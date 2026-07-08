@@ -1,0 +1,85 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+
+# Django Media Files
+media/
+
+# Static Collected Files
+staticfiles/
+
+# Environment Variables
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# MySQL Dumps
+*.sql
+
+# Coverage
+.coverage
+htmlcov/
+.coverage.*
+.cache
+.pytest_cache/
+
+# Migrations (optional)
+# Uncomment only if working in a team and generating migrations separately
+# */migrations/*
+# !*/migrations/__init__.py
+
+# Python Packaging
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Uploaded Documents
+*.pdf
+*.docx
+
+# Temporary Files
+*.tmp
+*.bak
+*.swp
+
+# Logs
+logs/
+*.log
+
+# Secrets
+secret_key.txt
+
+# Node Modules (if frontend tooling is added later)
+node_modules/
+
+# Windows
+desktop.ini
+
+# Mac
+.AppleDouble
+.LSOverride
