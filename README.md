@@ -258,9 +258,3 @@ http://127.0.0.1:8000/admin
 
 
 
-## License
-
-This project is developed As My BCA 4th Semester project 
-
-## Author
-Bishal Subedi
