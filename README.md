@@ -255,6 +255,3 @@ http://127.0.0.1:8000/admin
 * Email notifications
 * Similarity trend analytics
 * AI-generated content detection
-
-
-

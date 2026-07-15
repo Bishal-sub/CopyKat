@@ -35,7 +35,7 @@ ALLOWED_HOSTS = config(
     cast=lambda v: [host.strip() for host in v.split(',')]
 )
 
-
+AUTH_USER_MODEL = "accounts.User"
 
 # Application definition
 
@@ -140,3 +140,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 
+LOGIN_URL = '/login/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
