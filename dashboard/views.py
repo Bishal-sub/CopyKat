@@ -1,26 +1,54 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import render, redirect
+
+from assignments.models import Assignment
+
 
 
 @login_required
 def student_dashboard(request):
 
-    if request.user.role != 'student':
-        return redirect('login')
+    if request.user.role != "student":
+        return redirect("login")
+
+
+    assignments = Assignment.objects.filter(
+        student=request.user
+    ).order_by("-submitted_at")
+
+
 
     return render(
         request,
-        'dashboard/student_dashboard.html'
+        "student_dashboard.html",
+        {
+            "assignments": assignments
+        }
     )
+
+
+
+
+
 
 
 @login_required
 def teacher_dashboard(request):
 
-    if request.user.role != 'teacher':
-        return redirect('login')
+    if request.user.role != "teacher":
+        return redirect("login")
+
+
+    assignments = Assignment.objects.filter(
+        teacher=request.user
+    ).order_by("-submitted_at")
+
+
 
     return render(
         request,
-        'dashboard/teacher_dashboard.html'
+        "teacher_dashboard.html",
+        {
+            "assignments": assignments
+        }
     )

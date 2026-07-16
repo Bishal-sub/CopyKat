@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+CopyKat | Submit Assignment
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<div class="container py-5">
+
+
+<div class="bg-white border border-3 border-dark rounded-5 p-5">
+
+
+<h1 class="fw-bold mb-4">
+📤 Submit Assignment
+</h1>
+
+
+
+
+<form method="POST" enctype="multipart/form-data">
+
+
+{% csrf_token %}
+
+
+
+
+
+<label class="fw-bold">
+Assignment Title
+</label>
+
+
+<input
+type="text"
+name="title"
+class="form-control mb-3"
+required
+>
+
+
+
+
+
+
+<label class="fw-bold">
+Student Name
+</label>
+
+
+<input
+type="text"
+class="form-control mb-3"
+value="{{request.user.full_name}}"
+readonly
+>
+
+
+
+
+
+
+
+<label class="fw-bold">
+Select Teacher
+</label>
+
+
+<select
+name="teacher"
+class="form-control mb-3"
+required
+>
+
+
+<option>
+Choose Teacher
+</option>
+
+
+
+{% for teacher in teachers %}
+
+
+<option value="{{teacher.id}}">
+
+{{teacher.full_name}}
+
+</option>
+
+
+{% endfor %}
+
+
+
+</select>
+
+
+
+
+
+
+
+<label class="fw-bold">
+Level
+</label>
+
+
+<select
+name="level"
+id="level"
+class="form-control mb-3"
+onchange="semesterLoad()"
+>
+
+
+<option value="bachelor">
+Bachelor
+</option>
+
+
+<option value="master">
+Master
+</option>
+
+
+</select>
+
+
+
+
+
+
+<label class="fw-bold">
+Semester
+</label>
+
+
+<select
+name="semester"
+id="semester"
+class="form-control mb-3"
+>
+
+</select>
+
+
+
+
+
+
+
+<label class="fw-bold">
+Upload File
+</label>
+
+
+<input
+type="file"
+name="file"
+class="form-control mb-4"
+required
+>
+
+
+
+
+<button class="btn btn-warning border border-dark rounded-pill px-5">
+
+Submit
+
+</button>
+
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<script>
+
+
+function semesterLoad(){
+
+
+let level=document.getElementById(
+"level"
+).value;
+
+
+let semester=document.getElementById(
+"semester"
+);
+
+
+semester.innerHTML="";
+
+
+
+let total =
+level=="bachelor" ? 10 : 4;
+
+
+
+for(let i=1;i<=total;i++){
+
+
+let option=document.createElement(
+"option"
+);
+
+
+option.value=i;
+
+
+option.text="Semester "+i;
+
+
+semester.appendChild(option);
+
+
+}
+
+
+
+}
+
+
+
+semesterLoad();
+
+
+</script>
+
+
+
+{% endblock %}

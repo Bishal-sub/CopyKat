@@ -1,7 +1,8 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
-from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.db import models
+
 from datetime import datetime
 
 
@@ -13,41 +14,45 @@ def validate_admission_year(value):
 
 
 class User(AbstractUser):
-
     ROLE_CHOICES = (
-        ('student', 'Student'),
-        ('teacher', 'Teacher'),
-        ('admin', 'Admin'),
+        ("student", "Student"),
+        ("teacher", "Teacher"),
+        ("admin", "Admin"),
     )
 
     role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
-        default='student'
+        default="student",
     )
 
-    full_name = models.CharField(max_length=100)
+    full_name = models.CharField(
+        max_length=100,
+    )
 
-    email = models.EmailField(unique=True)
+    email = models.EmailField(
+        unique=True,
+    )
 
     phone_regex = RegexValidator(
-        regex=r'^\+?\d{10,15}$',
-        message='Enter a valid phone number'
+        regex=r"^\+?\d{10,15}$",
+        message="Enter a valid phone number",
     )
 
     phone_number = models.CharField(
         max_length=15,
         validators=[phone_regex],
-        unique=True
+        unique=True,
     )
 
     admission_year = models.PositiveIntegerField(
-        validators=[validate_admission_year],max_length=4)
+        validators=[validate_admission_year],
+    )
 
     photo = models.ImageField(
-        upload_to='students/',
+        upload_to="students/",
         blank=True,
-        null=True
+        null=True,
     )
 
     def __str__(self):

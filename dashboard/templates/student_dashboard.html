@@ -1,71 +1,243 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block title %} CopyKat | Student Dashboard {%endblock %} {% block content %}
 
+<div class="container-fluid py-4">
+  <!-- Navbar -->
 
-{% block title %}
-Student Dashboard
-{% endblock %}
+  <div class="topbar">
+    <div>
+      <h2 class="fw-bold">CopyKat</h2>
 
+      <p>Student Dashboard</p>
+    </div>
 
+    <div class="user">{{request.user.full_name}}</div>
+  </div>
 
-{% block content %}
+  <div class="row mt-4">
+    <!-- Sidebar -->
 
+    <div class="col-md-3">
+      <div class="sidebar">
+        <h3>Menu</h3>
 
-<h1>
-    Student Dashboard
-</h1>
+        <a href="#profile"> 👤 Profile </a>
 
+        <a href="{% url 'submit_assignment' %}"> 📤 Submit Assignment </a>
 
-<h3>
-    Welcome {{ request.user.full_name }}
-</h3>
+        
 
+        <form method="POST" action="{% url 'logout' %}">
+          {% csrf_token %}
 
-{% if request.user.photo %}
+          <button>Logout</button>
+        </form>
+      </div>
+    </div>
 
-<img 
-    src="{{ request.user.photo.url }}"
-    width="150"
-    height="150"
->
+    <!-- Content -->
 
-{% endif %}
+    <div class="col-md-9">
+      <div id="profile" class="box mb-4">
+        <h1>Profile</h1>
 
+        <table class="table">
+          <tr>
+            <th>Name</th>
 
+            <td>{{request.user.full_name}}</td>
+          </tr>
 
-<table border="1">
+          <tr>
+            <th>Email</th>
 
-<tr>
-    <th>Username</th>
-    <td>{{ request.user.username }}</td>
-</tr>
+            <td>{{request.user.email}}</td>
+          </tr>
 
+          <tr>
+            <th>Phone</th>
 
-<tr>
-    <th>Email</th>
-    <td>{{ request.user.email }}</td>
-</tr>
+            <td>{{request.user.phone_number}}</td>
+          </tr>
 
+          <tr>
+            <th>Role</th>
 
-<tr>
-    <th>Phone</th>
-    <td>{{ request.user.phone_number }}</td>
-</tr>
+            <td>{{request.user.role}}</td>
+          </tr>
+        </table>
+      </div>
 
+      <div id="assignments" class="box">
+        <h1>My Assignments</h1>
 
-<tr>
-    <th>Admission Year</th>
-    <td>{{ request.user.admission_year }}</td>
-</tr>
+        {% for assignment in assignments %}
 
+        <div class="assignment">
+          <h3>{{assignment.title}}</h3>
 
-<tr>
-    <th>Role</th>
-    <td>{{ request.user.role }}</td>
-</tr>
+          <p>
+            <b> Teacher: </b>
 
+            {{assignment.teacher.full_name}}
+          </p>
 
-</table>
+          <p>
+            <b> Level: </b>
 
+            {{assignment.get_level_display}}
+          </p>
 
+          <p>
+            <b> Semester: </b>
+
+            {{assignment.semester}}
+          </p>
+
+          <p>
+            <b> Similarity: </b>
+
+            {{assignment.similarity_percentage}} %
+          </p>
+
+          <p>
+            <b> Teacher Remark: </b>
+
+            {% if assignment.teacher_remark %} {{assignment.teacher_remark}} {%
+            else %} Waiting {% endif %}
+          </p>
+
+          {% if assignment.status == "accepted" %}
+
+          <span class="accepted"> Accepted </span>
+
+          {% elif assignment.status == "rejected" %}
+
+          <span class="rejected"> Rejected </span>
+
+          {% else %}
+
+          <span class="pending"> Pending </span>
+
+          {% endif %}
+        </div>
+
+        {% empty %}
+
+        <p>No assignment submitted.</p>
+
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  body {
+    background: #f8f8f5;
+  }
+
+  .topbar {
+    background: white;
+
+    border: 3px solid black;
+
+    border-radius: 35px;
+
+    padding: 20px;
+
+    display: flex;
+
+    justify-content: space-between;
+  }
+
+  .user {
+    background: #00f0b5;
+
+    border: 3px solid black;
+
+    border-radius: 50px;
+
+    padding: 15px 25px;
+
+    font-weight: bold;
+  }
+
+  .sidebar {
+    background: #111;
+
+    border-radius: 40px;
+
+    padding: 30px;
+  }
+
+  .sidebar a,
+  .sidebar button {
+    display: block;
+
+    background: #ffc107;
+
+    color: black;
+
+    padding: 15px;
+
+    margin-bottom: 15px;
+
+    border-radius: 50px;
+
+    border: 3px solid black;
+
+    text-decoration: none;
+
+    width: 100%;
+
+    font-weight: bold;
+  }
+
+  .box {
+    background: white;
+
+    border: 3px solid black;
+
+    border-radius: 40px;
+
+    padding: 35px;
+  }
+
+  .assignment {
+    background: #ead6f5;
+
+    border: 3px solid black;
+
+    border-radius: 30px;
+
+    padding: 25px;
+
+    margin-top: 20px;
+  }
+
+  .accepted,
+  .rejected,
+  .pending {
+    padding: 10px 20px;
+
+    border-radius: 50px;
+
+    border: 2px solid black;
+
+    font-weight: bold;
+  }
+
+  .accepted {
+    background: #00f0b5;
+  }
+
+  .rejected {
+    background: #ff8a8a;
+  }
+
+  .pending {
+    background: #ffc107;
+  }
+</style>
 
 {% endblock %}

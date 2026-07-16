@@ -1,0 +1,229 @@
+{% extends 'base.html' %} {% block title %} CopyKat | Detect Similarity. Protect
+Originality. {% endblock %} {% block content %}
+
+<div class="container-fluid py-3">
+  <!-- Navbar -->
+  <nav
+    class="navbar navbar-expand-lg bg-white border border-3 border-dark rounded-4 px-4 mb-4"
+  >
+    <a class="navbar-brand fw-bold fs-3" href="#"> CopyKat </a>
+
+    <button
+      class="navbar-toggler"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" href="#features"> Features </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#workflow"> Workflow </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#about"> About </a>
+        </li>
+
+        <li class="nav-item ms-3">
+          <a
+            href="{% url 'login' %}"
+            class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold"
+          >
+            Login
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+
+  <section class="bg-white border border-3 border-dark rounded-5 p-5 mb-4">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-2 fw-bold mb-4">Detect Assignment Similarity</h1>
+
+        <p class="lead text-muted mb-4">
+          Compare student submissions against previously uploaded assignments
+          and generate detailed similarity reports instantly.
+        </p>
+
+        <a
+          href="{% url 'register' %}"
+          class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+        >
+          Get Started
+        </a>
+      </div>
+
+      <div class="col-lg-6 text-center">
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/1048/1048953.png"
+          class="img-fluid"
+          style="max-height: 350px"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+
+  <section id="features" class="mb-4">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 border-dark border-3 rounded-5 bg-warning">
+          <div class="card-body p-4">
+            <h3 class="fw-bold">📄 Upload Assignments</h3>
+
+            <p>Upload PDF and DOCX assignments directly through the system.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div
+          class="card h-100 border-dark border-3 rounded-5"
+          style="background: #00f0b5"
+        >
+          <div class="card-body p-4">
+            <h3 class="fw-bold">🔍 Similarity Detection</h3>
+
+            <p>
+              TF-IDF and Cosine Similarity provide accurate comparison results.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div
+          class="card h-100 border-dark border-3 rounded-5"
+          style="background: #ead6f5"
+        >
+          <div class="card-body p-4">
+            <h3 class="fw-bold">✅ Teacher Review</h3>
+
+            <p>Teachers review reports and approve or reject submissions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow -->
+
+  <section
+    id="workflow"
+    class="bg-white border border-3 border-dark rounded-5 p-5 mb-4"
+  >
+    <h2 class="display-4 fw-bold mb-4">How CopyKat Works</h2>
+
+    <div class="row text-center">
+      <div class="col-md-3">
+        <h1>📤</h1>
+        <h5>Upload</h5>
+      </div>
+
+      <div class="col-md-3">
+        <h1>⚙️</h1>
+        <h5>Analyze</h5>
+      </div>
+
+      <div class="col-md-3">
+        <h1>📊</h1>
+        <h5>Compare</h5>
+      </div>
+
+      <div class="col-md-3">
+        <h1>✅</h1>
+        <h5>Review</h5>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why CopyKat -->
+
+  <section
+    id="about"
+    class="border border-3 border-dark rounded-5 p-5 mb-4"
+    style="background: #00f0b5"
+  >
+    <h2 class="display-4 fw-bold mb-4">Why CopyKat?</h2>
+
+    <div class="row">
+      <div class="col-md-6">
+        <ul class="fs-5">
+          <li>No expensive licenses</li>
+          <li>Internal assignment checking</li>
+          <li>Secure document storage</li>
+          <li>Fast similarity reports</li>
+          <li>Simple teacher review workflow</li>
+        </ul>
+      </div>
+
+      <div class="col-md-6">
+        <h3 class="fw-bold">Built for Colleges</h3>
+
+        <p>
+          CopyKat helps educational institutions detect copied assignments
+          without relying on external plagiarism detection services.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+
+  <section
+    class="bg-warning border border-3 border-dark rounded-5 p-5 text-center mb-4"
+  >
+    <h2 class="display-4 fw-bold">Join CopyKat Today</h2>
+
+    <p class="lead">Detect Similarity. Protect Originality.</p>
+
+    <a
+      href="{% url 'register' %}"
+      class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+    >
+      Create Account
+    </a>
+  </section>
+
+  <!-- Footer -->
+
+  <footer class="bg-white border border-3 border-dark rounded-4 p-4 mt-5">
+    <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+            
+            <h3 class="fw-bold mb-1">CopyKat</h3>
+            <p class="text-muted mb-0">Assignment Similarity Detection System</p>
+        </div>
+
+        <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+            <p class="mb-0">&copy; 2026 CopyKat. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+</div>
+
+<style>
+  body {
+    background: #f8f8f5;
+  }
+
+  .card {
+    transition: 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+</style>
+
+{% endblock %}

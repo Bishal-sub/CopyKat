@@ -1,36 +1,142 @@
-{% extends 'base.html' %} {% block title %} Teacher Dashboard {% endblock %} {%
-block content %}
+{% extends 'base.html' %}
 
-<h1>Teacher Dashboard</h1>
 
-<h3>Welcome {{ request.user.full_name }}</h3>
 
-{% if request.user.photo %}
+{% block title %}
+CopyKat | Teacher Dashboard
+{% endblock %}
 
-<img src="{{ request.user.photo.url }}" width="150" height="150" />
 
-{% endif %}
 
-<table border="1">
-  <tr>
-    <th>Username</th>
-    <td>{{ request.user.username }}</td>
-  </tr>
 
-  <tr>
-    <th>Email</th>
-    <td>{{ request.user.email }}</td>
-  </tr>
+{% block content %}
 
-  <tr>
-    <th>Phone</th>
-    <td>{{ request.user.phone_number }}</td>
-  </tr>
 
-  <tr>
-    <th>Role</th>
-    <td>{{ request.user.role }}</td>
-  </tr>
-</table>
+
+<div class="container py-5">
+
+
+
+<div class="box">
+
+
+<h1 class="fw-bold">
+
+Teacher Dashboard
+
+</h1>
+
+
+
+<h4>
+
+Welcome {{request.user.full_name}}
+
+</h4>
+
+
+
+
+
+<hr>
+
+
+
+
+
+<h2>
+Student Submissions
+</h2>
+
+
+
+
+
+{% for assignment in assignments %}
+
+
+
+
+<div class="assignment">
+
+
+<h3>
+
+{{assignment.title}}
+
+</h3>
+
+
+
+<p>
+
+Student:
+
+{{assignment.student.full_name}}
+
+</p>
+
+
+
+
+<p>
+
+Semester:
+
+{{assignment.semester}}
+
+</p>
+
+
+
+
+<p>
+
+Similarity:
+
+{{assignment.similarity_percentage}}%
+
+</p>
+
+
+
+
+
+<a 
+href="{% url 'teacher_review' assignment.id %}"
+class="btn btn-warning border border-dark rounded-pill"
+>
+
+Review
+
+</a>
+
+
+
+</div>
+
+
+
+
+{% empty %}
+
+
+<p>
+No assignments available.
+</p>
+
+
+{% endfor %}
+
+
+
+
+</div>
+
+
+</div>
+
+
+
 
 {% endblock %}

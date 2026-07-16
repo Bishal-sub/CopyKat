@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<div class="container py-5">
+
+
+<div class="card border border-dark border-3 rounded-5 p-5">
+
+
+<h2>
+Review Assignment
+</h2>
+
+
+<h4>
+{{assignment.title}}
+</h4>
+
+
+<p>
+Student:
+{{assignment.student.full_name}}
+</p>
+
+
+<p>
+Similarity:
+{{assignment.similarity_percentage}}%
+</p>
+
+
+
+
+<form method="POST">
+
+
+{% csrf_token %}
+
+
+
+<textarea
+name="remark"
+class="form-control mb-3"
+placeholder="Write remark"
+>{{assignment.teacher_remark}}</textarea>
+
+
+
+
+
+<select
+name="status"
+class="form-control mb-3"
+>
+
+
+<option value="accepted">
+Accept
+</option>
+
+
+<option value="rejected">
+Reject
+</option>
+
+
+</select>
+
+
+
+
+<button class="btn btn-success">
+
+Save
+
+</button>
+
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+
+{% endblock %}
