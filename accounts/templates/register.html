@@ -1,12 +1,11 @@
 {% extends 'base.html' %} {% block title %} Register | CopyKat {% endblock %} {%block content %}
 
 <div class="container">
-  <!-- Navbar -->
 
   <nav
     class="navbar navbar-expand-lg bg-white border border-3 border-dark rounded-4 px-4 mb-4 custom-navbar"
   >
-    <a class="navbar-brand fw-bold fs-3" href="{% url 'home' %}"> 🐱 CopyKat </a>
+    <a class="navbar-brand fw-bold fs-3" href="{% url 'home' %}">  CopyKat </a>
 
     <button
       class="navbar-toggler"
@@ -84,13 +83,11 @@
     background: #f8f8f5;
   }
 
-  /* Navbar same width as form */
 
   .custom-navbar {
     width: 100%;
   }
 
-  /* Register Card */
 
   .register-card {
     width: 100%;
@@ -106,7 +103,6 @@
     box-shadow: 12px 12px 0px #111;
   }
 
-  /* Inputs */
 
   input,
   select,
@@ -132,7 +128,6 @@
     box-shadow: none;
   }
 
-  /* Button */
 
   .btn-warning {
     background: #ffc107;
@@ -142,7 +137,6 @@
     background: #ffca2c;
   }
 
-  /* Tablet */
 
   @media (max-width: 991px) {
     .register-card {
@@ -152,7 +146,6 @@
     }
   }
 
-  /* Mobile */
 
   @media (max-width: 576px) {
     .register-card {

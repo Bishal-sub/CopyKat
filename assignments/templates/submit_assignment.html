@@ -1,253 +1,245 @@
 {% extends 'base.html' %}
 
-
 {% block title %}
 CopyKat | Submit Assignment
 {% endblock %}
 
-
-
 {% block content %}
-
 
 <div class="container py-5">
 
+    <!-- Page Header -->
 
-<div class="bg-white border border-3 border-dark rounded-5 p-5">
+    <div class="text-center mb-5">
 
+        <h1 class="display-5 fw-bold">
+            📤 Submit Assignment
+        </h1>
 
-<h1 class="fw-bold mb-4">
-📤 Submit Assignment
-</h1>
+        <p class="text-muted">
+            Upload your assignment and generate a similarity report.
+        </p>
 
+    </div>
 
+    <form method="POST" enctype="multipart/form-data">
 
+        {% csrf_token %}
 
-<form method="POST" enctype="multipart/form-data">
+        <div class="row g-4">
 
+            <!-- Left Section -->
 
-{% csrf_token %}
+            <div class="col-lg-7">
 
+                <div class="card shadow-sm border-0 h-100">
 
+                    <div class="card-body p-4">
 
+                        <h4 class="fw-bold mb-4">
+                            Assignment Information
+                        </h4>
 
+                        <div class="mb-3">
 
-<label class="fw-bold">
-Assignment Title
-</label>
+                            <label class="form-label fw-semibold">
+                                Assignment Title
+                            </label>
 
+                            <input
+                                type="text"
+                                name="title"
+                                class="form-control"
+                                placeholder="Enter assignment title"
+                                required
+                            >
 
-<input
-type="text"
-name="title"
-class="form-control mb-3"
-required
->
+                        </div>
 
+                        <div class="mb-3">
 
+                            <label class="form-label fw-semibold">
+                                Student Name
+                            </label>
 
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ request.user.full_name }}"
+                                readonly
+                            >
 
+                        </div>
 
+                        <div class="mb-3">
 
-<label class="fw-bold">
-Student Name
-</label>
+                            <label class="form-label fw-semibold">
+                                Select Teacher
+                            </label>
 
+                            <select
+                                name="teacher"
+                                class="form-select"
+                                required
+                            >
 
-<input
-type="text"
-class="form-control mb-3"
-value="{{request.user.full_name}}"
-readonly
->
+                                <option value="">
+                                    Choose Teacher
+                                </option>
 
+                                {% for teacher in teachers %}
 
+                                <option value="{{ teacher.id }}">
+                                    {{ teacher.full_name }}
+                                </option>
 
+                                {% endfor %}
 
+                            </select>
 
+                        </div>
 
+                        <div class="row">
 
-<label class="fw-bold">
-Select Teacher
-</label>
+                            <div class="col-md-6">
 
+                                <label class="form-label fw-semibold">
+                                    Level
+                                </label>
 
-<select
-name="teacher"
-class="form-control mb-3"
-required
->
+                                <select
+                                    name="level"
+                                    id="level"
+                                    class="form-select"
+                                    onchange="semesterLoad()"
+                                >
 
+                                    <option value="bachelor">
+                                        Bachelor
+                                    </option>
 
-<option>
-Choose Teacher
-</option>
+                                    <option value="master">
+                                        Master
+                                    </option>
 
+                                </select>
 
+                            </div>
 
-{% for teacher in teachers %}
+                            <div class="col-md-6">
 
+                                <label class="form-label fw-semibold">
+                                    Semester
+                                </label>
 
-<option value="{{teacher.id}}">
+                                <select
+                                    name="semester"
+                                    id="semester"
+                                    class="form-select"
+                                >
+                                </select>
 
-{{teacher.full_name}}
+                            </div>
 
-</option>
+                        </div>
 
+                    </div>
 
-{% endfor %}
+                </div>
 
+            </div>
 
+            <!-- Right Section -->
 
-</select>
+            <div class="col-lg-5">
 
+                <div class="card shadow-sm border-0 h-100">
 
+                    <div class="card-body p-4">
 
+                        <h4 class="fw-bold mb-4">
+                            Upload Document
+                        </h4>
 
+                        <div class="border rounded-4 p-5 text-center bg-light">
 
+                            <div class="display-4 mb-3">
+                                📄
+                            </div>
 
+                            <h5 class="fw-bold">
+                                Upload Assignment File
+                            </h5>
 
-<label class="fw-bold">
-Level
-</label>
+                            <p class="text-muted small">
+                                Supported formats:
+                                PDF, DOC, DOCX
+                            </p>
 
+                            <input
+                                type="file"
+                                name="file"
+                                class="form-control mt-3"
+                                required
+                            >
 
-<select
-name="level"
-id="level"
-class="form-control mb-3"
-onchange="semesterLoad()"
->
+                        </div>
 
+                        <div class="d-grid mt-4">
 
-<option value="bachelor">
-Bachelor
-</option>
+                            <button
+                                type="submit"
+                                class="btn btn-warning btn-lg fw-bold">
 
+                                Submit Assignment
 
-<option value="master">
-Master
-</option>
+                            </button>
 
+                        </div>
 
-</select>
+                    </div>
 
+                </div>
 
+            </div>
 
+        </div>
 
-
-
-<label class="fw-bold">
-Semester
-</label>
-
-
-<select
-name="semester"
-id="semester"
-class="form-control mb-3"
->
-
-</select>
-
-
-
-
-
-
-
-<label class="fw-bold">
-Upload File
-</label>
-
-
-<input
-type="file"
-name="file"
-class="form-control mb-4"
-required
->
-
-
-
-
-<button class="btn btn-warning border border-dark rounded-pill px-5">
-
-Submit
-
-</button>
-
-
-
-</form>
-
+    </form>
 
 </div>
-
-
-</div>
-
-
-
-
-
-
 
 <script>
 
-
 function semesterLoad(){
 
+    let level =
+    document.getElementById("level").value;
 
-let level=document.getElementById(
-"level"
-).value;
+    let semester =
+    document.getElementById("semester");
 
+    semester.innerHTML = "";
 
-let semester=document.getElementById(
-"semester"
-);
+    let total =
+    level === "bachelor" ? 10 : 4;
 
+    for(let i = 1; i <= total; i++){
 
-semester.innerHTML="";
+        let option =
+        document.createElement("option");
 
+        option.value = i;
 
+        option.text =
+        "Semester " + i;
 
-let total =
-level=="bachelor" ? 10 : 4;
-
-
-
-for(let i=1;i<=total;i++){
-
-
-let option=document.createElement(
-"option"
-);
-
-
-option.value=i;
-
-
-option.text="Semester "+i;
-
-
-semester.appendChild(option);
-
-
+        semester.appendChild(option);
+    }
 }
-
-
-
-}
-
-
 
 semesterLoad();
 
-
 </script>
-
-
 
 {% endblock %}

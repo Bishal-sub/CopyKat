@@ -1,142 +1,304 @@
 {% extends 'base.html' %}
 
-
-
 {% block title %}
 CopyKat | Teacher Dashboard
 {% endblock %}
 
-
-
-
 {% block content %}
 
+<div class="container py-4">
 
 
-<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
+        <div>
 
+            <h1 class="fw-bold">
+                Teacher Dashboard
+            </h1>
 
-<div class="box">
+            <p class="text-muted">
+                Welcome, {{ request.user.full_name }}
+            </p>
 
+        </div>
 
-<h1 class="fw-bold">
+        <a href="{% url 'logout' %}"
+           class="btn btn-outline-danger">
 
-Teacher Dashboard
+            Logout
 
-</h1>
+        </a>
 
+    </div>
 
 
-<h4>
+    <div class="row g-4 mb-4">
 
-Welcome {{request.user.full_name}}
+        <div class="col-md-3">
 
-</h4>
+            <div class="card border-primary">
 
+                <div class="card-body text-center">
 
+                    <h6>Total Assignments</h6>
 
+                    <h2>{{ assignments.count }}</h2>
 
+                </div>
 
-<hr>
+            </div>
 
+        </div>
 
+        <div class="col-md-3">
 
+            <div class="card border-warning">
 
+                <div class="card-body text-center">
 
-<h2>
-Student Submissions
-</h2>
+                    <h6>Pending</h6>
 
+                    <h2>{{ pending_count }}</h2>
 
+                </div>
 
+            </div>
 
+        </div>
 
-{% for assignment in assignments %}
+        <div class="col-md-3">
 
+            <div class="card border-success">
 
+                <div class="card-body text-center">
 
+                    <h6>Accepted</h6>
 
-<div class="assignment">
+                    <h2>{{ accepted_count }}</h2>
 
+                </div>
 
-<h3>
+            </div>
 
-{{assignment.title}}
+        </div>
 
-</h3>
+        <div class="col-md-3">
 
+            <div class="card border-danger">
 
+                <div class="card-body text-center">
 
-<p>
+                    <h6>Rejected</h6>
 
-Student:
+                    <h2>{{ rejected_count }}</h2>
 
-{{assignment.student.full_name}}
+                </div>
 
-</p>
+            </div>
 
+        </div>
 
+    </div>
 
 
-<p>
+    <div class="card shadow-sm">
 
-Semester:
+        <div class="card-header">
 
-{{assignment.semester}}
+            <h4 class="mb-0">
+                Student Submissions
+            </h4>
 
-</p>
+        </div>
 
+        <div class="card-body">
 
+            {% if assignments %}
 
+            <div class="table-responsive">
 
-<p>
+                <table class="table table-hover align-middle">
 
-Similarity:
+                    <thead>
 
-{{assignment.similarity_percentage}}%
+                        <tr>
 
-</p>
+                            <th>Title</th>
 
+                            <th>Student</th>
 
+                            <th>Level</th>
 
+                            <th>Semester</th>
 
+                            <th>File</th>
 
-<a 
-href="{% url 'teacher_review' assignment.id %}"
-class="btn btn-warning border border-dark rounded-pill"
->
+                            <th>Similarity</th>
 
-Review
+                            <th>Status</th>
 
-</a>
+                            <th>Action</th>
 
+                        </tr>
 
+                    </thead>
+
+                    <tbody>
+
+                        {% for assignment in assignments %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ assignment.title }}
+                                </strong>
+
+                            </td>
+
+                            <td>
+
+                                {{ assignment.student.full_name }}
+
+                            </td>
+
+                            <td>
+
+                                {{ assignment.get_level_display }}
+
+                            </td>
+
+                            <td>
+
+                                {{ assignment.semester }}
+
+                            </td>
+
+                            <td>
+
+                                {% if assignment.file %}
+
+                                <a href="{{ assignment.file.url }}"
+                                   target="_blank"
+                                   class="btn btn-sm btn-primary">
+
+                                    View File
+
+                                </a>
+
+                                {% else %}
+
+                                <span class="text-muted">
+
+                                    No File
+
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if assignment.similarity_percentage < 30 %}
+
+                                <span class="badge bg-success">
+
+                                    {{ assignment.similarity_percentage }}%
+
+                                </span>
+
+                                {% elif assignment.similarity_percentage < 60 %}
+
+                                <span class="badge bg-warning text-dark">
+
+                                    {{ assignment.similarity_percentage }}%
+
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-danger">
+
+                                    {{ assignment.similarity_percentage }}%
+
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if assignment.status == "accepted" %}
+
+                                <span class="badge bg-success">
+
+                                    Accepted
+
+                                </span>
+
+                                {% elif assignment.status == "rejected" %}
+
+                                <span class="badge bg-danger">
+
+                                    Rejected
+
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-warning text-dark">
+
+                                    Pending
+
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <a href="{% url 'teacher_review' assignment.id %}"
+                                   class="btn btn-warning btn-sm">
+
+                                    Review
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="text-center py-5">
+
+                <h5>
+
+                    No Assignments Available
+
+                </h5>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
 
 </div>
-
-
-
-
-{% empty %}
-
-
-<p>
-No assignments available.
-</p>
-
-
-{% endfor %}
-
-
-
-
-</div>
-
-
-</div>
-
-
-
 
 {% endblock %}

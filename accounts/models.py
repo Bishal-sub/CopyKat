@@ -1,9 +1,9 @@
+from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
-
-from datetime import datetime
 
 
 def validate_admission_year(value):
@@ -36,7 +36,7 @@ class User(AbstractUser):
 
     phone_regex = RegexValidator(
         regex=r"^\+?\d{10,15}$",
-        message="Enter a valid phone number",
+        message="Enter a valid phone number.",
     )
 
     phone_number = models.CharField(
@@ -54,6 +54,15 @@ class User(AbstractUser):
         blank=True,
         null=True,
     )
+
+    USERNAME_FIELD = "username"
+
+    REQUIRED_FIELDS = [
+        "email",
+        "full_name",
+        "phone_number",
+        "admission_year",
+    ]
 
     def __str__(self):
         return self.username
