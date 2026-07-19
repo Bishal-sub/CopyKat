@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block title %}
+CopyKat | Resubmit Assignment
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-lg border-0">
+
+                <div class="card-header">
+
+                    <h3 class="mb-0">
+                         Resubmit Assignment
+                    </h3>
+
+                </div>
+
+                <div class="card-body p-4">
+
+                    <div class="alert alert-warning">
+
+                        <strong>Teacher Remark:</strong>
+
+                        <br>
+
+                        {{ assignment.teacher_remark }}
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-bold">
+                                Assignment Title
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ assignment.title }}"
+                                readonly
+                            >
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-bold">
+                                Teacher
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ assignment.teacher.full_name }}"
+                                readonly
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-bold">
+                                Level
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ assignment.get_level_display }}"
+                                readonly
+                            >
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-bold">
+                                Semester
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ assignment.semester }}"
+                                readonly
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+                            Current File
+                        </label>
+
+                        <div>
+
+                            <a
+                                href="{{ assignment.file.url }}"
+                                target="_blank"
+                                class="btn btn-outline-primary">
+
+                                View Current File
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <form
+                        method="POST"
+                        enctype="multipart/form-data">
+
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+                                Upload New File
+                            </label>
+
+                            <input
+                                type="file"
+                                name="file"
+                                class="form-control"
+                                required
+                            >
+
+                            <div class="form-text">
+
+                                The old file will be replaced.
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger">
+
+                            Replace Assignment
+
+                        </button>
+
+                        <a
+                            href="{% url 'student_dashboard' %}"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -27,6 +27,14 @@ urlpatterns = [
         name="teacher_review"
 
     ),
+     path(
+        "resubmit/<int:assignment_id>/",
+        views.resubmit_assignment,
+        name="resubmit_assignment"
+    ),
 
 
+    
 ]
+
+
