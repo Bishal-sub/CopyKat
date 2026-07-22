@@ -94,12 +94,38 @@ Originality. {% endblock %} {% block content %}
           and get similarity percentage instantly.
         </p>
 
+        {% if request.user.is_authenticated %}
+
+    {% if request.user.role == "student" %}
         <a
-          href="{% url 'register' %}"
-          class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+            href="{% url 'student_dashboard' %}"
+            class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
         >
-          Get Started
+            Get Started
         </a>
+
+    {% elif request.user.role == "teacher" %}
+        <a
+            href="{% url 'teacher_dashboard' %}"
+            class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+        >
+            Get Started
+        </a>
+    {% endif %}
+
+{% else %}
+
+    <a
+        href="{% url 'register' %}"
+        class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+    >
+        Get Started
+    </a>
+    {% endif %}
+
+
+
+        
       </div>
 
       <div class="col-lg-6 text-center">
@@ -225,12 +251,36 @@ Originality. {% endblock %} {% block content %}
 
     <p class="lead">Detect Similarity. Protect Originality.</p>
 
+    {% if request.user.is_authenticated %}
+
+    {% if request.user.role == "student" %}
+        <a
+            href="{% url 'student_dashboard' %}"
+            class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+        >
+            Go to Dashboard
+        </a>
+
+    {% elif request.user.role == "teacher" %}
+        <a
+            href="{% url 'teacher_dashboard' %}"
+            class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+        >
+            Go to Dashboard
+        </a>
+    {% endif %}
+
+{% else %}
+
     <a
-      href="{% url 'register' %}"
-      class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+        href="{% url 'register' %}"
+        class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
     >
-      Create Account
+        Create Account
     </a>
+
+{% endif %}
+
   </section>
 
 
