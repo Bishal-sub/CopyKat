@@ -26,6 +26,8 @@ urlpatterns = [
     path('account/',include('accounts.urls')),
     path('assignments/',include('assignments.urls')),
     path('dashboard/',include('dashboard.urls')),
+    path("similarity/",include("similarity.urls")
+),
     
 ]
 if settings.DEBUG:
