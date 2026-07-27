@@ -7,9 +7,11 @@ from django.db import models
 
 
 def validate_admission_year(value):
+
     current_year = datetime.now().year
 
     if value < 2000 or value > current_year:
+
         raise ValidationError(
             "Enter a valid admission year."
         )
@@ -60,20 +62,6 @@ class User(AbstractUser):
         null=True,
     )
 
-    # Teacher fields
-    subject = models.ForeignKey(
-        "assignments.Subject",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="teachers",
-    )
-
-    semester = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-    )
-
     USERNAME_FIELD = "username"
 
     REQUIRED_FIELDS = [
@@ -83,4 +71,46 @@ class User(AbstractUser):
     ]
 
     def __str__(self):
+
         return self.username
+
+
+class TeacherAssignment(models.Model):
+
+    teacher = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        limit_choices_to={
+            "role": "teacher"
+        },
+        related_name="teaching_assignments",
+    )
+
+    subject = models.ForeignKey(
+        "assignments.Subject",
+        on_delete=models.CASCADE,
+        related_name="teacher_assignments",
+    )
+
+    semester = models.PositiveIntegerField()
+
+    class Meta:
+
+        unique_together = (
+            "teacher",
+            "subject",
+            "semester",
+        )
+
+        ordering = [
+            "semester",
+            "subject__name",
+        ]
+
+    def __str__(self):
+
+        return (
+            f"{self.teacher.full_name} - "
+            f"{self.subject.name} "
+            f"(Semester {self.semester})"
+        )

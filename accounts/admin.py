@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User
+from .models import (
+    User,
+    TeacherAssignment,
+)
 
 
 @admin.register(User)
@@ -11,9 +14,8 @@ class CustomUserAdmin(UserAdmin):
         "username",
         "full_name",
         "role",
-        "subject",
-        "semester",
         "email",
+        "phone_number",
         "is_staff",
     )
 
@@ -27,8 +29,6 @@ class CustomUserAdmin(UserAdmin):
                     "phone_number",
                     "admission_year",
                     "photo",
-                    "subject",
-                    "semester",
                 )
             },
         ),
@@ -45,9 +45,33 @@ class CustomUserAdmin(UserAdmin):
                     "phone_number",
                     "admission_year",
                     "photo",
-                    "subject",
-                    "semester",
                 )
             },
         ),
+    )
+
+
+@admin.register(TeacherAssignment)
+class TeacherAssignmentAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "teacher",
+        "subject",
+        "semester",
+    )
+
+    list_filter = (
+        "semester",
+        "subject",
+    )
+
+    search_fields = (
+        "teacher__username",
+        "teacher__full_name",
+        "subject__name",
+    )
+
+    ordering = (
+        "semester",
+        "subject",
     )
