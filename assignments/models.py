@@ -3,6 +3,17 @@ from accounts.models import User
 import os
 
 
+class Subject(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+
 class Assignment(models.Model):
 
     LEVEL_CHOICES = (
@@ -29,6 +40,12 @@ class Assignment(models.Model):
         limit_choices_to={"role": "teacher"}
     )
 
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.CASCADE,
+        related_name="assignments",
+    )
+
     title = models.CharField(
         max_length=200
     )
@@ -52,6 +69,14 @@ class Assignment(models.Model):
         default=0
     )
 
+    matched_assignment = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="matched_with",
+    )
+
     teacher_remark = models.TextField(
         blank=True,
         null=True
@@ -68,6 +93,10 @@ class Assignment(models.Model):
         null=True
     )
 
+    resubmission_used = models.BooleanField(
+        default=False
+    )
+
     class Meta:
         ordering = ["-submitted_at"]
 
@@ -76,4 +105,6 @@ class Assignment(models.Model):
 
     @property
     def filename(self):
-        return os.path.basename(self.file.name)
+        return os.path.basename(
+            self.file.name
+        )
