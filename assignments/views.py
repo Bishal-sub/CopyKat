@@ -1,24 +1,24 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.shortcuts import (
     render,
     redirect,
     get_object_or_404,
 )
 from django.utils import timezone
-from .forms import AssignmentForm
 
 import os
 
 from accounts.models import User
 from .models import Assignment
+from .forms import AssignmentForm
 
-from similarity.services import ( analyze_assignment )
-
+from similarity.services import (
+    analyze_assignment,
+)
 
 
 # SUBMIT ASSIGNMENT
-
-from .forms import AssignmentForm
 
 @login_required
 def submit_assignment(request):
@@ -26,41 +26,51 @@ def submit_assignment(request):
     if request.user.role != "student":
         return redirect("login")
 
-    teachers = User.objects.filter(
-        role="teacher"
-    )
-
     if request.method == "POST":
 
         form = AssignmentForm(
             request.POST,
-            request.FILES
+            request.FILES,
         )
 
         if form.is_valid():
 
-            assignment = Assignment.objects.create(
-
-                student=request.user,
-
-                title=form.cleaned_data["title"],
-
-                teacher=form.cleaned_data["teacher"],
-
-                level=form.cleaned_data["level"],
-
-                semester=form.cleaned_data["semester"],
-
-                file=form.cleaned_data["file"],
+            assignment = form.save(
+                commit=False
             )
 
-            analyze_assignment(
-                assignment
-            )
+            teacher = User.objects.filter(
+                role="teacher",
+                subject=assignment.subject,
+                semester=assignment.semester,
+            ).first()
 
-            return redirect(
-                "student_dashboard"
-            )
+            if not teacher:
+
+                form.add_error(
+                    None,
+                    "No teacher is assigned to this subject and semester."
+                )
+
+            else:
+
+                assignment.student = request.user
+                assignment.teacher = teacher
+
+                assignment.save()
+
+                analyze_assignment(
+                    assignment
+                )
+
+                messages.success(
+                    request,
+                    "Assignment submitted successfully."
+                )
+
+                return redirect(
+                    "student_dashboard"
+                )
 
     else:
 
@@ -70,35 +80,41 @@ def submit_assignment(request):
         request,
         "submit_assignment.html",
         {
-            "teachers": teachers,
             "form": form,
-        }
+        },
     )
 
 
 # RESUBMIT ASSIGNMENT
 
-
 @login_required
 def resubmit_assignment(
     request,
-    assignment_id
+    assignment_id,
 ):
 
     if request.user.role != "student":
         return redirect("login")
 
     assignment = get_object_or_404(
-
         Assignment,
-
         id=assignment_id,
-
         student=request.user,
-
         status="rejected",
-
     )
+
+    # Only one resubmission allowed
+
+    if assignment.resubmission_used:
+
+        messages.error(
+            request,
+            "You have already used your one resubmission attempt."
+        )
+
+        return redirect(
+            "student_dashboard"
+        )
 
     if request.method == "POST":
 
@@ -106,40 +122,97 @@ def resubmit_assignment(
             "file"
         )
 
-        if new_file:
+        if not new_file:
 
-            # Delete old file
-            if assignment.file:
+            messages.error(
+                request,
+                "Please select a file."
+            )
 
-                old_file_path = (
-                    assignment.file.path
+            return redirect(
+                "resubmit_assignment",
+                assignment_id=assignment.id,
+            )
+
+        allowed_extensions = (
+            ".pdf",
+            ".doc",
+            ".docx",
+        )
+
+        if not new_file.name.lower().endswith(
+            allowed_extensions
+        ):
+
+            messages.error(
+                request,
+                "Only PDF, DOC and DOCX files are allowed."
+            )
+
+            return redirect(
+                "resubmit_assignment",
+                assignment_id=assignment.id,
+            )
+
+        max_size = 10 * 1024 * 1024
+
+        if new_file.size > max_size:
+
+            messages.error(
+                request,
+                "Maximum file size is 10 MB."
+            )
+
+            return redirect(
+                "resubmit_assignment",
+                assignment_id=assignment.id,
+            )
+
+        # Delete old file
+
+        if assignment.file:
+
+            old_file_path = (
+                assignment.file.path
+            )
+
+            if os.path.exists(
+                old_file_path
+            ):
+                os.remove(
+                    old_file_path
                 )
 
-                if os.path.exists(
-                    old_file_path
-                ):
-                    os.remove(
-                        old_file_path
-                    )
+        # Replace file
 
-            # Replace old file
-            assignment.file = new_file
+        assignment.file = new_file
 
-            # Reset review information
-            assignment.status = "pending"
+        # Reset review data
 
-            assignment.teacher_remark = ""
+        assignment.status = "pending"
 
-            assignment.reviewed_at = None
+        assignment.teacher_remark = ""
 
-            assignment.similarity_percentage = 0
+        assignment.reviewed_at = None
 
-            assignment.save()
+        assignment.similarity_percentage = 0
 
-            # Recalculate similarity
-            analyze_assignment(
-                assignment
-            )
+        assignment.matched_assignment = None
+
+        assignment.resubmission_used = True
+
+        assignment.save()
+
+        # Run similarity check again
+
+        analyze_assignment(
+            assignment
+        )
+
+        messages.success(
+            request,
+            "Assignment resubmitted successfully."
+        )
 
         return redirect(
             "student_dashboard"
@@ -150,7 +223,7 @@ def resubmit_assignment(
         "resubmit_assignment.html",
         {
             "assignment": assignment,
-        }
+        },
     )
 
 
@@ -161,35 +234,38 @@ def resubmit_assignment(
 @login_required
 def teacher_review(
     request,
-    id
+    id,
 ):
 
     if request.user.role != "teacher":
         return redirect("login")
 
     assignment = get_object_or_404(
-
         Assignment,
-
         id=id,
-
         teacher=request.user,
-
     )
 
     if request.method == "POST":
 
         assignment.teacher_remark = request.POST.get(
-            "remark"
+            "remark",
+            ""
         )
 
         assignment.status = request.POST.get(
-            "status"
+            "status",
+            "pending"
         )
 
         assignment.reviewed_at = timezone.now()
 
         assignment.save()
+
+        messages.success(
+            request,
+            "Assignment reviewed successfully."
+        )
 
         return redirect(
             "teacher_dashboard"
@@ -199,6 +275,6 @@ def teacher_review(
         request,
         "teacher_review.html",
         {
-            "assignment": assignment
-        }
+            "assignment": assignment,
+        },
     )

@@ -18,6 +18,9 @@ from .extractors import (
 
 def clean_text(text):
 
+    if not text:
+        return ""
+
     text = text.lower()
 
     text = re.sub(
@@ -37,21 +40,31 @@ def clean_text(text):
 
 def get_text_from_file(file_path):
 
-    file_path = file_path.lower()
+    try:
 
-    if file_path.endswith(".pdf"):
+        file_path = file_path.lower()
 
-        return extract_pdf_text(
-            file_path
-        )
+        if file_path.endswith(".pdf"):
 
-    elif file_path.endswith(".docx"):
+            return extract_pdf_text(
+                file_path
+            )
 
-        return extract_docx_text(
-            file_path
-        )
+        elif file_path.endswith(".docx"):
 
-    return ""
+            return extract_docx_text(
+                file_path
+            )
+
+        elif file_path.endswith(".doc"):
+
+            return ""
+
+        return ""
+
+    except Exception:
+
+        return ""
 
 
 def calculate_similarity(
@@ -60,87 +73,129 @@ def calculate_similarity(
 ):
 
     if not text1 or not text2:
+
         return 0
 
-    documents = [
-        text1,
-        text2,
-    ]
+    try:
 
-    vectorizer = TfidfVectorizer()
+        documents = [
+            text1,
+            text2,
+        ]
 
-    vectors = vectorizer.fit_transform(
-        documents
-    )
+        vectorizer = TfidfVectorizer()
 
-    similarity = cosine_similarity(
-        vectors[0:1],
-        vectors[1:2]
-    )[0][0]
+        vectors = vectorizer.fit_transform(
+            documents
+        )
 
-    return round(similarity * 100,2)
+        similarity = cosine_similarity(
+            vectors[0:1],
+            vectors[1:2]
+        )[0][0]
+
+        return round(
+            similarity * 100,
+            2
+        )
+
+    except Exception:
+
+        return 0
 
 
 def analyze_assignment(
     assignment
 ):
 
-    current_text = get_text_from_file(
-        assignment.file.path
-    )
+    try:
 
-    current_text = clean_text(
-        current_text
-    )
+        current_text = get_text_from_file(
+            assignment.file.path
+        )
 
-    if not current_text:
+        current_text = clean_text(
+            current_text
+        )
+
+        if not current_text:
+
+            assignment.similarity_percentage = 0
+            assignment.matched_assignment = None
+
+            assignment.save()
+
+            return 0
+
+        highest_similarity = 0
+
+        matched_assignment = None
+
+        previous_assignments = (
+            Assignment.objects.filter(
+                subject=assignment.subject,
+                semester=assignment.semester,
+                level=assignment.level,
+            ).exclude(
+                id=assignment.id
+            )
+        )
+
+        for old_assignment in previous_assignments:
+
+            try:
+
+                if not old_assignment.file:
+
+                    continue
+
+                old_text = get_text_from_file(
+                    old_assignment.file.path
+                )
+
+                old_text = clean_text(
+                    old_text
+                )
+
+                if not old_text:
+
+                    continue
+
+                similarity = calculate_similarity(
+                    current_text,
+                    old_text,
+                )
+
+                if similarity > highest_similarity:
+
+                    highest_similarity = similarity
+
+                    matched_assignment = (
+                        old_assignment
+                    )
+
+            except Exception:
+
+                continue
+
+        assignment.similarity_percentage = (
+            highest_similarity
+        )
+
+        assignment.matched_assignment = (
+            matched_assignment
+        )
+
+        assignment.save()
+
+        return highest_similarity
+
+    except Exception:
 
         assignment.similarity_percentage = 0
+
+        assignment.matched_assignment = None
 
         assignment.save()
 
         return 0
-
-    highest_similarity = 0
-
-    previous_assignments = (
-        Assignment.objects.exclude(
-            id=assignment.id
-        )
-    )
-
-    for old_assignment in previous_assignments:
-
-        try:
-
-            if not old_assignment.file:
-                continue
-
-            old_text = get_text_from_file(
-                old_assignment.file.path
-            )
-
-            old_text = clean_text(
-                old_text
-            )
-
-            similarity = calculate_similarity(
-                current_text,
-                old_text,
-            )
-
-            if similarity > highest_similarity:
-
-                highest_similarity = similarity
-
-        except Exception:
-
-            continue
-
-    assignment.similarity_percentage = (
-        highest_similarity
-    )
-
-    assignment.save()
-
-    return highest_similarity

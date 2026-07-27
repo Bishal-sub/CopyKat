@@ -39,7 +39,7 @@ CopyKat | Submit Assignment
                     {% for error in field.errors %}
 
                         <li>
-                            <strong>{{ field.label }}</strong> :
+                            <strong>{{ field.label }}</strong>:
                             {{ error }}
                         </li>
 
@@ -79,14 +79,7 @@ CopyKat | Submit Assignment
                                 Assignment Title
                             </label>
 
-                            <input
-                                type="text"
-                                name="title"
-                                class="form-control"
-                                placeholder="Enter assignment title"
-                                value="{{ request.POST.title }}"
-                                required
-                            >
+                            {{ form.title }}
 
                         </div>
 
@@ -108,33 +101,10 @@ CopyKat | Submit Assignment
                         <div class="mb-3">
 
                             <label class="form-label fw-semibold">
-                                Select Teacher
+                                Subject
                             </label>
 
-                            <select
-                                name="teacher"
-                                class="form-select"
-                                required
-                            >
-
-                                <option value="">
-                                    Choose Teacher
-                                </option>
-
-                                {% for teacher in teachers %}
-
-                                <option
-                                    value="{{ teacher.id }}"
-                                    {% if request.POST.teacher == teacher.id|stringformat:"s" %}
-                                        selected
-                                    {% endif %}
-                                >
-                                    {{ teacher.full_name }}
-                                </option>
-
-                                {% endfor %}
-
-                            </select>
+                            {{ form.subject }}
 
                         </div>
 
@@ -146,32 +116,7 @@ CopyKat | Submit Assignment
                                     Level
                                 </label>
 
-                                <select
-                                    name="level"
-                                    id="level"
-                                    class="form-select"
-                                    onchange="semesterLoad()"
-                                >
-
-                                    <option
-                                        value="bachelor"
-                                        {% if request.POST.level == "bachelor" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        Bachelor
-                                    </option>
-
-                                    <option
-                                        value="master"
-                                        {% if request.POST.level == "master" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        Master
-                                    </option>
-
-                                </select>
+                                {{ form.level }}
 
                             </div>
 
@@ -181,12 +126,7 @@ CopyKat | Submit Assignment
                                     Semester
                                 </label>
 
-                                <select
-                                    name="semester"
-                                    id="semester"
-                                    class="form-select"
-                                >
-                                </select>
+                                {{ form.semester }}
 
                             </div>
 
@@ -211,23 +151,23 @@ CopyKat | Submit Assignment
                         </h4>
 
                         <div class="border rounded-4 p-5 text-center bg-light">
+
+                            <div class="display-4 mb-3">
+                                📄
+                            </div>
+
                             <h5 class="fw-bold">
                                 Upload Assignment File
                             </h5>
 
                             <p class="text-muted small">
                                 Supported formats:
-                                PDF, DOCX
+                                PDF, DOC, DOCX
                             </p>
 
-                            <input
-                                type="file"
-                                name="file"
-                                class="form-control mt-3"
-                                required
-                            >
+                            {{ form.file }}
 
-                            <small class="text-muted d-block mt-2">
+                            <small class="text-muted d-block mt-3">
                                 Maximum file size: 10 MB
                             </small>
 
@@ -237,10 +177,9 @@ CopyKat | Submit Assignment
 
                             <button
                                 type="submit"
-                                class="btn btn-warning btn-lg fw-bold">
-
+                                class="btn btn-warning btn-lg fw-bold"
+                            >
                                 Submit Assignment
-
                             </button>
 
                         </div>
@@ -256,56 +195,5 @@ CopyKat | Submit Assignment
     </form>
 
 </div>
-
-<script>
-
-function semesterLoad() {
-
-    let level =
-    document.getElementById(
-        "level"
-    ).value;
-
-    let semester =
-    document.getElementById(
-        "semester"
-    );
-
-    semester.innerHTML = "";
-
-    let total =
-    level === "bachelor"
-    ? 10
-    : 4;
-
-    for(let i = 1; i <= total; i++) {
-
-        let option =
-        document.createElement(
-            "option"
-        );
-
-        option.value = i;
-
-        option.text =
-        "Semester " + i;
-
-        if(
-            "{{ request.POST.semester }}"
-            ==
-            i
-        ){
-            option.selected = true;
-        }
-
-        semester.appendChild(
-            option
-        );
-    }
-}
-
-semesterLoad();
-
-</script>
 
 {% endblock %}

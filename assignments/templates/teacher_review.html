@@ -1,93 +1,213 @@
 {% extends 'base.html' %}
 
+{% block title %}
+CopyKat | Review Assignment
+{% endblock %}
 
 {% block content %}
 
-
 <div class="container py-5">
 
+    <div class="row justify-content-center">
 
-<div class="card border border-dark border-3 rounded-5 p-5">
+        <div class="col-lg-8">
 
+            <div class="card shadow-sm border-0">
 
-<h2>
-Review Assignment
-</h2>
+                <div class="card-body p-5">
 
+                    <h2 class="fw-bold mb-4">
+                        📋 Review Assignment
+                    </h2>
 
-<h4>
-{{assignment.title}}
-</h4>
+                    <div class="row mb-4">
 
+                        <div class="col-md-6">
 
-<p>
-Student:
-{{assignment.student.full_name}}
-</p>
+                            <p>
+                                <strong>Title:</strong>
+                                <br>
+                                {{ assignment.title }}
+                            </p>
 
+                        </div>
 
-<p>
-Similarity:
-{{assignment.similarity_percentage}}%
-</p>
+                        <div class="col-md-6">
 
+                            <p>
+                                <strong>Student:</strong>
+                                <br>
+                                {{ assignment.student.full_name }}
+                            </p>
 
+                        </div>
 
+                    </div>
 
-<form method="POST">
+                    <div class="row mb-4">
 
+                        <div class="col-md-6">
 
-{% csrf_token %}
+                            <p>
+                                <strong>Subject:</strong>
+                                <br>
+                                {{ assignment.subject }}
+                            </p>
 
+                        </div>
 
+                        <div class="col-md-6">
 
-<textarea
-name="remark"
-class="form-control mb-3"
-placeholder="Write remark"
->{{assignment.teacher_remark}}</textarea>
+                            <p>
+                                <strong>Semester:</strong>
+                                <br>
+                                {{ assignment.semester }}
+                            </p>
 
+                        </div>
 
+                    </div>
 
+                    <div class="alert alert-info">
 
+                        <strong>Similarity Score:</strong>
 
-<select
-name="status"
-class="form-control mb-3"
->
+                        {{ assignment.similarity_percentage }}%
 
+                    </div>
 
-<option value="accepted">
-Accept
-</option>
+                    {% if assignment.matched_assignment %}
 
+                    <div class="alert alert-secondary">
 
-<option value="rejected">
-Reject
-</option>
+                        <strong>Most Similar Assignment:</strong>
 
+                        <br>
 
-</select>
+                        {{ assignment.matched_assignment.title }}
 
+                        <br>
 
+                        <small>
 
+                            Submitted by:
+                            {{ assignment.matched_assignment.student.full_name }}
 
-<button class="btn btn-success">
+                        </small>
 
-Save
+                    </div>
 
-</button>
+                    {% endif %}
 
+                    {% if assignment.file %}
 
+                    <div class="mb-4">
 
-</form>
+                        <a
+                            href="{{ assignment.file.url }}"
+                            target="_blank"
+                            class="btn btn-outline-primary"
+                        >
+                            📄 View Submitted File
+                        </a>
 
+                    </div>
+
+                    {% endif %}
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Teacher Remark
+
+                            </label>
+
+                            <textarea
+                                name="remark"
+                                rows="5"
+                                class="form-control"
+                                placeholder="Write feedback for the student..."
+                            >{{ assignment.teacher_remark }}</textarea>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Review Status
+
+                            </label>
+
+                            <select
+                                name="status"
+                                class="form-select"
+                            >
+
+                                <option
+                                    value="pending"
+                                    {% if assignment.status == "pending" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Pending
+                                </option>
+
+                                <option
+                                    value="accepted"
+                                    {% if assignment.status == "accepted" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Accepted
+                                </option>
+
+                                <option
+                                    value="rejected"
+                                    {% if assignment.status == "rejected" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Rejected
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="d-flex gap-2">
+
+                            <button
+                                type="submit"
+                                class="btn btn-success"
+                            >
+                                Save Review
+                            </button>
+
+                            <a
+                                href="{% url 'teacher_dashboard' %}"
+                                class="btn btn-secondary"
+                            >
+                                Back
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
-
-
-</div>
-
-
 
 {% endblock %}

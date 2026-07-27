@@ -15,7 +15,7 @@ CopyKat | Resubmit Assignment
         </h1>
 
         <p class="text-muted">
-            Upload a corrected version of your assignment based on the teacher's feedback.
+            Upload a corrected version based on your teacher's feedback.
         </p>
 
     </div>
@@ -42,10 +42,28 @@ CopyKat | Resubmit Assignment
 
                     {% endif %}
 
+                    {% if assignment.resubmission_used %}
+
+                    <div class="alert alert-danger">
+
+                        <strong>
+                            Resubmission Limit Reached
+                        </strong>
+
+                        <br>
+
+                        You have already used your one allowed resubmission attempt.
+
+                    </div>
+
+                    {% endif %}
+
                     <div class="alert alert-warning">
 
                         <h5 class="fw-bold mb-2">
+
                             Teacher Feedback
+
                         </h5>
 
                         {{ assignment.teacher_remark|default:"No remark provided." }}
@@ -80,12 +98,44 @@ CopyKat | Resubmit Assignment
 
                     </div>
 
+                    {% if assignment.matched_assignment %}
+
+                    <div class="alert alert-info">
+
+                        <strong>
+                            Most Similar Assignment
+                        </strong>
+
+                        <hr>
+
+                        <p class="mb-1">
+
+                            <strong>Title:</strong>
+
+                            {{ assignment.matched_assignment.title }}
+
+                        </p>
+
+                        <p class="mb-0">
+
+                            <strong>Student:</strong>
+
+                            {{ assignment.matched_assignment.student.full_name }}
+
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
                     <div class="card bg-light border-0 mb-4">
 
                         <div class="card-body">
 
                             <h5 class="fw-bold mb-3">
+
                                 Assignment Information
+
                             </h5>
 
                             <div class="row">
@@ -93,7 +143,9 @@ CopyKat | Resubmit Assignment
                                 <div class="col-md-6 mb-3">
 
                                     <label class="form-label fw-bold">
-                                        Assignment Title
+
+                                        Title
+
                                     </label>
 
                                     <input
@@ -108,13 +160,15 @@ CopyKat | Resubmit Assignment
                                 <div class="col-md-6 mb-3">
 
                                     <label class="form-label fw-bold">
-                                        Teacher
+
+                                        Subject
+
                                     </label>
 
                                     <input
                                         type="text"
                                         class="form-control"
-                                        value="{{ assignment.teacher.full_name }}"
+                                        value="{{ assignment.subject }}"
                                         readonly
                                     >
 
@@ -127,7 +181,47 @@ CopyKat | Resubmit Assignment
                                 <div class="col-md-6 mb-3">
 
                                     <label class="form-label fw-bold">
+
+                                        Teacher
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        value="{{ assignment.teacher.full_name }}"
+                                        readonly
+                                    >
+
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label fw-bold">
+
+                                        Semester
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        value="{{ assignment.semester }}"
+                                        readonly
+                                    >
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label fw-bold">
+
                                         Level
+
                                     </label>
 
                                     <input
@@ -142,13 +236,15 @@ CopyKat | Resubmit Assignment
                                 <div class="col-md-6 mb-3">
 
                                     <label class="form-label fw-bold">
-                                        Semester
+
+                                        Submitted On
+
                                     </label>
 
                                     <input
                                         type="text"
                                         class="form-control"
-                                        value="{{ assignment.semester }}"
+                                        value="{{ assignment.submitted_at|date:'M d, Y H:i' }}"
                                         readonly
                                     >
 
@@ -165,7 +261,9 @@ CopyKat | Resubmit Assignment
                         <div class="card-body">
 
                             <h5 class="fw-bold mb-3">
+
                                 Current Submission
+
                             </h5>
 
                             <a
@@ -180,6 +278,8 @@ CopyKat | Resubmit Assignment
 
                     </div>
 
+                    {% if not assignment.resubmission_used %}
+
                     <form
                         method="POST"
                         enctype="multipart/form-data"
@@ -192,20 +292,23 @@ CopyKat | Resubmit Assignment
                             <div class="card-body">
 
                                 <h5 class="fw-bold mb-3">
+
                                     Upload Corrected File
+
                                 </h5>
 
                                 <input
                                     type="file"
                                     name="file"
                                     class="form-control"
+                                    accept=".pdf,.doc,.docx"
                                     required
                                 >
 
                                 <div class="form-text mt-2">
 
                                     Supported formats:
-                                    PDF, DOCX
+                                    PDF, DOC, DOCX
 
                                     <br>
 
@@ -214,7 +317,11 @@ CopyKat | Resubmit Assignment
 
                                     <br>
 
-                                    The old file will be permanently deleted and replaced with the new file.
+                                    This action can only be performed once.
+
+                                    <br>
+
+                                    Your previous file will be permanently replaced.
 
                                 </div>
 
@@ -241,6 +348,8 @@ CopyKat | Resubmit Assignment
                         </div>
 
                     </form>
+
+                    {% endif %}
 
                 </div>
 
