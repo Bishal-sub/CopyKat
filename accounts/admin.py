@@ -1,17 +1,19 @@
 from django.contrib import admin
-from .models import User
 from django.contrib.auth.admin import UserAdmin
 
 from .models import User
-# Register your models here.
+
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
 
     list_display = (
         "username",
-        "email",
+        "full_name",
         "role",
+        "subject",
+        "semester",
+        "email",
         "is_staff",
     )
 
@@ -25,6 +27,8 @@ class CustomUserAdmin(UserAdmin):
                     "phone_number",
                     "admission_year",
                     "photo",
+                    "subject",
+                    "semester",
                 )
             },
         ),
@@ -41,6 +45,8 @@ class CustomUserAdmin(UserAdmin):
                     "phone_number",
                     "admission_year",
                     "photo",
+                    "subject",
+                    "semester",
                 )
             },
         ),
