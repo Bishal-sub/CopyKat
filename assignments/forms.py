@@ -2,60 +2,55 @@ from django import forms
 from .models import Assignment
 
 
-
 class AssignmentForm(forms.ModelForm):
-
 
     class Meta:
 
         model = Assignment
 
         fields = [
-
             "title",
             "teacher",
             "level",
             "semester",
-            "file"
-
+            "file",
         ]
 
+    def clean_file(self):
 
-        widgets = {
+        file = self.cleaned_data.get(
+            "file"
+        )
 
+        if not file:
 
-            "title": forms.TextInput(
-                attrs={
-                    "class":"form-control"
-                }
-            ),
+            raise forms.ValidationError(
+                "Please upload a file."
+            )
 
+        allowed_extensions = [
+            ".pdf",
+            ".doc",
+            ".docx",
+        ]
 
-            "teacher": forms.Select(
-                attrs={
-                    "class":"form-control"
-                }
-            ),
+        filename = file.name.lower()
 
+        if not any(
+            filename.endswith(ext)
+            for ext in allowed_extensions
+        ):
 
-            "level": forms.Select(
-                attrs={
-                    "class":"form-control"
-                }
-            ),
+            raise forms.ValidationError(
+                "Only PDF, DOC and DOCX files are allowed."
+            )
 
+        max_size = 10 * 1024 * 1024
 
-            "semester": forms.NumberInput(
-                attrs={
-                    "class":"form-control"
-                }
-            ),
+        if file.size > max_size:
 
+            raise forms.ValidationError(
+                "File size cannot exceed 10MB."
+            )
 
-            "file": forms.FileInput(
-                attrs={
-                    "class":"form-control"
-                }
-            ),
-
-        }
+        return file

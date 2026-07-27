@@ -5,6 +5,7 @@ from django.shortcuts import (
     get_object_or_404,
 )
 from django.utils import timezone
+from .forms import AssignmentForm
 
 import os
 
@@ -17,6 +18,7 @@ from similarity.services import ( analyze_assignment )
 
 # SUBMIT ASSIGNMENT
 
+from .forms import AssignmentForm
 
 @login_required
 def submit_assignment(request):
@@ -30,49 +32,48 @@ def submit_assignment(request):
 
     if request.method == "POST":
 
-        assignment = Assignment.objects.create(
-
-            student=request.user,
-
-            title=request.POST.get(
-                "title"
-            ),
-
-            teacher_id=request.POST.get(
-                "teacher"
-            ),
-
-            level=request.POST.get(
-                "level"
-            ),
-
-            semester=request.POST.get(
-                "semester"
-            ),
-
-            file=request.FILES.get(
-                "file"
-            ),
-
+        form = AssignmentForm(
+            request.POST,
+            request.FILES
         )
 
-        # Calculate similarity
-        analyze_assignment(
-            assignment
-        )
+        if form.is_valid():
 
-        return redirect(
-            "student_dashboard"
-        )
+            assignment = Assignment.objects.create(
+
+                student=request.user,
+
+                title=form.cleaned_data["title"],
+
+                teacher=form.cleaned_data["teacher"],
+
+                level=form.cleaned_data["level"],
+
+                semester=form.cleaned_data["semester"],
+
+                file=form.cleaned_data["file"],
+            )
+
+            analyze_assignment(
+                assignment
+            )
+
+            return redirect(
+                "student_dashboard"
+            )
+
+    else:
+
+        form = AssignmentForm()
 
     return render(
         request,
         "submit_assignment.html",
         {
-            "teachers": teachers
+            "teachers": teachers,
+            "form": form,
         }
     )
-
 
 
 # RESUBMIT ASSIGNMENT

@@ -8,165 +8,237 @@ CopyKat | Resubmit Assignment
 
 <div class="container py-5">
 
+    <div class="text-center mb-5">
+
+        <h1 class="display-5 fw-bold">
+            🔄 Resubmit Assignment
+        </h1>
+
+        <p class="text-muted">
+            Upload a corrected version of your assignment based on the teacher's feedback.
+        </p>
+
+    </div>
+
     <div class="row justify-content-center">
 
         <div class="col-lg-8">
 
-            <div class="card shadow-lg border-0">
-
-                <div class="card-header">
-
-                    <h3 class="mb-0">
-                         Resubmit Assignment
-                    </h3>
-
-                </div>
+            <div class="card shadow-sm border-0">
 
                 <div class="card-body p-4">
 
+                    {% if messages %}
+
+                        {% for message in messages %}
+
+                            <div class="alert alert-danger">
+
+                                {{ message }}
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
                     <div class="alert alert-warning">
 
-                        <strong>Teacher Remark:</strong>
+                        <h5 class="fw-bold mb-2">
+                            Teacher Feedback
+                        </h5>
 
-                        <br>
-
-                        {{ assignment.teacher_remark }}
+                        {{ assignment.teacher_remark|default:"No remark provided." }}
 
                     </div>
 
-                    <div class="row">
+                    <div class="row g-3 mb-4">
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
 
-                            <label class="form-label fw-bold">
-                                Assignment Title
-                            </label>
+                            <div class="alert alert-danger mb-0">
 
-                            <input
-                                type="text"
-                                class="form-control"
-                                value="{{ assignment.title }}"
-                                readonly
-                            >
+                                <strong>Status:</strong>
+
+                                {{ assignment.get_status_display }}
+
+                            </div>
 
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
 
-                            <label class="form-label fw-bold">
-                                Teacher
-                            </label>
+                            <div class="alert alert-secondary mb-0">
 
-                            <input
-                                type="text"
-                                class="form-control"
-                                value="{{ assignment.teacher.full_name }}"
-                                readonly
-                            >
+                                <strong>Previous Similarity:</strong>
+
+                                {{ assignment.similarity_percentage }}%
+
+                            </div>
 
                         </div>
 
                     </div>
 
-                    <div class="row">
+                    <div class="card bg-light border-0 mb-4">
 
-                        <div class="col-md-6 mb-3">
+                        <div class="card-body">
 
-                            <label class="form-label fw-bold">
-                                Level
-                            </label>
+                            <h5 class="fw-bold mb-3">
+                                Assignment Information
+                            </h5>
 
-                            <input
-                                type="text"
-                                class="form-control"
-                                value="{{ assignment.get_level_display }}"
-                                readonly
-                            >
+                            <div class="row">
 
-                        </div>
+                                <div class="col-md-6 mb-3">
 
-                        <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">
+                                        Assignment Title
+                                    </label>
 
-                            <label class="form-label fw-bold">
-                                Semester
-                            </label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        value="{{ assignment.title }}"
+                                        readonly
+                                    >
 
-                            <input
-                                type="text"
-                                class="form-control"
-                                value="{{ assignment.semester }}"
-                                readonly
-                            >
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label fw-bold">
+                                        Teacher
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        value="{{ assignment.teacher.full_name }}"
+                                        readonly
+                                    >
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label fw-bold">
+                                        Level
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        value="{{ assignment.get_level_display }}"
+                                        readonly
+                                    >
+
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label fw-bold">
+                                        Semester
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        value="{{ assignment.semester }}"
+                                        readonly
+                                    >
+
+                                </div>
+
+                            </div>
 
                         </div>
 
                     </div>
 
-                    <div class="mb-4">
+                    <div class="card border-0 bg-light mb-4">
 
-                        <label class="form-label fw-bold">
-                            Current File
-                        </label>
+                        <div class="card-body">
 
-                        <div>
+                            <h5 class="fw-bold mb-3">
+                                Current Submission
+                            </h5>
 
                             <a
                                 href="{{ assignment.file.url }}"
                                 target="_blank"
-                                class="btn btn-outline-primary">
-
-                                View Current File
-
+                                class="btn btn-outline-primary"
+                            >
+                                📄 View Current File
                             </a>
 
                         </div>
 
                     </div>
 
-                    <hr>
-
                     <form
                         method="POST"
-                        enctype="multipart/form-data">
+                        enctype="multipart/form-data"
+                    >
 
                         {% csrf_token %}
 
-                        <div class="mb-4">
+                        <div class="card border-0 bg-light">
 
-                            <label class="form-label fw-bold">
-                                Upload New File
-                            </label>
+                            <div class="card-body">
 
-                            <input
-                                type="file"
-                                name="file"
-                                class="form-control"
-                                required
-                            >
+                                <h5 class="fw-bold mb-3">
+                                    Upload Corrected File
+                                </h5>
 
-                            <div class="form-text">
+                                <input
+                                    type="file"
+                                    name="file"
+                                    class="form-control"
+                                    required
+                                >
 
-                                The old file will be replaced.
+                                <div class="form-text mt-2">
+
+                                    Supported formats:
+                                    PDF, DOCX
+
+                                    <br>
+
+                                    Maximum file size:
+                                    10 MB
+
+                                    <br>
+
+                                    The old file will be permanently deleted and replaced with the new file.
+
+                                </div>
 
                             </div>
 
                         </div>
 
-                        <button
-                            type="submit"
-                            class="btn btn-danger">
+                        <div class="d-flex gap-2 mt-4">
 
-                            Replace Assignment
+                            <button
+                                type="submit"
+                                class="btn btn-danger btn-lg"
+                            >
+                                🔄 Upload Corrected Assignment
+                            </button>
 
-                        </button>
+                            <a
+                                href="{% url 'student_dashboard' %}"
+                                class="btn btn-secondary btn-lg"
+                            >
+                                Cancel
+                            </a>
 
-                        <a
-                            href="{% url 'student_dashboard' %}"
-                            class="btn btn-secondary">
-
-                            Cancel
-
-                        </a>
+                        </div>
 
                     </form>
 

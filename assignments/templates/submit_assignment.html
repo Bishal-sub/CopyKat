@@ -8,7 +8,6 @@ CopyKat | Submit Assignment
 
 <div class="container py-5">
 
-
     <div class="text-center mb-5">
 
         <h1 class="display-5 fw-bold">
@@ -25,9 +24,44 @@ CopyKat | Submit Assignment
 
         {% csrf_token %}
 
+        {% if form.errors %}
+
+        <div class="alert alert-danger">
+
+            <h5 class="fw-bold">
+                Please fix the following errors:
+            </h5>
+
+            <ul class="mb-0">
+
+                {% for field in form %}
+
+                    {% for error in field.errors %}
+
+                        <li>
+                            <strong>{{ field.label }}</strong> :
+                            {{ error }}
+                        </li>
+
+                    {% endfor %}
+
+                {% endfor %}
+
+                {% for error in form.non_field_errors %}
+
+                    <li>{{ error }}</li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+        {% endif %}
+
         <div class="row g-4">
 
-            <!-- Left Section -->
+            <!-- Assignment Information -->
 
             <div class="col-lg-7">
 
@@ -50,6 +84,7 @@ CopyKat | Submit Assignment
                                 name="title"
                                 class="form-control"
                                 placeholder="Enter assignment title"
+                                value="{{ request.POST.title }}"
                                 required
                             >
 
@@ -88,7 +123,12 @@ CopyKat | Submit Assignment
 
                                 {% for teacher in teachers %}
 
-                                <option value="{{ teacher.id }}">
+                                <option
+                                    value="{{ teacher.id }}"
+                                    {% if request.POST.teacher == teacher.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
                                     {{ teacher.full_name }}
                                 </option>
 
@@ -113,11 +153,21 @@ CopyKat | Submit Assignment
                                     onchange="semesterLoad()"
                                 >
 
-                                    <option value="bachelor">
+                                    <option
+                                        value="bachelor"
+                                        {% if request.POST.level == "bachelor" %}
+                                            selected
+                                        {% endif %}
+                                    >
                                         Bachelor
                                     </option>
 
-                                    <option value="master">
+                                    <option
+                                        value="master"
+                                        {% if request.POST.level == "master" %}
+                                            selected
+                                        {% endif %}
+                                    >
                                         Master
                                     </option>
 
@@ -148,6 +198,7 @@ CopyKat | Submit Assignment
 
             </div>
 
+            <!-- Upload Section -->
 
             <div class="col-lg-5">
 
@@ -171,7 +222,7 @@ CopyKat | Submit Assignment
 
                             <p class="text-muted small">
                                 Supported formats:
-                                PDF, DOC, DOCX
+                                PDF, DOCX
                             </p>
 
                             <input
@@ -180,6 +231,10 @@ CopyKat | Submit Assignment
                                 class="form-control mt-3"
                                 required
                             >
+
+                            <small class="text-muted d-block mt-2">
+                                Maximum file size: 10 MB
+                            </small>
 
                         </div>
 
@@ -209,28 +264,48 @@ CopyKat | Submit Assignment
 
 <script>
 
-function semesterLoad(){
+function semesterLoad() {
 
-    let level = document.getElementById("level").value;
+    let level =
+    document.getElementById(
+        "level"
+    ).value;
 
-    let semester = document.getElementById("semester");
+    let semester =
+    document.getElementById(
+        "semester"
+    );
 
     semester.innerHTML = "";
 
     let total =
-    level === "bachelor" ? 10 : 4;
+    level === "bachelor"
+    ? 10
+    : 4;
 
-    for(let i = 1; i <= total; i++){
+    for(let i = 1; i <= total; i++) {
 
         let option =
-        document.createElement("option");
+        document.createElement(
+            "option"
+        );
 
         option.value = i;
 
         option.text =
         "Semester " + i;
 
-        semester.appendChild(option);
+        if(
+            "{{ request.POST.semester }}"
+            ==
+            i
+        ){
+            option.selected = true;
+        }
+
+        semester.appendChild(
+            option
+        );
     }
 }
 
