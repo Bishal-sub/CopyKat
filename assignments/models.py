@@ -30,45 +30,45 @@ class Assignment(models.Model):
     student = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="student_assignments"
+        related_name="student_assignments",
     )
 
     teacher = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="teacher_assignments",
-        limit_choices_to={"role": "teacher"}
+        limit_choices_to={
+            "role": "teacher"
+        },
     )
 
     subject = models.ForeignKey(
-    Subject,
-    on_delete=models.CASCADE,
-    null=True,
-    blank=True,
-    related_name="assignments",
-)
+        Subject,
+        on_delete=models.CASCADE,
+        related_name="assignments",
+    )
 
     title = models.CharField(
-        max_length=200
+        max_length=200,
     )
 
     level = models.CharField(
         max_length=20,
-        choices=LEVEL_CHOICES
+        choices=LEVEL_CHOICES,
     )
 
     semester = models.PositiveIntegerField()
 
     file = models.FileField(
-        upload_to="assignments/"
+        upload_to="assignments/",
     )
 
     submitted_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     similarity_percentage = models.FloatField(
-        default=0
+        default=0,
     )
 
     matched_assignment = models.ForeignKey(
@@ -76,37 +76,51 @@ class Assignment(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="matched_with",
+        related_name="matched_assignments",
     )
 
     teacher_remark = models.TextField(
         blank=True,
-        null=True
+        null=True,
     )
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default="pending"
+        default="pending",
     )
 
     reviewed_at = models.DateTimeField(
+        null=True,
         blank=True,
-        null=True
     )
 
+    # One-time resubmission
     resubmission_used = models.BooleanField(
-        default=False
+        default=False,
     )
 
     class Meta:
-        ordering = ["-submitted_at"]
+
+        ordering = [
+            "-submitted_at"
+        ]
 
     def __str__(self):
-        return self.title
+
+        return (
+            f"{self.title}"
+            f" - "
+            f"{self.student.username}"
+        )
 
     @property
     def filename(self):
-        return os.path.basename(
-            self.file.name
-        )
+
+        if self.file:
+
+            return os.path.basename(
+                self.file.name
+            )
+
+        return ""

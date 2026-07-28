@@ -61,8 +61,6 @@ CopyKat | Submit Assignment
 
         <div class="row g-4">
 
-            <!-- Assignment Information -->
-
             <div class="col-lg-7">
 
                 <div class="card shadow-sm border-0 h-100">
@@ -110,23 +108,48 @@ CopyKat | Submit Assignment
 
                         <div class="row">
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+
+                                <label class="form-label fw-semibold">
+                                    Teacher
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="teacher_name"
+                                    class="form-control"
+                                    readonly
+                                >
+
+                            </div>
+
+                            <div class="col-md-4">
 
                                 <label class="form-label fw-semibold">
                                     Level
                                 </label>
 
-                                {{ form.level }}
+                                <input
+                                    type="text"
+                                    id="level"
+                                    class="form-control"
+                                    readonly
+                                >
 
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
 
                                 <label class="form-label fw-semibold">
                                     Semester
                                 </label>
 
-                                {{ form.semester }}
+                                <input
+                                    type="text"
+                                    id="semester"
+                                    class="form-control"
+                                    readonly
+                                >
 
                             </div>
 
@@ -137,8 +160,6 @@ CopyKat | Submit Assignment
                 </div>
 
             </div>
-
-            <!-- Upload Section -->
 
             <div class="col-lg-5">
 
@@ -194,6 +215,90 @@ CopyKat | Submit Assignment
 
     </form>
 
-</div>
+</div><script>
 
+document.addEventListener("DOMContentLoaded", function () {
+
+    const subjectSelect =
+        document.getElementById("subject-select");
+
+    const teacherField =
+        document.getElementById("teacher_name");
+
+    const levelField =
+        document.getElementById("level");
+
+    const semesterField =
+        document.getElementById("semester");
+
+    console.log("Subject Select:", subjectSelect);
+
+    if (!subjectSelect) {
+        alert("Subject dropdown not found!");
+        return;
+    }
+
+    function loadSubjectInfo() {
+
+        const subjectId = subjectSelect.value;
+
+        if (!subjectId) {
+
+            teacherField.value = "";
+            levelField.value = "";
+            semesterField.value = "";
+
+            return;
+        }
+
+        fetch(
+            `/assignments/subject-details/${subjectId}/`
+        )
+        .then(response => response.json())
+        .then(data => {
+
+            console.log("API Response:", data);
+
+            if (data.success) {
+
+                teacherField.value =
+                    data.teacher;
+
+                levelField.value =
+                    data.level.charAt(0).toUpperCase() +
+                    data.level.slice(1);
+
+                semesterField.value =
+                    data.semester;
+
+            } else {
+
+                teacherField.value = "";
+                levelField.value = "";
+                semesterField.value = "";
+
+            }
+
+        })
+        .catch(error => {
+
+            console.error(
+                "Fetch Error:",
+                error
+            );
+
+        });
+
+    }
+
+    subjectSelect.addEventListener(
+        "change",
+        loadSubjectInfo
+    );
+
+    loadSubjectInfo();
+
+});
+
+</script>
 {% endblock %}

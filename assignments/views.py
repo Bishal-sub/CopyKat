@@ -9,22 +9,30 @@ from django.utils import timezone
 
 import os
 
-from accounts.models import User
+from accounts.models import TeacherAssignment
+
 from .models import Assignment
 from .forms import AssignmentForm
 
-from similarity.services import (
-    analyze_assignment,
-)
+from similarity.services import analyze_assignment
 
 
+# ==========================================
 # SUBMIT ASSIGNMENT
+# ==========================================
 
 @login_required
 def submit_assignment(request):
 
     if request.user.role != "student":
         return redirect("login")
+
+    teacher_assignments = (
+        TeacherAssignment.objects.select_related(
+            "teacher",
+            "subject",
+        )
+    )
 
     if request.method == "POST":
 
@@ -39,23 +47,34 @@ def submit_assignment(request):
                 commit=False
             )
 
-            teacher = User.objects.filter(
-                role="teacher",
-                subject=assignment.subject,
-                semester=assignment.semester,
-            ).first()
+            teacher_assignment = (
+                TeacherAssignment.objects.filter(
+                    subject=assignment.subject
+                ).first()
+            )
 
-            if not teacher:
+            if not teacher_assignment:
 
                 form.add_error(
                     None,
-                    "No teacher is assigned to this subject and semester."
+                    "No teacher assigned for this subject."
                 )
 
             else:
 
                 assignment.student = request.user
-                assignment.teacher = teacher
+
+                assignment.teacher = (
+                    teacher_assignment.teacher
+                )
+
+                assignment.level = (
+                    teacher_assignment.level
+                )
+
+                assignment.semester = (
+                    teacher_assignment.semester
+                )
 
                 assignment.save()
 
@@ -81,11 +100,14 @@ def submit_assignment(request):
         "submit_assignment.html",
         {
             "form": form,
+            "teacher_assignments": teacher_assignments,
         },
     )
 
 
+# ==========================================
 # RESUBMIT ASSIGNMENT
+# ==========================================
 
 @login_required
 def resubmit_assignment(
@@ -103,13 +125,11 @@ def resubmit_assignment(
         status="rejected",
     )
 
-    # Only one resubmission allowed
-
     if assignment.resubmission_used:
 
         messages.error(
             request,
-            "You have already used your one resubmission attempt."
+            "You have already used your one resubmission."
         )
 
         return redirect(
@@ -154,7 +174,9 @@ def resubmit_assignment(
                 assignment_id=assignment.id,
             )
 
-        max_size = 10 * 1024 * 1024
+        max_size = (
+            10 * 1024 * 1024
+        )
 
         if new_file.size > max_size:
 
@@ -167,8 +189,6 @@ def resubmit_assignment(
                 "resubmit_assignment",
                 assignment_id=assignment.id,
             )
-
-        # Delete old file
 
         if assignment.file:
 
@@ -183,11 +203,7 @@ def resubmit_assignment(
                     old_file_path
                 )
 
-        # Replace file
-
         assignment.file = new_file
-
-        # Reset review data
 
         assignment.status = "pending"
 
@@ -202,8 +218,6 @@ def resubmit_assignment(
         assignment.resubmission_used = True
 
         assignment.save()
-
-        # Run similarity check again
 
         analyze_assignment(
             assignment
@@ -227,9 +241,9 @@ def resubmit_assignment(
     )
 
 
-
+# ==========================================
 # TEACHER REVIEW
-
+# ==========================================
 
 @login_required
 def teacher_review(
@@ -248,17 +262,23 @@ def teacher_review(
 
     if request.method == "POST":
 
-        assignment.teacher_remark = request.POST.get(
-            "remark",
-            ""
+        assignment.teacher_remark = (
+            request.POST.get(
+                "remark",
+                ""
+            )
         )
 
-        assignment.status = request.POST.get(
-            "status",
-            "pending"
+        assignment.status = (
+            request.POST.get(
+                "status",
+                "pending"
+            )
         )
 
-        assignment.reviewed_at = timezone.now()
+        assignment.reviewed_at = (
+            timezone.now()
+        )
 
         assignment.save()
 
@@ -277,4 +297,39 @@ def teacher_review(
         {
             "assignment": assignment,
         },
+    )
+    
+from django.http import JsonResponse
+from accounts.models import TeacherAssignment
+
+
+def subject_details(request, subject_id):
+
+    teacher_assignment = (
+        TeacherAssignment.objects.filter(
+            subject_id=subject_id
+        )
+        .select_related(
+            "teacher",
+            "subject",
+        )
+        .first()
+    )
+
+    if not teacher_assignment:
+
+        return JsonResponse(
+            {
+                "success": False,
+            }
+        )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "teacher": teacher_assignment.teacher.full_name,
+            "teacher_id": teacher_assignment.teacher.id,
+            "semester": teacher_assignment.semester,
+            "level": teacher_assignment.level,
+        }
     )

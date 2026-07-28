@@ -2,7 +2,6 @@ from django import forms
 
 from .models import (
     Assignment,
-    Subject,
 )
 
 
@@ -15,8 +14,6 @@ class AssignmentForm(forms.ModelForm):
         fields = (
             "title",
             "subject",
-            "level",
-            "semester",
             "file",
         )
 
@@ -32,21 +29,7 @@ class AssignmentForm(forms.ModelForm):
             "subject": forms.Select(
                 attrs={
                     "class": "form-select",
-                }
-            ),
-
-            "level": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
-
-            "semester": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "min": 1,
-                    "max": 10,
-                    "placeholder": "Enter semester",
+                    "id": "subject-select",
                 }
             ),
 
@@ -64,10 +47,6 @@ class AssignmentForm(forms.ModelForm):
 
             "subject": "Subject",
 
-            "level": "Level",
-
-            "semester": "Semester",
-
             "file": "Assignment File",
         }
 
@@ -78,6 +57,7 @@ class AssignmentForm(forms.ModelForm):
         )
 
         if not title:
+
             raise forms.ValidationError(
                 "Title is required."
             )
@@ -91,32 +71,6 @@ class AssignmentForm(forms.ModelForm):
             )
 
         return title
-
-    def clean_semester(self):
-
-        semester = self.cleaned_data.get(
-            "semester"
-        )
-
-        if semester is None:
-
-            raise forms.ValidationError(
-                "Semester is required."
-            )
-
-        if semester < 1:
-
-            raise forms.ValidationError(
-                "Semester must be greater than 0."
-            )
-
-        if semester > 10:
-
-            raise forms.ValidationError(
-                "Semester cannot exceed 10."
-            )
-
-        return semester
 
     def clean_file(self):
 
@@ -144,7 +98,7 @@ class AssignmentForm(forms.ModelForm):
                 "Only PDF, DOC and DOCX files are allowed."
             )
 
-        max_size = 10 * 1024 * 1024  # 10 MB
+        max_size = 10 * 1024 * 1024
 
         if file.size > max_size:
 
@@ -153,25 +107,3 @@ class AssignmentForm(forms.ModelForm):
             )
 
         return file
-
-    def clean(self):
-
-        cleaned_data = super().clean()
-
-        level = cleaned_data.get(
-            "level"
-        )
-
-        semester = cleaned_data.get(
-            "semester"
-        )
-
-        if level == "master" and semester:
-
-            if semester > 4:
-
-                raise forms.ValidationError(
-                    "Master level only supports semesters 1-4."
-                )
-
-        return cleaned_data

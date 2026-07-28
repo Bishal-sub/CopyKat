@@ -77,6 +77,11 @@ class User(AbstractUser):
 
 class TeacherAssignment(models.Model):
 
+    LEVEL_CHOICES = (
+        ("bachelor", "Bachelor"),
+        ("master", "Master"),
+    )
+
     teacher = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -94,23 +99,30 @@ class TeacherAssignment(models.Model):
 
     semester = models.PositiveIntegerField()
 
-    class Meta:
+    level = models.CharField(
+        max_length=20,
+        choices=LEVEL_CHOICES,
+    )
 
-        unique_together = (
-            "teacher",
-            "subject",
-            "semester",
-        )
+    class Meta:
 
         ordering = [
             "semester",
             "subject__name",
         ]
 
+        unique_together = (
+            "teacher",
+            "subject",
+            "semester",
+            "level",
+        )
+
     def __str__(self):
 
         return (
-            f"{self.teacher.full_name} - "
-            f"{self.subject.name} "
-            f"(Semester {self.semester})"
+            f"{self.teacher.full_name} | "
+            f"{self.subject.name} | "
+            f"Semester {self.semester} | "
+            f"{self.get_level_display()}"
         )
