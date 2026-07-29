@@ -1,11 +1,11 @@
 import re
 
 from sklearn.feature_extraction.text import (
-    TfidfVectorizer
+    TfidfVectorizer,
 )
 
 from sklearn.metrics.pairwise import (
-    cosine_similarity
+    cosine_similarity,
 )
 
 from assignments.models import Assignment
@@ -26,13 +26,13 @@ def clean_text(text):
     text = re.sub(
         r"[^\w\s]",
         "",
-        text
+        text,
     )
 
     text = re.sub(
         r"\s+",
         " ",
-        text
+        text,
     )
 
     return text.strip()
@@ -40,36 +40,34 @@ def clean_text(text):
 
 def get_text_from_file(file_path):
 
-    try:
+    file_path = file_path.lower()
 
-        file_path = file_path.lower()
+    if file_path.endswith(".pdf"):
 
-        if file_path.endswith(".pdf"):
+        return extract_pdf_text(
+            file_path
+        )
 
-            return extract_pdf_text(
-                file_path
-            )
+    elif file_path.endswith(".docx"):
 
-        elif file_path.endswith(".docx"):
+        return extract_docx_text(
+            file_path
+        )
 
-            return extract_docx_text(
-                file_path
-            )
+    elif file_path.endswith(".doc"):
 
-        elif file_path.endswith(".doc"):
+        raise Exception(
+            "DOC files are not supported. Please upload DOCX or PDF."
+        )
 
-            return ""
-
-        return ""
-
-    except Exception:
-
-        return ""
+    raise Exception(
+        "Unsupported file format."
+    )
 
 
 def calculate_similarity(
     text1,
-    text2
+    text2,
 ):
 
     if not text1 or not text2:
@@ -91,12 +89,12 @@ def calculate_similarity(
 
         similarity = cosine_similarity(
             vectors[0:1],
-            vectors[1:2]
+            vectors[1:2],
         )[0][0]
 
         return round(
             similarity * 100,
-            2
+            2,
         )
 
     except Exception:
@@ -105,7 +103,7 @@ def calculate_similarity(
 
 
 def analyze_assignment(
-    assignment
+    assignment,
 ):
 
     try:
@@ -121,7 +119,14 @@ def analyze_assignment(
         if not current_text:
 
             assignment.similarity_percentage = 0
+
             assignment.matched_assignment = None
+
+            assignment.analysis_completed = False
+
+            assignment.analysis_error = (
+                "No readable text found in document."
+            )
 
             assignment.save()
 
@@ -136,7 +141,8 @@ def analyze_assignment(
                 subject=assignment.subject,
                 semester=assignment.semester,
                 level=assignment.level,
-            ).exclude(
+            )
+            .exclude(
                 id=assignment.id
             )
         )
@@ -146,7 +152,6 @@ def analyze_assignment(
             try:
 
                 if not old_assignment.file:
-
                     continue
 
                 old_text = get_text_from_file(
@@ -158,7 +163,6 @@ def analyze_assignment(
                 )
 
                 if not old_text:
-
                     continue
 
                 similarity = calculate_similarity(
@@ -186,15 +190,25 @@ def analyze_assignment(
             matched_assignment
         )
 
+        assignment.analysis_completed = True
+
+        assignment.analysis_error = ""
+
         assignment.save()
 
         return highest_similarity
 
-    except Exception:
+    except Exception as e:
 
         assignment.similarity_percentage = 0
 
         assignment.matched_assignment = None
+
+        assignment.analysis_completed = False
+
+        assignment.analysis_error = str(
+            e
+        )
 
         assignment.save()
 

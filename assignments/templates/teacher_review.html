@@ -10,128 +10,285 @@ CopyKat | Review Assignment
 
     <div class="row justify-content-center">
 
-        <div class="col-lg-8">
+        <div class="col-lg-9">
 
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-lg border-0">
 
-                <div class="card-body p-5">
+                <div class="card-header bg-dark text-white">
 
-                    <h2 class="fw-bold mb-4">
-                         Review Assignment
-                    </h2>
+                    <h3 class="mb-0">
+                        Review Assignment
+                    </h3>
 
-                    <div class="row mb-4">
+                </div>
 
-                        <div class="col-md-6">
+                <div class="card-body p-4">
 
-                            <p>
-                                <strong>Title:</strong>
-                                <br>
-                                {{ assignment.title }}
-                            </p>
+                    {% if messages %}
 
-                        </div>
+                        {% for message in messages %}
 
-                        <div class="col-md-6">
+                            <div class="alert alert-success">
+                                {{ message }}
+                            </div>
 
-                            <p>
-                                <strong>Student:</strong>
-                                <br>
-                                {{ assignment.student.full_name }}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="row mb-4">
-
-                        <div class="col-md-6">
-
-                            <p>
-                                <strong>Subject:</strong>
-                                <br>
-                                {{ assignment.subject }}
-                            </p>
-
-                        </div>
-
-                        <div class="col-md-6">
-
-                            <p>
-                                <strong>Semester:</strong>
-                                <br>
-                                {{ assignment.semester }}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="alert alert-info">
-
-                        <strong>Similarity Score:</strong>
-
-                        {{ assignment.similarity_percentage }}%
-
-                    </div>
-
-                    {% if assignment.matched_assignment %}
-
-                    <div class="alert alert-secondary">
-
-                        <strong>Most Similar Assignment:</strong>
-
-                        <br>
-
-                        {{ assignment.matched_assignment.title }}
-
-                        <br>
-
-                        <small>
-
-                            Submitted by:
-                            {{ assignment.matched_assignment.student.full_name }}
-
-                        </small>
-
-                    </div>
+                        {% endfor %}
 
                     {% endif %}
 
-                    {% if assignment.file %}
+                    <!-- Assignment Details -->
 
                     <div class="mb-4">
 
-                        <a
-                            href="{{ assignment.file.url }}"
-                            target="_blank"
-                            class="btn btn-outline-primary"
-                        >
-                             View Submitted File
-                        </a>
+                        <h4 class="fw-bold">
+                            {{ assignment.title }}
+                        </h4>
+
+                        <hr>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <p>
+                                    <strong>Student:</strong>
+                                    {{ assignment.student.full_name }}
+                                </p>
+
+                                <p>
+                                    <strong>Subject:</strong>
+                                    {{ assignment.subject.name }}
+                                </p>
+
+                                <p>
+                                    <strong>Level:</strong>
+                                    {{ assignment.get_level_display }}
+                                </p>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <p>
+                                    <strong>Semester:</strong>
+                                    {{ assignment.semester }}
+                                </p>
+
+                                <p>
+                                    <strong>Status:</strong>
+                                    {{ assignment.get_status_display }}
+                                </p>
+
+                                <p>
+                                    <strong>Submitted At:</strong>
+                                    {{ assignment.submitted_at }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Submitted File -->
+
+                    <div class="card bg-light border-0 mb-4">
+
+                        <div class="card-body">
+
+                            <h5 class="fw-bold mb-3">
+                                Submitted File
+                            </h5>
+
+                            <a
+                                href="{{ assignment.file.url }}"
+                                target="_blank"
+                                class="btn btn-primary"
+                            >
+                                📄 View Submitted Assignment
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Similarity Report -->
+
+                    <div class="card border-0 bg-warning-subtle mb-4">
+
+                        <div class="card-body">
+
+                            <h5 class="fw-bold mb-3">
+                                Similarity Report
+                            </h5>
+
+                            <h1 class="fw-bold text-danger">
+                                {{ assignment.similarity_percentage }}%
+                            </h1>
+
+                            {% if assignment.matched_assignment %}
+
+                                <div class="alert alert-warning mt-3 mb-0">
+
+                                    This assignment has matching content with another submission.
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="alert alert-success mt-3 mb-0">
+
+                                    No matching assignment found.
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    <!-- Matched Assignment Information -->
+
+                    {% if assignment.matched_assignment %}
+
+                    <div class="card border-warning shadow-sm mb-4">
+
+                        <div class="card-header bg-warning">
+
+                            <h5 class="mb-0 fw-bold">
+                                Matched Assignment Information
+                            </h5>
+
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+
+                                    <strong>Student Name</strong>
+
+                                    <div>
+                                        {{ assignment.matched_assignment.student.full_name }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+
+                                    <strong>Assignment Title</strong>
+
+                                    <div>
+                                        {{ assignment.matched_assignment.title }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-4 mb-3">
+
+                                    <strong>Subject</strong>
+
+                                    <div>
+                                        {{ assignment.matched_assignment.subject.name }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+
+                                    <strong>Level</strong>
+
+                                    <div>
+                                        {{ assignment.matched_assignment.get_level_display }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+
+                                    <strong>Semester</strong>
+
+                                    <div>
+                                        {{ assignment.matched_assignment.semester }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+
+                                    <strong>Submitted Date</strong>
+
+                                    <div>
+                                        {{ assignment.matched_assignment.submitted_at }}
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+
+                                    <strong>Similarity</strong>
+
+                                    <div class="fw-bold text-danger">
+                                        {{ assignment.similarity_percentage }}%
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="d-flex gap-2 flex-wrap mt-3">
+
+                                <a
+                                    href="{{ assignment.file.url }}"
+                                    target="_blank"
+                                    class="btn btn-primary"
+                                >
+                                    📄 View Current File
+                                </a>
+
+                                <a
+                                    href="{{ assignment.matched_assignment.file.url }}"
+                                    target="_blank"
+                                    class="btn btn-warning"
+                                >
+                                    📄 View Matched File
+                                </a>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
                     {% endif %}
+
+                    <!-- Review Form -->
 
                     <form method="POST">
 
                         {% csrf_token %}
 
-                        <div class="mb-4">
+                        <div class="mb-3">
 
                             <label class="form-label fw-bold">
-
                                 Teacher Remark
-
                             </label>
 
                             <textarea
                                 name="remark"
-                                rows="5"
                                 class="form-control"
-                                placeholder="Write feedback for the student..."
+                                rows="5"
+                                placeholder="Write your feedback..."
                             >{{ assignment.teacher_remark }}</textarea>
 
                         </div>
@@ -139,15 +296,31 @@ CopyKat | Review Assignment
                         <div class="mb-4">
 
                             <label class="form-label fw-bold">
-
                                 Review Status
-
                             </label>
 
                             <select
                                 name="status"
                                 class="form-select"
                             >
+
+                                <option
+                                    value="accepted"
+                                    {% if assignment.status == "accepted" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Accept
+                                </option>
+
+                                <option
+                                    value="rejected"
+                                    {% if assignment.status == "rejected" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Reject
+                                </option>
 
                                 <option
                                     value="pending"
@@ -158,24 +331,6 @@ CopyKat | Review Assignment
                                     Pending
                                 </option>
 
-                                <option
-                                    value="accepted"
-                                    {% if assignment.status == "accepted" %}
-                                    selected
-                                    {% endif %}
-                                >
-                                    Accepted
-                                </option>
-
-                                <option
-                                    value="rejected"
-                                    {% if assignment.status == "rejected" %}
-                                    selected
-                                    {% endif %}
-                                >
-                                    Rejected
-                                </option>
-
                             </select>
 
                         </div>
@@ -184,14 +339,14 @@ CopyKat | Review Assignment
 
                             <button
                                 type="submit"
-                                class="btn btn-success"
+                                class="btn btn-success btn-lg"
                             >
                                 Save Review
                             </button>
 
                             <a
                                 href="{% url 'teacher_dashboard' %}"
-                                class="btn btn-secondary"
+                                class="btn btn-secondary btn-lg"
                             >
                                 Back
                             </a>

@@ -1,40 +1,65 @@
 import fitz
+
 from docx import Document
 
 
 def extract_pdf_text(file_path):
 
-    text = ""
-
     try:
 
-        pdf = fitz.open(file_path)
+        pdf = fitz.open(
+            file_path
+        )
+
+        text = ""
 
         for page in pdf:
+
             text += page.get_text()
 
         pdf.close()
 
-    except Exception:
-        pass
+        if not text.strip():
 
-    return text
+            raise Exception(
+                "PDF contains no readable text."
+            )
+
+        return text
+
+    except Exception as e:
+
+        raise Exception(
+            f"PDF extraction failed: {str(e)}"
+        )
 
 
 def extract_docx_text(file_path):
 
-    text = ""
-
     try:
 
-        document = Document(file_path)
-
-        text = "\n".join(
-            paragraph.text
-            for paragraph in document.paragraphs
+        document = Document(
+            file_path
         )
 
-    except Exception:
-        pass
+        text = "\n".join(
 
-    return text
+            paragraph.text
+
+            for paragraph in document.paragraphs
+
+        )
+
+        if not text.strip():
+
+            raise Exception(
+                "DOCX contains no readable text."
+            )
+
+        return text
+
+    except Exception as e:
+
+        raise Exception(
+            f"DOCX extraction failed: {str(e)}"
+        ) 

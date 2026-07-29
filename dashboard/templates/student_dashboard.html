@@ -301,33 +301,33 @@ CopyKat | Student Dashboard
 
                             <td>
 
-                                {% if assignment.similarity_percentage < 30 %}
+    {% if assignment.similarity_percentage <= 20 %}
 
-                                <span class="badge bg-success">
+        <span class="badge bg-success">
+            {{ assignment.similarity_percentage }}%
+        </span>
 
-                                    {{ assignment.similarity_percentage }}%
+    {% elif assignment.similarity_percentage <= 50 %}
 
-                                </span>
+        <span class="badge bg-warning text-dark">
+            {{ assignment.similarity_percentage }}%
+        </span>
 
-                                {% elif assignment.similarity_percentage < 60 %}
+    {% elif assignment.similarity_percentage <= 75 %}
 
-                                <span class="badge bg-warning text-dark">
+        <span class="badge bg-danger">
+            {{ assignment.similarity_percentage }}%
+        </span>
 
-                                    {{ assignment.similarity_percentage }}%
+    {% else %}
 
-                                </span>
+        <span class="badge bg-dark">
+            {{ assignment.similarity_percentage }}%
+        </span>
 
-                                {% else %}
+    {% endif %}
 
-                                <span class="badge bg-danger">
-
-                                    {{ assignment.similarity_percentage }}%
-
-                                </span>
-
-                                {% endif %}
-
-                            </td>
+</td>
 
                             <td>
 

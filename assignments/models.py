@@ -37,9 +37,7 @@ class Assignment(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name="teacher_assignments",
-        limit_choices_to={
-            "role": "teacher"
-        },
+        limit_choices_to={"role": "teacher"},
     )
 
     subject = models.ForeignKey(
@@ -76,7 +74,7 @@ class Assignment(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="matched_assignments",
+        related_name="matched_with",
     )
 
     teacher_remark = models.TextField(
@@ -91,36 +89,22 @@ class Assignment(models.Model):
     )
 
     reviewed_at = models.DateTimeField(
-        null=True,
         blank=True,
+        null=True,
     )
 
-    # One-time resubmission
     resubmission_used = models.BooleanField(
         default=False,
     )
 
     class Meta:
-
-        ordering = [
-            "-submitted_at"
-        ]
+        ordering = ["-submitted_at"]
 
     def __str__(self):
-
-        return (
-            f"{self.title}"
-            f" - "
-            f"{self.student.username}"
-        )
+        return self.title
 
     @property
     def filename(self):
-
-        if self.file:
-
-            return os.path.basename(
-                self.file.name
-            )
-
-        return ""
+        return os.path.basename(
+            self.file.name
+        )
