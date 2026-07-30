@@ -23,18 +23,12 @@
 
           <h2 class="text-center fw-bold mb-4">Welcome Back</h2>
 
-          {% if messages %}
-
+           {% if messages %}
     {% for message in messages %}
-
-        <div class="alert alert-danger">
-
+        <div class="alert alert-info">
             {{ message }}
-
         </div>
-
     {% endfor %}
-
 {% endif %}
 
           <form method="POST">

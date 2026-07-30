@@ -79,6 +79,22 @@ def login_view(request):
         "login.html"
     )
 
+from django.contrib import messages
+from django.contrib.auth import logout
+
+
 def logout_view(request):
+
+    storage = messages.get_messages(request)
+
+    for _ in storage:
+        pass
+
     logout(request)
+
+    messages.success(
+        request,
+        "You have been logged out successfully."
+    )
+
     return redirect("login")

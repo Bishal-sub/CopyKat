@@ -379,27 +379,35 @@ CopyKat | Student Dashboard
 
                             <td>
 
-                                {% if assignment.status == "rejected" %}
+{% if assignment.status == "pending" %}
 
-                                <a
-                                    href="{% url 'resubmit_assignment' assignment.id %}"
-                                    class="btn btn-danger btn-sm">
+    <span class="badge bg-warning">
+        Under Review
+    </span>
 
-                                    Resubmit
+{% elif assignment.status == "accepted" %}
 
-                                </a>
+   <span>N/A</span>
 
-                                {% else %}
+{% elif assignment.status == "rejected" %}
 
-                                <span class="text-muted">
+    {% if not assignment.resubmission_used %}
 
-                                    —
+        <a href="{% url 'resubmit_assignment' assignment.id %}"
+           class="btn btn-danger btn-sm">
+            Resubmit
+        </a>
 
-                                </span>
+    {% else %}
+    <span>N/A</span>
 
-                                {% endif %}
+        
 
-                            </td>
+    {% endif %}
+
+{% endif %}
+
+</td>
 
                         </tr>
 
