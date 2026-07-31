@@ -105,6 +105,4 @@ class Assignment(models.Model):
 
     @property
     def filename(self):
-        return os.path.basename(
-            self.file.name
-        )
+        return os.path.basename(self.file.name)

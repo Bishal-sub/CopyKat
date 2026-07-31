@@ -12,9 +12,7 @@ def validate_admission_year(value):
 
     if value < 2000 or value > current_year:
 
-        raise ValidationError(
-            "Enter a valid admission year."
-        )
+        raise ValidationError("Enter a valid admission year.")
 
 
 class User(AbstractUser):
@@ -85,9 +83,7 @@ class TeacherAssignment(models.Model):
     teacher = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        limit_choices_to={
-            "role": "teacher"
-        },
+        limit_choices_to={"role": "teacher"},
         related_name="teaching_assignments",
     )
 

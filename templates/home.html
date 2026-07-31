@@ -2,87 +2,73 @@
 Originality. {% endblock %} {% block content %}
 
 <div class="container-fluid py-3">
-  
- <nav
+  <nav
     class="navbar navbar-expand-lg bg-white border border-3 border-dark rounded-4 px-4 mb-4"
->
-    <a class="navbar-brand fw-bold fs-3" href="#">
-        CopyKat
-    </a>
+  >
+    <a class="navbar-brand fw-bold fs-3" href="#">CopyKat</a>
 
     <button
-        class="navbar-toggler"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNav"
+      class="navbar-toggler"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
     >
-        <span class="navbar-toggler-icon"></span>
+      <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" href="#features">Features</a>
+        </li>
 
-        <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" href="#workflow">Workflow</a>
+        </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="#features">
-                    Features
-                </a>
-            </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#about">About</a>
+        </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="#workflow">
-                    Workflow
-                </a>
-            </li>
+        <li class="nav-item ms-3">
+          {% if request.user.is_authenticated %} {% if request.user.role ==
+          "student" %}
+          <a
+            href="{% url 'student_dashboard' %}"
+            class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold"
+          >
+            Dashboard
+          </a>
 
-            <li class="nav-item">
-                <a class="nav-link" href="#about">
-                    About
-                </a>
-            </li>
+          {% elif request.user.role == "teacher" %}
 
-            <li class="nav-item ms-3">
+          <a
+            href="{% url 'teacher_dashboard' %}"
+            class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold"
+          >
+            Dashboard
+          </a>
 
-                {% if request.user.is_authenticated %}
+          {% elif request.user.role == "admin" %}
 
-                    {% if request.user.role == "student" %}
+          <a
+            href="/admin/"
+            class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold"
+          >
+            Admin Panel
+          </a>
 
-                        <a
-                            href="{% url 'student_dashboard' %}"
-                            class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold"
-                        >
-                            Dashboard
-                        </a>
-
-                    {% elif request.user.role == "teacher" %}
-
-                        <a
-                            href="{% url 'teacher_dashboard' %}"
-                            class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold"
-                        >
-                            Dashboard
-                        </a>
-
-                    {% endif %}
-
-                {% else %}
-
-                    <a
-                        href="{% url 'login' %}"
-                        class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold"
-                    >
-                        Login
-                    </a>
-
-                {% endif %}
-
-            </li>
-
-        </ul>
-
+          {% endif %} {% else %}
+          <a
+            href="{% url 'login' %}"
+            class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold"
+          >
+            Login
+          </a>
+          {% endif %}
+        </li>
+      </ul>
     </div>
-
-</nav>
-  
+  </nav>
 
   <section class="bg-white border border-3 border-dark rounded-5 p-5 mb-4">
     <div class="row align-items-center">
@@ -94,38 +80,32 @@ Originality. {% endblock %} {% block content %}
           and get similarity percentage instantly.
         </p>
 
-        {% if request.user.is_authenticated %}
-
-    {% if request.user.role == "student" %}
+        {% if request.user.is_authenticated %} {% if request.user.role ==
+        "student" %}
         <a
-            href="{% url 'student_dashboard' %}"
-            class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+          href="{% url 'student_dashboard' %}"
+          class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
         >
-            Get Started
+          Get Started
         </a>
 
-    {% elif request.user.role == "teacher" %}
+        {% elif request.user.role == "teacher" %}
+
         <a
-            href="{% url 'teacher_dashboard' %}"
-            class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+          href="{% url 'teacher_dashboard' %}"
+          class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
         >
-            Get Started
+          Get Started
         </a>
-    {% endif %}
 
-{% else %}
-
-    <a
-        href="{% url 'register' %}"
-        class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
-    >
-        Get Started
-    </a>
-    {% endif %}
-
-
-
-        
+        {% endif %} {% else %}
+        <a
+          href="{% url 'register' %}"
+          class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+        >
+          Get Started
+        </a>
+        {% endif %}
       </div>
 
       <div class="col-lg-6 text-center">
@@ -138,15 +118,12 @@ Originality. {% endblock %} {% block content %}
     </div>
   </section>
 
- 
-
   <section id="features" class="mb-4">
     <div class="row g-4">
       <div class="col-md-4">
         <div class="card h-100 border-dark border-3 rounded-5 bg-warning">
           <div class="card-body p-4">
-            <h3 class="fw-bold">📄 Upload Assignments</h3>
-
+            <h3 class="fw-bold">Upload Assignments</h3>
             <p>Upload PDF and DOCX assignments directly through the system.</p>
           </div>
         </div>
@@ -158,8 +135,7 @@ Originality. {% endblock %} {% block content %}
           style="background: #00f0b5"
         >
           <div class="card-body p-4">
-            <h3 class="fw-bold">🔍 Similarity Detection</h3>
-
+            <h3 class="fw-bold">Similarity Detection</h3>
             <p>
               TF-IDF and Cosine Similarity provide accurate comparison results.
             </p>
@@ -173,16 +149,13 @@ Originality. {% endblock %} {% block content %}
           style="background: #ead6f5"
         >
           <div class="card-body p-4">
-            <h3 class="fw-bold">✅ Teacher Review</h3>
-
+            <h3 class="fw-bold">Teacher Review</h3>
             <p>Teachers review reports and approve or reject submissions.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-  
 
   <section
     id="workflow"
@@ -213,7 +186,6 @@ Originality. {% endblock %} {% block content %}
     </div>
   </section>
 
-
   <section
     id="about"
     class="border border-3 border-dark rounded-5 p-5 mb-4"
@@ -243,60 +215,64 @@ Originality. {% endblock %} {% block content %}
     </div>
   </section>
 
-
   <section
     class="bg-warning border border-3 border-dark rounded-5 p-5 text-center mb-4"
   >
     <h2 class="display-4 fw-bold">Join CopyKat Today</h2>
-
     <p class="lead">Detect Similarity. Protect Originality.</p>
 
-    {% if request.user.is_authenticated %}
-
-    {% if request.user.role == "student" %}
-        <a
-            href="{% url 'student_dashboard' %}"
-            class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
-        >
-            Go to Dashboard
-        </a>
-
-    {% elif request.user.role == "teacher" %}
-        <a
-            href="{% url 'teacher_dashboard' %}"
-            class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
-        >
-            Go to Dashboard
-        </a>
-    {% endif %}
-
-{% else %}
+    {% if request.user.is_authenticated %} {% if request.user.role == "student"
+    %}
 
     <a
-        href="{% url 'register' %}"
-        class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+      href="{% url 'student_dashboard' %}"
+      class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
     >
-        Create Account
+      Go to Dashboard
     </a>
 
-{% endif %}
+    {% elif request.user.role == "teacher" %}
 
+    <a
+      href="{% url 'teacher_dashboard' %}"
+      class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+    >
+      Go to Dashboard
+    </a>
+
+    {% elif request.user.role == "admin" %}
+
+    <a
+      href="/admin/"
+      class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+    >
+      Go to Admin Panel
+    </a>
+
+    {% endif %} {% else %}
+
+    <a
+      href="{% url 'register' %}"
+      class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold"
+    >
+      Create Account
+    </a>
+
+    {% endif %}
   </section>
-
 
   <footer class="bg-white border border-3 border-dark rounded-4 p-4 mt-5">
     <div class="row align-items-center">
-        <div class="col-md-6 text-center text-md-start">
-            
-            <h3 class="fw-bold mb-1">CopyKat</h3>
-            <p class="text-muted mb-0">Assignment Similarity Detection System</p>
-        </div>
+      <div class="col-md-6 text-center text-md-start">
+        <h3 class="fw-bold mb-1">CopyKat</h3>
+        <p class="text-muted mb-0">Assignment Similarity Detection System</p>
+      </div>
 
-        <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
-            <p class="mb-0">&copy; 2026 CopyKat. All Rights Reserved.</p>
-        </div>
+      <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+        <p class="mb-0">&copy; 2026 CopyKat. All Rights Reserved.</p>
+      </div>
     </div>
-</footer>
+  </footer>
 </div>
 
 <style>
