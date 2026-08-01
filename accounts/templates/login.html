@@ -46,17 +46,31 @@
               />
             </div>
 
-            <div class="mb-4">
-              <label class="form-label fw-semibold"> Password </label>
+     <div class="mb-4">
+    <label class="form-label fw-semibold">Password</label>
 
-              <input
-                type="password"
-                name="password"
-                class="form-control border-dark border-2 rounded-4"
-                placeholder="Enter password"
-                required
-              />
-            </div>
+    <input
+        type="password"
+        name="password"
+        class="form-control border-dark border-2 rounded-4"
+        placeholder="Enter password"
+        required
+    />
+
+    <div class="mt-2">
+        <a href="#" id="forgotPassword" class="text-decoration-none text-primary small">
+            Forgot password?
+        </a>
+    </div>
+
+    <div id="adminMessage" class="mt-2 d-none">
+        <small class="text-muted">
+            Please contact your administrator to reset your password.
+        </small>
+    </div>
+</div>
+
+
 
             <div class="d-grid">
               <button
@@ -138,5 +152,12 @@
     }
   }
 </style>
+<script>
+    document.getElementById("forgotPassword").addEventListener("click", function(e) {
+        e.preventDefault();
+
+        document.getElementById("adminMessage").classList.toggle("d-none");
+    });
+</script>
 
 {% endblock %}
