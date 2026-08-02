@@ -1,10 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-
-from .models import (
-    User,
-    TeacherAssignment,
-)
+from .models import User,StudentDetails
+from .models import TeacherAssignment
 
 
 @admin.register(User)
@@ -75,3 +72,28 @@ class TeacherAssignmentAdmin(admin.ModelAdmin):
         "semester",
         "subject",
     )
+@admin.register(StudentDetails)
+class StudentDetailsAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "full_name",
+        "admission_year",
+        "barcode_number",
+        "is_registered",
+    )
+
+    list_filter = (
+        "admission_year",
+        "is_registered",
+    )
+
+    search_fields = (
+        "full_name",
+        "barcode_number",
+    )
+
+    ordering = (
+        "-admission_year",
+        "full_name",
+    )
+    

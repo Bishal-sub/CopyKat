@@ -122,3 +122,23 @@ class TeacherAssignment(models.Model):
             f"Semester {self.semester} | "
             f"{self.get_level_display()}"
         )
+
+
+class StudentDetails(models.Model):
+
+    full_name = models.CharField(max_length=100)
+
+    admission_year = models.PositiveIntegerField()
+
+    barcode_number = models.CharField(max_length=100,unique=True)
+
+    is_registered = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+
+        return (
+            f"{self.full_name} "
+            f"({self.admission_year})"
+        )        
