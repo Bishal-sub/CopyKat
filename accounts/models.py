@@ -1,5 +1,6 @@
 from datetime import datetime
-
+from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -142,3 +143,21 @@ class StudentDetails(models.Model):
             f"{self.full_name} "
             f"({self.admission_year})"
         )        
+    
+
+
+class EmailVerificationOTP(models.Model):
+
+    user = models.ForeignKey("User",on_delete=models.CASCADE,)
+
+    otp = models.CharField(max_length=6,)
+
+    created_at = models.DateTimeField(auto_now_add=True,)
+
+    def is_expired(self):
+
+        return (timezone.now()>self.created_at + timedelta(minutes=10))
+
+    def __str__(self):
+
+        return f"{self.user.email} - {self.otp}"        
