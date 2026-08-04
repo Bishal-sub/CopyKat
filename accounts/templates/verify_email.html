@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card p-4">
+
+        <h3>
+            Verify Email
+        </h3>
+
+        {% if error %}
+
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="otp"
+                class="form-control mb-3"
+                placeholder="Enter OTP"
+                maxlength="6"
+            >
+
+            <button
+                class="btn btn-primary"
+            >
+                Verify
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
