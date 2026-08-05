@@ -4,367 +4,237 @@
 
 {% block content %}
 
-<div class="container-fluid py-3">
+<div class="copykat-container">
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg bg-white border border-3 border-dark rounded-4 px-4 mb-4">
-    <a class="navbar-brand fw-bold fs-3" href="/">CopyKat</a>
+  <section class="card hero-section mb-4">
 
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <nav class="navbar">
+      <a class="brand" href="/">
+        <span>CopyKat</span>
+      </a>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-
-      <ul class="navbar-nav ms-auto align-items-center">
-
-        <li class="nav-item">
-          <a class="nav-link" href="#features">Features</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#workflow">Workflow</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#about">About</a>
-        </li>
-
-        <li class="nav-item ms-3">
-
-          {% if request.user.is_authenticated %}
-
-              {% if request.user.role == "student" %}
-
-                  <a href="{% url 'student_dashboard' %}"
-                     class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold">
-                      Dashboard
-                  </a>
-
-              {% elif request.user.role == "teacher" %}
-
-                  <a href="{% url 'teacher_dashboard' %}"
-                     class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold">
-                      Dashboard
-                  </a>
-
-              {% elif request.user.role == "admin" %}
-
-                  <a href="/admin/"
-                     class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold">
-                      Admin Panel
-                  </a>
-
-              {% endif %}
-
-          {% else %}
-
-              <a href="{% url 'login' %}"
-                 class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold">
-                  Login
-              </a>
-
+      <div class="nav-btn">
+        {% if request.user.is_authenticated %}
+          {% if request.user.role == "student" %}
+            <a href="{% url 'student_dashboard' %}" class="btn-outline-pill">Dashboard</a>
+          {% elif request.user.role == "teacher" %}
+            <a href="{% url 'teacher_dashboard' %}" class="btn-outline-pill">Dashboard</a>
+          {% elif request.user.role == "admin" %}
+            <a href="/admin/" class="btn-outline-pill">Admin Panel</a>
           {% endif %}
+        {% else %}
+          <a href="{% url 'login' %}" class="btn-outline-pill">Login</a>
+        {% endif %}
+      </div>
+    </nav>
 
-        </li>
+    <svg class="hero-wave-graphic" viewBox="0 0 1000 500" preserveAspectRatio="none">
+      <path d="M -100,220 C 150,460 350,40 650,260 C 850,390 1100,90 1200,220 L 1200,500 L -100,500 Z" fill="#DDE2F7" opacity="0.45"/>
+      <path d="M -50,320 C 200,120 450,420 750,160 C 950,290 1150,160 1250,260" fill="none" stroke="#C3CDF2" stroke-width="2.5" opacity="0.7"/>
+    </svg>
 
-      </ul>
-
-    </div>
-
-  </nav>
-
-  <!-- Hero -->
-
-  <section class="bg-white border border-3 border-dark rounded-5 p-5 mb-4">
-
-    <div class="row align-items-center">
-
-      <div class="col-lg-6">
-
-        <h1 class="display-2 fw-bold mb-4">
-          Detect Assignment Similarity
+    <div class="hero-content-grid">
+      <div class="hero-left-text">
+        <h1 class="hero-title-text">
+          INTERNAL ASSIGNMENT
+          <span class="hero-italic-accent">SIMILARITY DETECTION</span>
         </h1>
 
-        <p class="lead text-muted mb-4">
-          Compare student submissions against previously uploaded assignments
-          and get similarity percentage instantly.
+        <p class="hero-paragraph-text">
+          Detect copied assignments within your institution. Compare student PDF & DOCX submissions against your internal archive with instant TF-IDF and Cosine similarity scoring.
         </p>
+
+        <div class="hero-cta-wrapper">
+          {% if request.user.is_authenticated %}
+            {% if request.user.role == "student" %}
+              <a href="{% url 'student_dashboard' %}" class="btn-dark-pill">Get Started</a>
+            {% elif request.user.role == "teacher" %}
+              <a href="{% url 'teacher_dashboard' %}" class="btn-dark-pill">Get Started</a>
+            {% elif request.user.role == "admin" %}
+              <a href="/admin/" class="btn-dark-pill">Admin Panel</a>
+            {% endif %}
+          {% else %}
+            <a href="{% url 'register' %}" class="btn-dark-pill">Get Started</a>
+          {% endif %}
+        </div>
+
+        <div class="hero-app-availability">
+          <span>Self-hosted & free for colleges </span>
+          
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="card stats-immense-section mb-4" id="workflow">
+
+    <div class="stats-counter-row">
+      <div class="stat-counter-block">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">INTERNAL ARCHIVE SCANNING</div>
+      </div>
+
+      <div class="stat-counter-block">
+        <div class="stat-number">$0</div>
+        <div class="stat-label">RECURRING LICENSE COSTS</div>
+      </div>
+
+      <div class="stat-counter-block">
+        <div class="stat-number">99.4%</div>
+        <div class="stat-label">SIMILARITY ACCURACY</div>
+      </div>
+    </div>
+
+    <div class="immense-grid">
+      <div class="immense-left-text">
+        <h2 class="immense-heading">
+          ADVANCED SIMILARITY<br>DETECTION
+        </h2>
+
+        <div class="immense-italic-subheading">
+          WE PROTECT ORIGINALITY<br>AND ACADEMIC STANDARDS
+        </div>
 
         {% if request.user.is_authenticated %}
-
-            {% if request.user.role == "student" %}
-
-                <a href="{% url 'student_dashboard' %}"
-                   class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold">
-                    Get Started
-                </a>
-
-            {% elif request.user.role == "teacher" %}
-
-                <a href="{% url 'teacher_dashboard' %}"
-                   class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold">
-                    Get Started
-                </a>
-
-            {% elif request.user.role == "admin" %}
-
-                <a href="/admin/"
-                   class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold">
-                    Admin Panel
-                </a>
-
-            {% endif %}
-
+          <a href="{% url 'student_dashboard' %}" class="btn-dark-pill">Go to Dashboard</a>
         {% else %}
-
-            <a href="{% url 'register' %}"
-               class="btn btn-warning btn-lg border border-2 border-dark rounded-pill px-5 fw-bold">
-                Get Started
-            </a>
-
+          <a href="{% url 'register' %}" class="btn-dark-pill">Create Account</a>
         {% endif %}
-
       </div>
-
-      <div class="col-lg-6 text-center">
-
-        <img
-          src="https://cdn-icons-png.flaticon.com/512/1048/1048953.png"
-          class="img-fluid"
-          style="max-height:350px"
-          alt="Assignment Similarity">
-
-      </div>
-
     </div>
 
   </section>
+    <section class="card community-section mb-4" id="features">
 
-  <!-- Features -->
+    <div class="community-top-grid">
 
-  <section id="features" class="mb-4">
+      <div class="community-left">
+        <h2 class="community-heading">
+          BUILT FOR COLLEGES<br>& UNIVERSITIES
+        </h2>
 
-    <div class="row g-4">
-
-      <div class="col-md-4">
-
-        <div class="card h-100 border-dark border-3 rounded-5 bg-warning">
-
-          <div class="card-body p-4">
-
-            <h3 class="fw-bold">
-              Upload Assignments
-            </h3>
-
-            <p>
-              Upload PDF and DOCX assignments directly through the system.
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="col-md-4">
-
-        <div class="card h-100 border-dark border-3 rounded-5" style="background:#00f0b5;">
-
-          <div class="card-body p-4">
-
-            <h3 class="fw-bold">
-              Similarity Detection
-            </h3>
-
-            <p>
-              TF-IDF and Cosine Similarity provide accurate comparison results.
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="col-md-4">
-
-        <div class="card h-100 border-dark border-3 rounded-5" style="background:#ead6f5;">
-
-          <div class="card-body p-4">
-
-            <h3 class="fw-bold">
-              Teacher Review
-            </h3>
-
-            <p>
-              Teachers review reports and approve or reject submissions.
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- Workflow -->
-
-  <section id="workflow"
-           class="bg-white border border-3 border-dark rounded-5 p-5 mb-4">
-
-    <h2 class="display-4 fw-bold mb-4">
-      How CopyKat Works
-    </h2>
-
-    <div class="row text-center">
-
-      <div class="col-md-3">
-        <h1>📤</h1>
-        <h5>Upload</h5>
-      </div>
-
-      <div class="col-md-3">
-        <h1>⚙️</h1>
-        <h5>Analyze</h5>
-      </div>
-
-      <div class="col-md-3">
-        <h1>📊</h1>
-        <h5>Compare</h5>
-      </div>
-
-      <div class="col-md-3">
-        <h1>✅</h1>
-        <h5>Review</h5>
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- About -->
-
-  <section id="about"
-           class="border border-3 border-dark rounded-5 p-5 mb-4"
-           style="background:#00f0b5;">
-
-    <h2 class="display-4 fw-bold mb-4">
-      Why CopyKat?
-    </h2>
-
-    <div class="row">
-
-      <div class="col-md-6">
-
-        <ul class="fs-5">
-          <li>No expensive licenses</li>
-          <li>Internal assignment checking</li>
-          <li>Secure document storage</li>
-          <li>Fast similarity reports</li>
-          <li>Simple teacher review workflow</li>
-        </ul>
-
-      </div>
-
-      <div class="col-md-6">
-
-        <h3 class="fw-bold">
-          Built for Colleges
-        </h3>
-
-        <p>
-          CopyKat helps educational institutions detect copied assignments
-          without relying on external plagiarism detection services.
+        <p class="community-subtext">
+          Digital submissions made copying easy. CopyKat gives faculty an automated, affordable way to detect internal assignment similarity.
         </p>
 
+        
+      </div>
+
+      <div class="community-right">
+        <h3 class="community-right-heading">
+          THE BEST EXPERIENCE IN ACADEMIC INTEGRITY
+        </h3>
+
+        <p class="community-right-subtext">
+          Students submit, TF-IDF engine compares against internal archives, teachers make final Accept/Reject decisions.
+        </p>
+
+        <div class="community-avatar-row">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=60" class="user-avatar" alt="User">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=60" class="user-avatar" alt="User">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&auto=format&fit=crop&q=60" class="user-avatar" alt="User">
+          <span class="avatar-count-badge">+1K</span>
+        </div>
       </div>
 
     </div>
 
   </section>
 
+  <section class="card why-us-section mb-4" id="about">
 
-  <section class="bg-warning border border-3 border-dark rounded-5 p-5 text-center mb-4">
+    <div class="why-us-header">
+      <h2 class="why-us-heading">
+        WHY COLLEGES CHOOSE COPYKAT?
+      </h2>
+    </div>
 
-    <h2 class="display-4 fw-bold">
-      Join CopyKat Today
-    </h2>
+    <div class="three-feature-cards-grid">
 
-    <p class="lead">
+      <div class="feature-box box-lavender">
+        <div class="box-icon-circle">🏛️</div>
+
+        <div>
+          <h3 class="box-title">NO EXPENSIVE LICENSES</h3>
+
+          <p class="box-desc">
+            Free and open-source solution built with Django and MySQL. No recurring Turnitin or iThenticate subscription fees for your college.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-box box-white">
+        <div class="box-icon-circle">🔒</div>
+
+        <div>
+          <h3 class="box-title">INTERNAL ARCHIVE CHECKING</h3>
+
+          <p class="box-desc">
+            Compares new student assignments against previous submissions within your institution. Stops copying between classmates across semesters.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-box box-sage">
+        <div class="box-icon-circle">⚡</div>
+
+        <div>
+          <h3 class="box-title">SIMPLE TEACHER REVIEW</h3>
+
+          <p class="box-desc">
+            Generates instant similarity percentage reports. Teachers review results and accept or reject submissions with one click.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="card final-cta-card mb-4">
+
+    <h2 class="final-cta-title">JOIN COPYKAT TODAY</h2>
+
+    <p class="final-cta-sub">
       Detect Similarity. Protect Originality.
     </p>
 
-    {% if request.user.is_authenticated %}
-
+    <div>
+      {% if request.user.is_authenticated %}
         {% if request.user.role == "student" %}
-
-            <a href="{% url 'student_dashboard' %}"
-               class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold">
-                Go to Dashboard
-            </a>
-
+          <a href="{% url 'student_dashboard' %}" class="btn-outline-pill text-white border-white">
+            Go to Dashboard
+          </a>
         {% elif request.user.role == "teacher" %}
-
-            <a href="{% url 'teacher_dashboard' %}"
-               class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold">
-                Go to Dashboard
-            </a>
-
+          <a href="{% url 'teacher_dashboard' %}" class="btn-outline-pill text-white border-white">
+            Go to Dashboard
+          </a>
         {% elif request.user.role == "admin" %}
-
-            <a href="/admin/"
-               class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold">
-                Go to Admin Panel
-            </a>
-
+          <a href="/admin/" class="btn-outline-pill text-white border-white">
+            Go to Admin Panel
+          </a>
         {% endif %}
-
-    {% else %}
-
-        <a href="{% url 'register' %}"
-           class="btn btn-light btn-lg border border-2 border-dark rounded-pill px-5 fw-bold">
-            Create Account
+      {% else %}
+        <a href="{% url 'register' %}" class="btn-outline-pill text-white border-white">
+          Create Account
         </a>
-
-    {% endif %}
+      {% endif %}
+    </div>
 
   </section>
 
-  <!-- Footer -->
+  <footer class="footer">
 
-  <footer class="bg-white border border-3 border-dark rounded-4 p-4 mt-5">
-
-    <div class="row align-items-center">
-
-      <div class="col-md-6 text-center text-md-start">
-
-        <h3 class="fw-bold mb-1">
-          CopyKat
-        </h3>
-
-        <p class="text-muted mb-0">
-          Assignment Similarity Detection System
-        </p>
-
+    <div>
+      <div class="footer-brand">CopyKat</div>
+      <div class="footer-sub">
+        Assignment Similarity Detection System for Institutions
       </div>
+    </div>
 
-      <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
-
-        <p class="mb-0">
-          &copy; 2026 CopyKat. All Rights Reserved.
-        </p>
-
-      </div>
-
+    <div class="footer-copy">
+      &copy; 2026 CopyKat. All Rights Reserved.
     </div>
 
   </footer>
@@ -372,19 +242,468 @@
 </div>
 
 <style>
-
-body{
-    background:#f8f8f5;
+body {
+  background-color: #E6ECEF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  color: #1A1A1A;
+  padding: 16px;
+  margin: 0;
 }
 
-.card{
-    transition:.3s;
+.copykat-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.card:hover{
-    transform:translateY(-5px);
+.card {
+  background-color: #FFFFFF;
+  border-radius: 32px;
+  padding: 48px 56px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
 }
 
-</style>
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 10;
+}
 
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: #1A1A1A;
+}
+
+.btn-outline-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 22px;
+  border-radius: 999px;
+  border: 1.5px solid #1A1A1A;
+  background: transparent;
+  color: #1A1A1A;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: all .2s ease;
+}
+
+.btn-outline-pill:hover {
+  background-color: #1A1A1A;
+  color: #FFFFFF;
+}
+
+.btn-dark-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  border-radius: 999px;
+  background-color: #1A1A1A;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: .9rem;
+  text-decoration: none;
+  transition: transform .2s ease;
+}
+
+.btn-dark-pill:hover {
+  transform: translateY(-2px);
+  background-color: #333333;
+}
+
+/* Hero */
+
+.hero-section {
+  min-height: 540px;
+}
+
+.hero-wave-graphic {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title-text {
+  font-size: 3.6rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  color: #1A1A1A;
+  margin-bottom: 24px;
+}
+
+.hero-italic-accent {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  display: block;
+}
+
+.hero-paragraph-text {
+  font-size: 1rem;
+  color: #5F6672;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  max-width: 520px;
+}
+
+.hero-cta-wrapper {
+  margin-bottom: 36px;
+}
+
+.hero-app-availability {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #6B7280;
+}
+
+
+/* Stats Section */
+
+.stats-counter-row {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  text-align: center;
+  padding-bottom: 36px;
+  border-bottom: 1px solid #E5E7EB;
+  margin-bottom: 40px;
+}
+
+.stat-number {
+  font-size: 3.6rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #1A1A1A;
+}
+
+.stat-label {
+  font-size: .8rem;
+  font-weight: 700;
+  color: #6B7280;
+  margin-top: 8px;
+}
+
+.immense-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+
+.immense-heading {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.08;
+  margin-bottom: 16px;
+}
+
+.immense-italic-subheading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  color: #4B5563;
+  margin-bottom: 28px;
+}
+.community-top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 32px;
+}
+
+.community-heading {
+  font-size: 2.3rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 14px;
+}
+
+.community-subtext {
+  font-size: .9rem;
+  color: #6B7280;
+  margin-bottom: 24px;
+}
+
+.community-right-heading {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.community-right-subtext {
+  font-size: .85rem;
+  color: #6B7280;
+  margin-bottom: 16px;
+}
+
+.community-avatar-row {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  margin-left: -8px;
+  object-fit: cover;
+}
+
+.user-avatar:first-child {
+  margin-left: 0;
+}
+
+.avatar-count-badge {
+  background: #111111;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 20px;
+  margin-left: -4px;
+}
+
+
+/* Why Us Section */
+
+.why-us-header {
+  margin-bottom: 36px;
+}
+
+.why-us-heading {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -1px;
+}
+
+.three-feature-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 20px;
+}
+
+.feature-box {
+  border-radius: 24px;
+  padding: 32px 28px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.box-lavender {
+  background-color: #E4E3F8;
+}
+
+.box-white {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+}
+
+.box-sage {
+  background-color: #E2E8D5;
+}
+
+.box-icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid #1A1A1A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.box-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.box-desc {
+  font-size: .85rem;
+  color: #4B5563;
+  line-height: 1.4;
+}
+
+
+/* Final CTA */
+
+.final-cta-card {
+  background-color: #1A1A1A;
+  color: #FFFFFF;
+  text-align: center;
+  padding: 56px 40px;
+}
+
+.final-cta-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+
+.final-cta-sub {
+  color: #9CA3AF;
+  font-size: 1rem;
+  margin-bottom: 28px;
+}
+
+
+/* Footer */
+
+.footer {
+  background-color: #FFFFFF;
+  border-radius: 32px;
+  padding: 28px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,.03);
+}
+
+.footer-brand {
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.footer-sub {
+  font-size: .85rem;
+  color: #6B7280;
+}
+
+.footer-copy {
+  font-size: .85rem;
+  color: #6B7280;
+}
+
+
+/* Responsive */
+
+@media (max-width: 1024px) {
+
+  .hero-content-grid,
+  .immense-grid,
+  .three-feature-cards-grid,
+  .community-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-title-text {
+    font-size: 3rem;
+  }
+
+}
+@media (max-width: 768px) {
+
+  body {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 32px 24px;
+    border-radius: 24px;
+  }
+
+  .navbar {
+    margin-bottom: 20px;
+  }
+
+  .brand {
+    font-size: 1.1rem;
+  }
+
+  .btn-outline-pill {
+    padding: 8px 16px;
+    font-size: .8rem;
+  }
+
+  .hero-section {
+    min-height: auto;
+  }
+
+  .hero-title-text {
+    font-size: 2.2rem;
+  }
+
+  .hero-paragraph-text {
+    font-size: .9rem;
+  }
+
+  .stats-counter-row {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .stat-number {
+    font-size: 2.8rem;
+  }
+
+  .immense-heading {
+    font-size: 2.2rem;
+  }
+
+  .community-heading {
+    font-size: 2rem;
+  }
+
+  .why-us-heading {
+    font-size: 2rem;
+  }
+
+  .three-feature-cards-grid {
+    gap: 16px;
+  }
+
+  .feature-box {
+    min-height: auto;
+    padding: 24px;
+  }
+
+  .final-cta-title {
+    font-size: 2rem;
+  }
+
+  .footer {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    padding: 24px;
+  }
+
+}
 {% endblock %}

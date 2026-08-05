@@ -4,445 +4,1733 @@
 CopyKat | Student Dashboard
 {% endblock %}
 
+
 {% block content %}
 
-<div class="container py-4">
 
+<div class="container-fluid py-4 px-3 px-lg-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div>
-            <h1 class="fw-bold">
-                 Student Dashboard
-            </h1>
+<!-- Header -->
 
-            <p class="text-muted">
-                Welcome, {{ request.user.full_name }}
-            </p>
-        </div>
+<div class="dashboard-wrapper">
 
-        <form method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
 
-            <button class="btn btn-outline-danger">
-                Logout
-            </button>
-        </form>
+<div class="dashboard-header mb-4">
 
-    </div>
 
-    <!-- Statistics -->
+<div>
 
-    <div class="row g-4 mb-4">
+<h1 class="dashboard-title">
 
-        <div class="col-6 col-lg-3">
+Student Dashboard
 
-            <div class="card border-warning border-3 h-100">
+</h1>
 
-                <div class="card-body text-center">
 
-                    <h6>Total Assignments</h6>
+<p class="dashboard-subtitle">
 
-                    <h2 class="fw-bold">
-                        {{ assignments|length }}
-                    </h2>
+Welcome, {{ request.user.full_name }}
 
-                </div>
+</p>
 
-            </div>
-
-        </div>
-
-        <div class="col-6 col-lg-3">
-
-            <div class="card border-success border-3 h-100">
-
-                <div class="card-body text-center">
-
-                    <h6>Accepted</h6>
-
-                    <h2 class="fw-bold">
-                        {{ accepted_count }}
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-6 col-lg-3">
-
-            <div class="card border-primary border-3 h-100">
-
-                <div class="card-body text-center">
-
-                    <h6>Pending</h6>
-
-                    <h2 class="fw-bold">
-                        {{ pending_count }}
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-6 col-lg-3">
-
-            <div class="card border-danger border-3 h-100">
-
-                <div class="card-body text-center">
-
-                    <h6>Rejected</h6>
-
-                    <h2 class="fw-bold">
-                        {{ rejected_count }}
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Profile + Upload -->
-
-    <div class="row g-4 mb-4">
-
-        <!-- Profile -->
-
-        <div class="col-lg-6">
-
-            <div class="card h-100">
-
-                <div class="card-header fw-bold">
-                    Profile Information
-                </div>
-
-                <div class="card-body">
-
-                    <div class="text-center mb-4">
-
-                        {% if request.user.photo %}
-
-                        <img
-                            src="{{ request.user.photo.url }}"
-                            alt="{{ request.user.full_name }}"
-                            class="rounded-circle border border-3 border-warning"
-                            width="140"
-                            height="140"
-                            style="object-fit:cover;"
-                        >
-
-                        {% else %}
-
-                        <div
-                            class="rounded-circle bg-warning d-inline-flex justify-content-center align-items-center fw-bold"
-                            style="width:140px;height:140px;font-size:50px;">
-
-                            {{ request.user.full_name|first }}
-
-                        </div>
-
-                        {% endif %}
-
-                    </div>
-
-                    <table class="table">
-
-                        <tr>
-                            <th>Name</th>
-                            <td>{{ request.user.full_name }}</td>
-                        </tr>
-
-                        <tr>
-                            <th>Email</th>
-                            <td>{{ request.user.email }}</td>
-                        </tr>
-
-                        <tr>
-                            <th>Phone</th>
-                            <td>{{ request.user.phone_number }}</td>
-                        </tr>
-
-                        <tr>
-                            <th>Admission Year</th>
-                            <td>{{ request.user.admission_year }}</td>
-                        </tr>
-
-                        
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Upload -->
-
-        <div class="col-lg-6">
-
-            <div class="card h-100">
-
-                <div class="card-body d-flex flex-column justify-content-center text-center">
-
-                    <h3 class="fw-bold">
-                        📤 Submit Assignment
-                    </h3>
-
-                    <p class="text-muted">
-
-                        Upload a new assignment and check similarity instantly.
-
-                    </p>
-
-                    <a
-                        href="{% url 'submit_assignment' %}"
-                        class="btn btn-warning btn-lg">
-
-                        Upload Assignment
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Assignments -->
-
-    <div class="card">
-
-        <div class="card-header fw-bold">
-
-            My Assignments
-
-        </div>
-
-        <div class="card-body">
-
-            {% if assignments %}
-
-            <div class="table-responsive">
-
-                <table class="table table-hover align-middle">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Title</th>
-
-                            <th>Teacher</th>
-
-                            <th>Semester</th>
-
-                            <th>File</th>
-
-                            <th>Similarity</th>
-                            <th>Status</th>
-                            <th>Teacher Remark</th>
-
-                            <th>Action</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {% for assignment in assignments %}
-
-                        <tr>
-
-                            <td>
-
-                                {{ assignment.title }}
-
-                            </td>
-
-                            <td>
-
-                                {{ assignment.teacher.full_name }}
-
-                            </td>
-
-                            <td>
-
-                                {{ assignment.semester }}
-
-                            </td>
-
-                            <td>
-
-                                {% if assignment.file %}
-
-                                <a
-                                    href="{{ assignment.file.url }}"
-                                    target="_blank"
-                                    class="btn btn-outline-primary btn-sm">
-
-                                    View File
-
-                                </a>
-
-                                {% endif %}
-
-                            </td>
-
-                            <td>
-
-    {% if assignment.similarity_percentage <= 20 %}
-
-        <span class="badge bg-success">
-            {{ assignment.similarity_percentage }}%
-        </span>
-
-    {% elif assignment.similarity_percentage <= 50 %}
-
-        <span class="badge bg-warning text-dark">
-            {{ assignment.similarity_percentage }}%
-        </span>
-
-    {% elif assignment.similarity_percentage <= 75 %}
-
-        <span class="badge bg-danger">
-            {{ assignment.similarity_percentage }}%
-        </span>
-
-    {% else %}
-
-        <span class="badge bg-dark">
-            {{ assignment.similarity_percentage }}%
-        </span>
-
-    {% endif %}
-
-</td>
-
-                            <td>
-
-                                {% if assignment.status == "accepted" %}
-
-                                <span class="badge bg-success">
-
-                                    Accepted
-
-                                </span>
-
-                                {% elif assignment.status == "rejected" %}
-
-                                <span class="badge bg-danger">
-
-                                    Rejected
-
-                                </span>
-
-                                {% else %}
-
-                                <span class="badge bg-warning text-dark">
-
-                                    Pending
-
-                                </span>
-
-                                {% endif %}
-
-                            </td>
-
-                            <td style="max-width: 250px;">
-
-                                {% if assignment.teacher_remark %}
-
-                                {{ assignment.teacher_remark }}
-
-                                {% else %}
-
-                                <span class="text-muted">
-
-                                    Waiting...
-
-                                </span>
-
-                                {% endif %}
-
-                            </td>
-
-                            <td>
-
-{% if assignment.status == "pending" %}
-
-    <span class="badge bg-warning">
-        Under Review
-    </span>
-
-{% elif assignment.status == "accepted" %}
-
-   <span>N/A</span>
-
-{% elif assignment.status == "rejected" %}
-
-    {% if not assignment.resubmission_used %}
-
-        <a href="{% url 'resubmit_assignment' assignment.id %}"
-           class="btn btn-danger btn-sm">
-            Resubmit
-        </a>
-
-    {% else %}
-    <span>N/A</span>
-
-        
-
-    {% endif %}
-
-{% endif %}
-
-</td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-            {% else %}
-
-            <div class="text-center py-5">
-
-                <h4>
-
-                    No assignments submitted yet
-
-                </h4>
-
-                <p class="text-muted">
-
-                    Upload your first assignment.
-
-                </p>
-
-            </div>
-
-            {% endif %}
-
-        </div>
-
-    </div>
 
 </div>
 
+
+
+
+
+<form method="POST" action="{% url 'logout' %}">
+
+{% csrf_token %}
+
+
+<button class="dark-outline-btn">
+
+Logout
+
+</button>
+
+
+</form>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- Statistics -->
+
+
+<div class="row g-4 mb-4">
+
+
+
+<div class="col-6 col-lg-3">
+
+
+<div class="stat-card">
+
+
+<div class="stat-label">
+
+Total Assignments
+
+</div>
+
+
+<div class="stat-number">
+
+{{ assignments|length }}
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="col-6 col-lg-3">
+
+
+<div class="stat-card">
+
+
+<div class="stat-label">
+
+Accepted
+
+</div>
+
+
+<div class="stat-number">
+
+{{ accepted_count }}
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="col-6 col-lg-3">
+
+
+<div class="stat-card">
+
+
+<div class="stat-label">
+
+Pending
+
+</div>
+
+
+<div class="stat-number">
+
+{{ pending_count }}
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="col-6 col-lg-3">
+
+
+<div class="stat-card">
+
+
+<div class="stat-label">
+
+Rejected
+
+</div>
+
+
+<div class="stat-number">
+
+{{ rejected_count }}
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- Profile + Upload -->
+
+
+
+<div class="row g-4 mb-4">
+
+
+
+
+
+<!-- Profile -->
+
+<div class="col-lg-6">
+
+
+<div class="dashboard-card h-100">
+
+
+
+<div class="card-heading">
+
+Profile Information
+
+</div>
+
+
+
+
+
+<div class="card-content">
+
+
+
+
+
+<div class="text-center mb-4">
+
+
+
+{% if request.user.photo %}
+
+
+<img
+src="{{ request.user.photo.url }}"
+alt="{{ request.user.full_name }}"
+class="profile-image"
+>
+
+
+
+{% else %}
+
+
+<div class="profile-placeholder">
+
+
+{{ request.user.full_name|first }}
+
+
+</div>
+
+
+{% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+
+<table class="profile-table">
+
+
+
+<tr>
+
+<th>Name</th>
+
+<td>{{ request.user.full_name }}</td>
+
+</tr>
+
+
+
+
+<tr>
+
+<th>Email</th>
+
+<td>{{ request.user.email }}</td>
+
+</tr>
+
+
+
+
+<tr>
+
+<th>Phone</th>
+
+<td>{{ request.user.phone_number }}</td>
+
+</tr>
+
+
+
+
+<tr>
+
+<th>Admission Year</th>
+
+<td>{{ request.user.admission_year }}</td>
+
+</tr>
+
+
+
+</table>
+
+
+
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- Upload -->
+
+
+
+<div class="col-lg-6">
+
+
+<div class="dashboard-card upload-card h-100">
+
+
+
+<div>
+
+
+<h3 class="upload-title">
+
+📤 Submit Assignment
+
+</h3>
+
+
+
+<p class="dashboard-subtitle">
+
+Upload a new assignment and check similarity instantly.
+
+</p>
+
+
+<a href="{% url 'submit_assignment' %}"
+class="dark-action-btn">
+
+
+Upload Assignment
+
+
+</a>
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+</div>
+<!-- Assignments -->
+
+<div class="dashboard-card assignments-card">
+
+
+    <div class="card-heading">
+
+        My Assignments
+
+    </div>
+
+
+
+    <div class="card-content">
+
+
+
+    {% if assignments %}
+
+
+
+    <div class="table-responsive">
+
+
+        <table class="table dashboard-table align-middle">
+
+
+            <thead>
+
+
+                <tr>
+
+                    <th>Title</th>
+
+                    <th>Teacher</th>
+
+                    <th>Semester</th>
+
+                    <th>File</th>
+
+                    <th>Similarity</th>
+
+                    <th>Status</th>
+
+                    <th>Teacher Remark</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+
+            </thead>
+
+
+
+
+            <tbody>
+
+
+            {% for assignment in assignments %}
+
+
+
+                <tr>
+
+
+
+                    <td>
+
+                        {{ assignment.title }}
+
+                    </td>
+
+
+
+
+                    <td>
+
+                        {{ assignment.teacher.full_name }}
+
+                    </td>
+
+
+
+
+                    <td>
+
+                        {{ assignment.semester }}
+
+                    </td>
+
+
+
+
+
+                    <td>
+
+
+                    {% if assignment.file %}
+
+
+                    <a
+                    href="{{ assignment.file.url }}"
+                    target="_blank"
+                    class="table-btn">
+
+
+                        View File
+
+
+                    </a>
+
+
+                    {% endif %}
+
+
+                    </td>
+
+
+
+
+
+
+
+                    <td>
+
+
+
+                    {% if assignment.similarity_percentage <= 20 %}
+
+
+
+                    <span class="status-badge success">
+
+
+                        {{ assignment.similarity_percentage }}%
+
+
+                    </span>
+
+
+
+
+
+                    {% elif assignment.similarity_percentage <= 50 %}
+
+
+
+                    <span class="status-badge warning">
+
+
+                        {{ assignment.similarity_percentage }}%
+
+
+                    </span>
+
+
+
+
+
+                    {% elif assignment.similarity_percentage <= 75 %}
+
+
+
+                    <span class="status-badge danger">
+
+
+                        {{ assignment.similarity_percentage }}%
+
+
+                    </span>
+
+
+
+
+
+                    {% else %}
+
+
+
+                    <span class="status-badge dark">
+
+
+                        {{ assignment.similarity_percentage }}%
+
+
+                    </span>
+
+
+
+
+
+                    {% endif %}
+
+
+
+                    </td>
+
+
+
+
+
+
+
+                    <td>
+
+
+
+                    {% if assignment.status == "accepted" %}
+
+
+
+                    <span class="status-badge success">
+
+                        Accepted
+
+                    </span>
+
+
+
+
+                    {% elif assignment.status == "rejected" %}
+
+
+
+
+                    <span class="status-badge danger">
+
+                        Rejected
+
+                    </span>
+
+
+
+
+                    {% else %}
+
+
+
+                    <span class="status-badge warning">
+
+                        Pending
+
+                    </span>
+
+
+
+
+                    {% endif %}
+
+
+
+                    </td>
+
+
+
+
+
+
+
+                    <td class="remark-cell">
+
+
+
+                    {% if assignment.teacher_remark %}
+
+
+                        {{ assignment.teacher_remark }}
+
+
+
+                    {% else %}
+
+
+
+                        <span class="text-secondary">
+
+                            Waiting...
+
+                        </span>
+
+
+
+                    {% endif %}
+
+
+
+                    </td>
+
+
+
+
+
+
+
+                    <td>
+
+
+
+                    {% if assignment.status == "pending" %}
+
+
+
+                        <span class="status-badge warning">
+
+                            Under Review
+
+                        </span>
+
+
+
+
+
+                    {% elif assignment.status == "accepted" %}
+
+
+
+
+                        <span class="text-secondary">
+
+                            N/A
+
+                        </span>
+
+
+
+
+
+                    {% elif assignment.status == "rejected" %}
+
+
+
+
+
+                        {% if not assignment.resubmission_used %}
+
+
+
+
+                        <a href="{% url 'resubmit_assignment' assignment.id %}"
+                           class="resubmit-btn">
+
+
+                            Resubmit
+
+
+                        </a>
+
+
+
+
+                        {% else %}
+
+
+
+                        <span class="text-secondary">
+
+                            N/A
+
+                        </span>
+
+
+
+                        {% endif %}
+
+
+
+
+
+                    {% endif %}
+
+
+
+
+
+                    </td>
+
+
+
+
+                </tr>
+
+
+
+            {% endfor %}
+
+
+
+            </tbody>
+
+
+
+        </table>
+
+
+
+    </div>
+
+
+
+
+
+
+    {% else %}
+
+
+
+    <div class="empty-state">
+
+
+        <h4>
+
+            No assignments submitted yet
+
+        </h4>
+
+
+
+        <p class="text-secondary">
+
+            Upload your first assignment.
+
+        </p>
+
+
+    </div>
+
+
+
+
+    {% endif %}
+
+
+
+
+
+    </div>
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+<style>
+
+
+body{
+
+    background:#E6ECEF;
+
+    font-family:'Plus Jakarta Sans',sans-serif;
+
+}
+
+
+
+
+
+
+/* Main wrapper */
+
+
+.dashboard-wrapper{
+
+    max-width:1400px;
+
+    margin:auto;
+
+}
+
+
+
+
+
+
+
+/* Header */
+
+
+.dashboard-header{
+
+
+    background:#FFFFFF;
+
+
+    border-radius:32px;
+
+
+    padding:28px 40px;
+
+
+    display:flex;
+
+
+    justify-content:space-between;
+
+
+    align-items:center;
+
+
+    box-shadow:
+
+    0 4px 20px rgba(0,0,0,.03);
+
+
+}
+
+
+
+.dashboard-title{
+
+
+    font-size:2.5rem;
+
+
+    font-weight:800;
+
+
+    letter-spacing:-1px;
+
+
+    margin:0;
+
+
+}
+
+
+
+.dashboard-subtitle{
+
+
+    color:#6B7280;
+
+
+    margin-top:8px;
+
+
+}
+
+
+
+
+
+
+
+
+/* Buttons */
+
+
+.dark-outline-btn{
+
+
+    padding:12px 28px;
+
+
+    border-radius:999px;
+
+
+    border:1.5px solid #1A1A1A;
+
+
+    background:transparent;
+
+
+    color:#1A1A1A;
+
+
+    font-weight:700;
+
+
+    transition:.25s ease;
+
+
+}
+
+
+
+.dark-outline-btn:hover{
+
+
+    background:#1A1A1A;
+
+
+    color:white;
+
+
+}
+
+
+
+
+
+
+
+.dark-action-btn{
+
+
+    display:inline-flex;
+
+
+    justify-content:center;
+
+
+    align-items:center;
+
+
+    padding:14px 32px;
+
+
+    border-radius:999px;
+
+
+    background:#1A1A1A;
+
+
+    color:white;
+
+
+    text-decoration:none;
+
+
+    font-weight:700;
+
+
+    transition:.25s ease;
+
+
+}
+
+
+
+.dark-action-btn:hover{
+
+
+    background:#333;
+
+
+    color:white;
+
+
+    transform:translateY(-3px);
+
+
+}
+
+
+
+
+
+
+
+
+/* Statistics */
+
+
+.stat-card{
+
+
+    background:white;
+
+
+    border-radius:28px;
+
+
+    padding:30px;
+
+
+    text-align:center;
+
+
+    box-shadow:
+
+    0 8px 30px rgba(0,0,0,.05);
+
+
+    transition:.3s ease;
+
+
+}
+
+
+
+.stat-card:hover{
+
+
+    transform:translateY(-5px);
+
+
+}
+
+
+
+
+
+.stat-label{
+
+
+    font-size:.9rem;
+
+
+    color:#6B7280;
+
+
+    font-weight:700;
+
+
+    text-transform:uppercase;
+
+
+}
+
+
+
+.stat-number{
+
+
+    font-size:3rem;
+
+
+    font-weight:800;
+
+
+    margin-top:12px;
+
+
+    color:#1A1A1A;
+
+
+}
+
+
+
+
+
+
+
+
+/* General cards */
+
+
+.dashboard-card{
+
+
+    background:#FFFFFF;
+
+
+    border-radius:32px;
+
+
+    box-shadow:
+
+    0 8px 30px rgba(0,0,0,.05);
+
+
+    overflow:hidden;
+
+
+    transition:.3s ease;
+
+
+}
+
+
+
+.dashboard-card:hover{
+
+
+    transform:translateY(-5px);
+
+
+}
+
+
+
+
+
+.card-heading{
+
+
+    padding:24px 32px;
+
+
+    font-size:1.2rem;
+
+
+    font-weight:800;
+
+
+    border-bottom:1px solid #E5E7EB;
+
+
+}
+
+
+
+.card-content{
+
+
+    padding:32px;
+
+
+}
+
+
+
+
+
+
+
+
+/* Profile */
+
+
+.profile-image{
+
+
+    width:140px;
+
+
+    height:140px;
+
+
+    border-radius:50%;
+
+
+    object-fit:cover;
+
+
+    border:4px solid #1A1A1A;
+
+
+}
+
+
+
+
+
+.profile-placeholder{
+
+
+    width:140px;
+
+
+    height:140px;
+
+
+    border-radius:50%;
+
+
+    background:#1A1A1A;
+
+
+    color:white;
+
+
+    display:flex;
+
+
+    justify-content:center;
+
+
+    align-items:center;
+
+
+    margin:auto;
+
+
+    font-size:50px;
+
+
+    font-weight:800;
+
+
+}
+
+
+
+
+
+.profile-table{
+
+
+    width:100%;
+
+
+}
+
+
+
+.profile-table tr{
+
+
+    border-bottom:1px solid #E5E7EB;
+
+
+}
+
+
+
+.profile-table th{
+
+
+    padding:14px 0;
+
+
+    color:#6B7280;
+
+
+}
+
+
+
+.profile-table td{
+
+
+    padding:14px 0;
+
+
+    font-weight:600;
+
+
+}
+
+
+
+
+
+
+
+
+/* Upload */
+
+
+.upload-card{
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    justify-content:center;
+
+
+    text-align:center;
+
+
+    padding:40px;
+
+
+}
+
+
+
+.upload-title{
+
+
+    font-size:2rem;
+
+
+    font-weight:800;
+
+
+}
+
+
+
+
+
+
+
+
+
+/* Assignment Table */
+
+
+.assignments-card{
+
+
+    margin-bottom:30px;
+
+
+}
+
+
+
+.dashboard-table{
+
+
+    border-collapse:separate;
+
+
+    border-spacing:0 12px;
+
+
+}
+
+
+
+.dashboard-table thead th{
+
+
+    border:none;
+
+
+    color:#6B7280;
+
+
+    font-size:.85rem;
+
+
+    text-transform:uppercase;
+
+
+}
+
+
+
+.dashboard-table tbody tr{
+
+
+    background:#FAFAFA;
+
+
+    border-radius:20px;
+
+
+}
+
+
+
+.dashboard-table td{
+
+
+    padding:18px;
+
+
+    border:none;
+
+
+}
+
+
+
+
+
+
+
+
+.table-btn{
+
+
+    padding:8px 18px;
+
+
+    border-radius:999px;
+
+
+    border:1px solid #1A1A1A;
+
+
+    color:#1A1A1A;
+
+
+    text-decoration:none;
+
+
+    font-size:.85rem;
+
+
+    font-weight:700;
+
+
+}
+
+
+
+.table-btn:hover{
+
+
+    background:#1A1A1A;
+
+
+    color:white;
+
+
+}
+
+
+
+
+
+
+
+
+/* Status badges */
+
+
+.status-badge{
+
+
+    display:inline-flex;
+
+
+    padding:7px 14px;
+
+
+    border-radius:999px;
+
+
+    font-size:.8rem;
+
+
+    font-weight:700;
+
+
+}
+
+
+
+.success{
+
+
+    background:#DFF7E5;
+
+
+    color:#15803D;
+
+
+}
+
+
+
+.warning{
+
+
+    background:#FEF3C7;
+
+
+    color:#92400E;
+
+
+}
+
+
+
+.danger{
+
+
+    background:#FEE2E2;
+
+
+    color:#B91C1C;
+
+
+}
+
+
+
+.dark{
+
+
+    background:#1A1A1A;
+
+
+    color:white;
+
+
+}
+
+
+
+
+
+
+
+
+.remark-cell{
+
+
+    max-width:250px;
+
+
+}
+
+
+
+
+
+
+
+
+.resubmit-btn{
+
+
+    padding:8px 18px;
+
+
+    border-radius:999px;
+
+
+    background:#1A1A1A;
+
+
+    color:white;
+
+
+    text-decoration:none;
+
+
+    font-size:.85rem;
+
+
+    font-weight:700;
+
+
+}
+
+
+
+.resubmit-btn:hover{
+
+
+    background:#333;
+
+
+    color:white;
+
+
+}
+
+
+
+
+
+
+
+
+.empty-state{
+
+
+    text-align:center;
+
+
+    padding:60px 20px;
+
+
+}
+
+
+
+
+
+
+
+
+/* Responsive */
+
+
+@media(max-width:992px){
+
+
+.dashboard-header{
+
+
+    flex-direction:column;
+
+
+    gap:20px;
+
+
+    text-align:center;
+
+
+}
+
+
+
+.dashboard-title{
+
+
+    font-size:2rem;
+
+
+}
+
+
+
+}
+
+
+
+
+@media(max-width:768px){
+
+
+.card-content{
+
+
+    padding:24px;
+
+
+}
+
+
+
+.stat-number{
+
+
+    font-size:2.3rem;
+
+
+}
+
+
+
+.dashboard-header{
+
+
+    padding:25px;
+
+
+}
+
+
+}
+
+
+
+</style>
+
+
 {% endblock %}
+

@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
+import os
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,13 +32,24 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 
+
 ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='127.0.0.1,localhost',
-    cast=lambda v: [host.strip() for host in v.split(',')]
+    "ALLOWED_HOSTS",
+    default="127.0.0.1,localhost,outcast-itunes-backfire.ngrok-free.dev",
+    cast=lambda v: [host.strip() for host in v.split(",")]
 )
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "outcast-itunes-backfire.ngrok-free.dev",
+]
 
 AUTH_USER_MODEL = "accounts.User"
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://outcast-itunes-backfire.ngrok-free.dev",
+    "https://*.ngrok-free.dev",
+]
 
 # Application definition
 
@@ -147,3 +161,29 @@ LOGIN_REDIRECT_URL = "student_dashboard"
 
 LOGOUT_REDIRECT_URL = "login"
 
+
+
+from dotenv import load_dotenv
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / ".env")
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = os.getenv(
+    "EMAIL_HOST_USER"
+)
+
+EMAIL_HOST_PASSWORD = os.getenv(
+    "EMAIL_HOST_PASSWORD"
+)
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
