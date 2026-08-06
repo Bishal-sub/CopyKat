@@ -1,364 +1,490 @@
-{% extends 'base.html' %}
-
-{% block title %}
-CopyKat | Resubmit Assignment
-{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% block title %} CopyKat | Resubmit Assignment {%endblock %} {% block content %}
 
 <div class="container py-5">
+  <div class="copykat-container">
+    <div class="page-header mb-4">
+      <h1 class="page-title">Resubmit Assignment</h1>
 
-    <div class="text-center mb-5">
-
-        <h1 class="display-5 fw-bold">
-             Resubmit Assignment
-        </h1>
-
-        <p class="text-muted">
-            Upload a corrected version based on your teacher's feedback.
-        </p>
-
+      <p class="page-subtitle">
+        Upload a corrected version based on your teacher's feedback.
+      </p>
     </div>
 
-    <div class="row justify-content-center">
+    <div class="main-card">
+      <div class="card-body-custom">
+        {% if messages %} {% for message in messages %}
 
-        <div class="col-lg-8">
+        <div class="alert custom-alert-danger mb-4">{{ message }}</div>
 
-            <div class="card shadow-sm border-0">
+        {% endfor %} {% endif %} {% if assignment.resubmission_used %}
 
-                <div class="card-body p-4">
+        <div class="alert custom-alert-danger mb-4">
+          <strong> Resubmission Limit Reached </strong>
 
-                    {% if messages %}
+          <br />
 
-                        {% for message in messages %}
-
-                            <div class="alert alert-danger">
-
-                                {{ message }}
-
-                            </div>
-
-                        {% endfor %}
-
-                    {% endif %}
-
-                    {% if assignment.resubmission_used %}
-
-                    <div class="alert alert-danger">
-
-                        <strong>
-                            Resubmission Limit Reached
-                        </strong>
-
-                        <br>
-
-                        You have already used your one allowed resubmission attempt.
-
-                    </div>
-
-                    {% endif %}
-
-                    <div class="alert alert-warning">
-
-                        <h5 class="fw-bold mb-2">
-
-                            Teacher Feedback
-
-                        </h5>
-
-                        {{ assignment.teacher_remark|default:"No remark provided." }}
-
-                    </div>
-
-                    <div class="row g-3 mb-4">
-
-                        <div class="col-md-6">
-
-                            <div class="alert alert-danger mb-0">
-
-                                <strong>Status:</strong>
-
-                                {{ assignment.get_status_display }}
-
-                            </div>
-
-                        </div>
-
-                        <div class="col-md-6">
-
-                            <div class="alert alert-secondary mb-0">
-
-                                <strong>Previous Similarity:</strong>
-
-                                {{ assignment.similarity_percentage }}%
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    {% if assignment.matched_assignment %}
-
-                    <div class="alert alert-info">
-
-                        <strong>
-                            Most Similar Assignment
-                        </strong>
-
-                        <hr>
-
-                        <p class="mb-1">
-
-                            <strong>Title:</strong>
-
-                            {{ assignment.matched_assignment.title }}
-
-                        </p>
-
-                        <p class="mb-0">
-
-                            <strong>Student:</strong>
-
-                            {{ assignment.matched_assignment.student.full_name }}
-
-                        </p>
-
-                    </div>
-
-                    {% endif %}
-
-                    <div class="card bg-light border-0 mb-4">
-
-                        <div class="card-body">
-
-                            <h5 class="fw-bold mb-3">
-
-                                Assignment Information
-
-                            </h5>
-
-                            <div class="row">
-
-                                <div class="col-md-6 mb-3">
-
-                                    <label class="form-label fw-bold">
-
-                                        Title
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        value="{{ assignment.title }}"
-                                        readonly
-                                    >
-
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-
-                                    <label class="form-label fw-bold">
-
-                                        Subject
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        value="{{ assignment.subject }}"
-                                        readonly
-                                    >
-
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-
-                                <div class="col-md-6 mb-3">
-
-                                    <label class="form-label fw-bold">
-
-                                        Teacher
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        value="{{ assignment.teacher.full_name }}"
-                                        readonly
-                                    >
-
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-
-                                    <label class="form-label fw-bold">
-
-                                        Semester
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        value="{{ assignment.semester }}"
-                                        readonly
-                                    >
-
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-
-                                <div class="col-md-6 mb-3">
-
-                                    <label class="form-label fw-bold">
-
-                                        Level
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        value="{{ assignment.get_level_display }}"
-                                        readonly
-                                    >
-
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-
-                                    <label class="form-label fw-bold">
-
-                                        Submitted On
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        value="{{ assignment.submitted_at|date:'M d, Y H:i' }}"
-                                        readonly
-                                    >
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="card border-0 bg-light mb-4">
-
-                        <div class="card-body">
-
-                            <h5 class="fw-bold mb-3">
-
-                                Current Submission
-
-                            </h5>
-
-                            <a
-                                href="{{ assignment.file.url }}"
-                                target="_blank"
-                                class="btn btn-outline-primary"
-                            >
-                                 View Current File
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                    {% if not assignment.resubmission_used %}
-
-                    <form
-                        method="POST"
-                        enctype="multipart/form-data"
-                    >
-
-                        {% csrf_token %}
-
-                        <div class="card border-0 bg-light">
-
-                            <div class="card-body">
-
-                                <h5 class="fw-bold mb-3">
-
-                                    Upload Corrected File
-
-                                </h5>
-
-                                <input
-                                    type="file"
-                                    name="file"
-                                    class="form-control"
-                                    accept=".pdf,.doc,.docx"
-                                    required
-                                >
-
-                                <div class="form-text mt-2">
-
-                                    Supported formats:
-                                    PDF, DOC, DOCX
-
-                                    <br>
-
-                                    Maximum file size:
-                                    10 MB
-
-                                    <br>
-
-                                    This action can only be performed once.
-
-                                    <br>
-
-                                    Your previous file will be permanently replaced.
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="d-flex gap-2 mt-4">
-
-                            <button
-                                type="submit"
-                                class="btn btn-danger btn-lg"
-                            >
-                                 Upload Corrected Assignment
-                            </button>
-
-                            <a
-                                href="{% url 'student_dashboard' %}"
-                                class="btn btn-secondary btn-lg"
-                            >
-                                Cancel
-                            </a>
-
-                        </div>
-
-                    </form>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
+          You have already used your one allowed resubmission attempt.
         </div>
 
-    </div>
+        {% endif %}
 
+        <div class="custom-feedback mb-4">
+          <h5 class="fw-bold mb-2">Teacher Feedback</h5>
+
+          {{ assignment.teacher_remark|default:"No remark provided." }}
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-md-6">
+            <div class="status-box danger-box">
+              <strong> Status: </strong>
+
+              {{ assignment.get_status_display }}
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="status-box neutral-box">
+              <strong> Previous Similarity: </strong>
+
+              {{ assignment.similarity_percentage }}%
+            </div>
+          </div>
+        </div>
+
+        {% if assignment.matched_assignment %}
+
+        <div class="similar-card mb-4">
+          <h5 class="fw-bold">Most Similar Assignment</h5>
+
+          <hr />
+
+          <p class="mb-2">
+            <strong> Title: </strong>
+
+            {{ assignment.matched_assignment.title }}
+          </p>
+
+          <p class="mb-0">
+            <strong> Student: </strong>
+
+            {{ assignment.matched_assignment.student.full_name }}
+          </p>
+        </div>
+
+        {% endif %}
+
+        <div class="inner-card mb-4">
+          <div class="inner-header">Assignment Information</div>
+
+          <div class="inner-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold"> Title </label>
+
+                <input
+                  type="text"
+                  class="form-control custom-input"
+                  value="{{ assignment.title }}"
+                  readonly
+                />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold"> Subject </label>
+
+                <input
+                  type="text"
+                  class="form-control custom-input"
+                  value="{{ assignment.subject }}"
+                  readonly
+                />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold"> Teacher </label>
+
+                <input
+                  type="text"
+                  class="form-control custom-input"
+                  value="{{ assignment.teacher.full_name }}"
+                  readonly
+                />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold"> Semester </label>
+
+                <input
+                  type="text"
+                  class="form-control custom-input"
+                  value="{{ assignment.semester }}"
+                  readonly
+                />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold"> Level </label>
+
+                <input
+                  type="text"
+                  class="form-control custom-input"
+                  value="{{ assignment.get_level_display }}"
+                  readonly
+                />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold"> Submitted On </label>
+
+                <input
+                  type="text"
+                  class="form-control custom-input"
+                  value="{{ assignment.submitted_at|date:'M d, Y H:i' }}"
+                  readonly
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="inner-card mb-4">
+          <div class="inner-header">Current Submission</div>
+
+          <div class="inner-body">
+            <a
+              href="{{ assignment.file.url }}"
+              target="_blank"
+              class="btn dark-pill-btn"
+            >
+              View Current File
+            </a>
+          </div>
+        </div>
+
+        {% if not assignment.resubmission_used %}
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="inner-card mb-4">
+            <div class="inner-header">Upload Corrected File</div>
+
+            <div class="inner-body">
+              <input
+                type="file"
+                name="file"
+                class="form-control custom-input"
+                accept=".pdf,.doc,.docx"
+                required
+              />
+
+              <div class="upload-help mt-3">
+                Supported formats: PDF, DOC, DOCX
+
+                <br />
+
+                Maximum file size: 10 MB
+
+                <br />
+
+                This action can only be performed once.
+
+                <br />
+
+                Your previous file will be permanently replaced.
+              </div>
+            </div>
+          </div>
+
+          <div class="button-group mb-3">
+            <button type="submit" class="btn danger-pill-btn">
+              Upload Corrected Assignment
+            </button>
+
+            <a href="{% url 'student_dashboard' %}" class="btn cancel-pill-btn">
+              Cancel
+            </a>
+          </div>
+        </form>
+
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
+
+<style>
+  body {
+    background: #e6ecef;
+
+    font-family: "Plus Jakarta Sans", sans-serif;
+
+    color: #1a1a1a;
+
+    padding: 16px;
+  }
+
+  /* Same width as navbar */
+
+  .copykat-container {
+    width: 100%;
+
+    max-width: 1360px;
+
+    margin: auto;
+  }
+
+  .page-header {
+    background: #ffffff;
+
+    border-radius: 32px;
+
+    padding: 40px 48px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  }
+
+  .page-title {
+    font-size: 3rem;
+
+    font-weight: 800;
+
+    letter-spacing: -1.5px;
+
+    margin-bottom: 10px;
+  }
+
+  .page-subtitle {
+    color: #6b7280;
+
+    margin: 0;
+  }
+
+  .main-card {
+    background: #ffffff;
+
+    border-radius: 32px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+
+    overflow: hidden;
+  }
+
+  .card-body-custom {
+    padding: 48px;
+  }
+
+  .custom-alert-danger {
+    background: #fee2e2;
+
+    color: #991b1b;
+
+    border: none;
+
+    border-radius: 24px;
+
+    padding: 20px;
+  }
+
+  .custom-feedback {
+    background: #fef3c7;
+
+    color: #92400e;
+
+    padding: 25px;
+
+    border-radius: 24px;
+  }
+
+  .status-box {
+    padding: 22px;
+
+    border-radius: 24px;
+
+    font-weight: 700;
+  }
+
+  .danger-box {
+    background: #fee2e2;
+
+    color: #991b1b;
+  }
+
+  .neutral-box {
+    background: #f3f4f6;
+  }
+
+  .similar-card {
+    background: #dbeafe;
+
+    color: #1e40af;
+
+    padding: 25px;
+
+    border-radius: 24px;
+  }
+
+  .inner-card {
+    background: #f8f9fa;
+
+    border-radius: 28px;
+
+    overflow: hidden;
+
+    border: 1px solid #e5e7eb;
+  }
+
+  .inner-header {
+    background: #ffffff;
+
+    padding: 24px 30px;
+
+    font-weight: 800;
+
+    font-size: 1.2rem;
+
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .inner-body {
+    padding: 30px;
+  }
+
+  .custom-input {
+    padding: 14px 18px;
+
+    border-radius: 18px;
+
+    border: 2px solid #e5e7eb;
+  }
+
+  .custom-input:focus {
+    border-color: #1a1a1a;
+
+    box-shadow: none;
+  }
+
+  .dark-pill-btn {
+    display: inline-flex;
+
+    padding: 14px 32px;
+
+    border-radius: 999px;
+
+    background: #1a1a1a;
+
+    color: white;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition: 0.25s;
+  }
+
+  .dark-pill-btn:hover {
+    background: #333;
+
+    color: white;
+
+    transform: translateY(-2px);
+  }
+
+  .danger-pill-btn {
+    padding: 15px 32px;
+
+    border-radius: 999px;
+
+    background: #dc2626;
+
+    color: white;
+
+    font-weight: 700;
+
+    border: none;
+
+    transition: 0.25s;
+  }
+
+  .danger-pill-btn:hover {
+    background: #b91c1c;
+
+    color: white;
+  }
+
+  .cancel-pill-btn {
+    padding: 15px 32px;
+
+    border-radius: 999px;
+
+    background: #1a1a1a;
+
+    color: white;
+
+    font-weight: 700;
+
+    text-decoration: none;
+  }
+
+  .cancel-pill-btn:hover {
+    background: #333;
+
+    color: white;
+  }
+
+  .button-group {
+    display: flex;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+  }
+
+  .upload-help {
+    color: #6b7280;
+
+    line-height: 1.7;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding: 10px;
+    }
+
+    .page-header {
+      padding: 30px 24px;
+
+      border-radius: 24px;
+    }
+
+    .page-title {
+      font-size: 2.2rem;
+    }
+
+    .card-body-custom {
+      padding: 24px;
+    }
+
+    .inner-body {
+      padding: 22px;
+    }
+
+    .button-group {
+      flex-direction: column;
+    }
+
+    .dark-pill-btn,
+    .danger-pill-btn,
+    .cancel-pill-btn {
+      width: 100%;
+
+      justify-content: center;
+    }
+  }
+</style>
 
 {% endblock %}

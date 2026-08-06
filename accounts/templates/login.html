@@ -132,9 +132,6 @@
                   class="password-eye">
 
 
-                  👁
-
-
                 </button>
 
 
@@ -340,47 +337,33 @@ body{
 
 /* Password eye */
 
-
-.password-wrapper{
-
-    position:relative;
-
+.password-field-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
 }
 
-
-
-.password-eye{
-
-    position:absolute;
-
-    right:18px;
-
-    top:50%;
-
-    transform:translateY(-50%);
-
-    border:none;
-
-    background:transparent;
-
-    cursor:pointer;
-
-    font-size:18px;
-
-    color:#6B7280;
-
-    transition:.2s ease;
-
+.password-field-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+    box-sizing: border-box;
 }
 
-
-
-.password-eye:hover{
-
-    color:#1A1A1A;
-
+.password-eye {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
 }
 
+.password-eye:hover {
+    color: #000;
+}
 
 
 
@@ -494,38 +477,40 @@ document.getElementById("forgotPassword")
 
 // Password show/hide
 
+document.querySelectorAll('input[type="password"]').forEach(function (input) {
 
-const togglePassword =
-document.getElementById("togglePassword");
+    let wrapper = document.createElement("div");
+    wrapper.className = "password-field-wrapper";
 
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
 
-const password =
-document.getElementById("password");
+    let button = document.createElement("button");
+    button.type = "button";
+    button.className = "password-eye";
+    button.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
 
+    wrapper.appendChild(button);
 
+    button.addEventListener("click", function () {
 
-togglePassword.addEventListener("click", function(){
+        if (input.type === "password") {
 
+            input.type = "text";
+            button.innerHTML = '<i class="fa-solid fa-eye"></i>';
 
-    const type =
-    password.getAttribute("type") === "password"
-    ? "text"
-    : "password";
+            
 
+        } else {
 
+            input.type = "password";
+            button.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
 
-    password.setAttribute("type", type);
+        }
 
-
-
-    this.textContent =
-    type === "password"
-    ? "👁"
-    : "🙈";
-
+    });
 
 });
-
 
 </script>
 

@@ -1,368 +1,544 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block title %} CopyKat | Review Assignment {%endblock %} {% block content %}
 
-{% block title %}
-CopyKat | Review Assignment
-{% endblock %}
+<div class="container py-4">
+  <div class="copykat-container">
+    <!-- Header -->
 
-{% block content %}
+    <div class="page-header mb-4">
+      <h1 class="page-title">Review Assignment</h1>
 
-<div class="container py-5">
-
-    <div class="row justify-content-center">
-
-        <div class="col-lg-9">
-
-            <div class="card shadow-lg border-0">
-
-                <div class="card-header bg-dark text-white">
-
-                    <h3 class="mb-0">
-                        Review Assignment
-                    </h3>
-
-                </div>
-
-                <div class="card-body p-4">
-
-                    {% if messages %}
-
-                        {% for message in messages %}
-
-                            <div class="alert alert-success">
-                                {{ message }}
-                            </div>
-
-                        {% endfor %}
-
-                    {% endif %}
-
-                    <!-- Assignment Details -->
-
-                    <div class="mb-4">
-
-                        <h4 class="fw-bold">
-                            {{ assignment.title }}
-                        </h4>
-
-                        <hr>
-
-                        <div class="row">
-
-                            <div class="col-md-6">
-
-                                <p>
-                                    <strong>Student:</strong>
-                                    {{ assignment.student.full_name }}
-                                </p>
-
-                                <p>
-                                    <strong>Subject:</strong>
-                                    {{ assignment.subject.name }}
-                                </p>
-
-                                <p>
-                                    <strong>Level:</strong>
-                                    {{ assignment.get_level_display }}
-                                </p>
-
-                            </div>
-
-                            <div class="col-md-6">
-
-                                <p>
-                                    <strong>Semester:</strong>
-                                    {{ assignment.semester }}
-                                </p>
-
-                                <p>
-                                    <strong>Status:</strong>
-                                    {{ assignment.get_status_display }}
-                                </p>
-
-                                <p>
-                                    <strong>Submitted At:</strong>
-                                    {{ assignment.submitted_at }}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- Submitted File -->
-
-                    <div class="card bg-light border-0 mb-4">
-
-                        <div class="card-body">
-
-                            <h5 class="fw-bold mb-3">
-                                Submitted File
-                            </h5>
-
-                            <a
-                                href="{{ assignment.file.url }}"
-                                target="_blank"
-                                class="btn btn-primary"
-                            >
-                                📄 View Submitted Assignment
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                    <!-- Similarity Report -->
-
-                    <div class="card border-0 bg-warning-subtle mb-4">
-
-                        <div class="card-body">
-
-                            <h5 class="fw-bold mb-3">
-                                Similarity Report
-                            </h5>
-
-                            <h1 class="fw-bold text-danger">
-                                {{ assignment.similarity_percentage }}%
-                            </h1>
-
-                            {% if assignment.matched_assignment %}
-
-                                <div class="alert alert-warning mt-3 mb-0">
-
-                                    This assignment has matching content with another submission.
-
-                                </div>
-
-                            {% else %}
-
-                                <div class="alert alert-success mt-3 mb-0">
-
-                                    No matching assignment found.
-
-                                </div>
-
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-                    <!-- Matched Assignment Information -->
-
-                    {% if assignment.matched_assignment %}
-
-                    <div class="card border-warning shadow-sm mb-4">
-
-                        <div class="card-header bg-warning">
-
-                            <h5 class="mb-0 fw-bold">
-                                Matched Assignment Information
-                            </h5>
-
-                        </div>
-
-                        <div class="card-body">
-
-                            <div class="row">
-
-                                <div class="col-md-6 mb-3">
-
-                                    <strong>Student Name</strong>
-
-                                    <div>
-                                        {{ assignment.matched_assignment.student.full_name }}
-                                    </div>
-
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-
-                                    <strong>Assignment Title</strong>
-
-                                    <div>
-                                        {{ assignment.matched_assignment.title }}
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-
-                                <div class="col-md-4 mb-3">
-
-                                    <strong>Subject</strong>
-
-                                    <div>
-                                        {{ assignment.matched_assignment.subject.name }}
-                                    </div>
-
-                                </div>
-
-                                <div class="col-md-4 mb-3">
-
-                                    <strong>Level</strong>
-
-                                    <div>
-                                        {{ assignment.matched_assignment.get_level_display }}
-                                    </div>
-
-                                </div>
-
-                                <div class="col-md-4 mb-3">
-
-                                    <strong>Semester</strong>
-
-                                    <div>
-                                        {{ assignment.matched_assignment.semester }}
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-
-                                <div class="col-md-6 mb-3">
-
-                                    <strong>Submitted Date</strong>
-
-                                    <div>
-                                        {{ assignment.matched_assignment.submitted_at }}
-                                    </div>
-
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-
-                                    <strong>Similarity</strong>
-
-                                    <div class="fw-bold text-danger">
-                                        {{ assignment.similarity_percentage }}%
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <div class="d-flex gap-2 flex-wrap mt-3">
-
-                                <a
-                                    href="{{ assignment.file.url }}"
-                                    target="_blank"
-                                    class="btn btn-primary"
-                                >
-                                    📄 View Current File
-                                </a>
-
-                                <a
-                                    href="{{ assignment.matched_assignment.file.url }}"
-                                    target="_blank"
-                                    class="btn btn-warning"
-                                >
-                                    📄 View Matched File
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    {% endif %}
-
-                    <!-- Review Form -->
-
-                    <form method="POST">
-
-                        {% csrf_token %}
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-bold">
-                                Teacher Remark
-                            </label>
-
-                            <textarea
-                                name="remark"
-                                class="form-control"
-                                rows="5"
-                                placeholder="Write your feedback..."
-                            >{{ assignment.teacher_remark }}</textarea>
-
-                        </div>
-
-                        <div class="mb-4">
-
-                            <label class="form-label fw-bold">
-                                Review Status
-                            </label>
-
-                            <select
-                                name="status"
-                                class="form-select"
-                            >
-
-                                <option
-                                    value="accepted"
-                                    {% if assignment.status == "accepted" %}
-                                    selected
-                                    {% endif %}
-                                >
-                                    Accept
-                                </option>
-
-                                <option
-                                    value="rejected"
-                                    {% if assignment.status == "rejected" %}
-                                    selected
-                                    {% endif %}
-                                >
-                                    Reject
-                                </option>
-
-                                <option
-                                    value="pending"
-                                    {% if assignment.status == "pending" %}
-                                    selected
-                                    {% endif %}
-                                >
-                                    Pending
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                        <div class="d-flex gap-2">
-
-                            <button
-                                type="submit"
-                                class="btn btn-success btn-lg"
-                            >
-                                Save Review
-                            </button>
-
-                            <a
-                                href="{% url 'teacher_dashboard' %}"
-                                class="btn btn-secondary btn-lg"
-                            >
-                                Back
-                            </a>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-        </div>
-
+      <p class="page-subtitle">
+        Review similarity reports and provide feedback to students.
+      </p>
     </div>
 
+    <!-- Main Card -->
+
+    <div class="main-card">
+      <div class="card-body-custom">
+        {% if messages %} {% for message in messages %}
+
+        <div class="alert custom-alert-success mb-4">{{ message }}</div>
+
+        {% endfor %} {% endif %}
+
+        <!-- Assignment Details -->
+
+        <div class="inner-card mb-4">
+          <div class="inner-header">Assignment Details</div>
+
+          <div class="inner-body">
+            <h3 class="fw-bold mb-3">{{ assignment.title }}</h3>
+
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="detail-box mb-3">
+                  <strong>Student</strong>
+
+                  <div>{{ assignment.student.full_name }}</div>
+                </div>
+
+                <div class="detail-box mb-3">
+                  <strong>Subject</strong>
+
+                  <div>{{ assignment.subject.name }}</div>
+                </div>
+
+                <div class="detail-box">
+                  <strong>Level</strong>
+
+                  <div>{{ assignment.get_level_display }}</div>
+                </div>
+              </div>
+
+              <div class="col-lg-6">
+                <div class="detail-box mb-3">
+                  <strong>Semester</strong>
+
+                  <div>{{ assignment.semester }}</div>
+                </div>
+
+                <div class="detail-box mb-3">
+                  <strong>Status</strong>
+
+                  <div>{{ assignment.get_status_display }}</div>
+                </div>
+
+                <div class="detail-box">
+                  <strong>Submitted</strong>
+
+                  <div>{{ assignment.submitted_at }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submitted File -->
+
+        <div class="inner-card mb-4">
+          <div class="inner-header">Submitted File</div>
+
+          <div class="inner-body text-center">
+            <a
+              href="{{ assignment.file.url }}"
+              target="_blank"
+              class="btn dark-pill-btn"
+            >
+              📄 View Submitted Assignment
+            </a>
+          </div>
+        </div>
+
+        <!-- Similarity -->
+
+        <div class="similarity-card mb-4">
+          <div class="similarity-number">
+            {{ assignment.similarity_percentage }}%
+          </div>
+
+          <div class="similarity-label">Similarity Score</div>
+
+          {% if assignment.matched_assignment %}
+
+          <div class="alert custom-alert-warning mt-4 mb-0">
+            Matching assignment detected.
+          </div>
+
+          {% else %}
+
+          <div class="alert custom-alert-success mt-4 mb-0">
+            No matching assignment found.
+          </div>
+
+          {% endif %}
+        </div>
+        <!-- Matched Assignment Information -->
+
+        {% if assignment.matched_assignment %}
+
+        <div class="inner-card mb-4">
+          <div class="inner-header warning-header">
+            Matched Assignment Information
+          </div>
+
+          <div class="inner-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <strong> Student Name </strong>
+
+                <div>{{ assignment.matched_assignment.student.full_name }}</div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <strong> Assignment Title </strong>
+
+                <div>{{ assignment.matched_assignment.title }}</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <strong> Subject </strong>
+
+                <div>{{ assignment.matched_assignment.subject.name }}</div>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <strong> Level </strong>
+
+                <div>{{ assignment.matched_assignment.get_level_display }}</div>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <strong> Semester </strong>
+
+                <div>{{ assignment.matched_assignment.semester }}</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <strong> Submitted Date </strong>
+
+                <div>{{ assignment.matched_assignment.submitted_at }}</div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <strong> Similarity </strong>
+
+                <div class="text-danger fw-bold">
+                  {{ assignment.similarity_percentage }}%
+                </div>
+              </div>
+            </div>
+
+            <div class="button-group mt-3">
+              <a
+                href="{{ assignment.file.url }}"
+                target="_blank"
+                class="dark-pill-btn"
+              >
+                📄 View Current File
+              </a>
+
+              <a
+                href="{{ assignment.matched_assignment.file.url }}"
+                target="_blank"
+                class="warning-pill-btn"
+              >
+                📄 View Matched File
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {% endif %}
+
+        <!-- Review Form -->
+
+        <div class="inner-card">
+          <div class="inner-header">Teacher Review</div>
+
+          <div class="inner-body">
+            <form method="POST">
+              {% csrf_token %}
+
+              <div class="mb-4">
+                <label class="form-label fw-bold"> Teacher Remark </label>
+
+                <textarea
+                  name="remark"
+                  class="form-control custom-input"
+                  rows="5"
+                  placeholder="Write your feedback..."
+                >
+{{ assignment.teacher_remark }}</textarea
+                >
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fw-bold"> Review Status </label>
+
+                <select name="status" class="form-select custom-input">
+                  <option
+                    value="accepted"
+                    {%
+                    if
+                    assignment.status=""
+                    ="accepted"
+                    %}
+                    selected
+                    {%
+                    endif
+                    %}
+                  >
+                    Accept
+                  </option>
+
+                  <option
+                    value="rejected"
+                    {%
+                    if
+                    assignment.status=""
+                    ="rejected"
+                    %}
+                    selected
+                    {%
+                    endif
+                    %}
+                  >
+                    Reject
+                  </option>
+
+                  <option
+                    value="pending"
+                    {%
+                    if
+                    assignment.status=""
+                    ="pending"
+                    %}
+                    selected
+                    {%
+                    endif
+                    %}
+                  >
+                    Pending
+                  </option>
+                </select>
+              </div>
+
+              <div class="button-group">
+                <button type="submit" class="success-pill-btn">
+                  Save Review
+                </button>
+
+                <a href="{% url 'teacher_dashboard' %}" class="cancel-pill-btn">
+                  Back
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<style>
+  body {
+    background: #e6ecef;
+
+    font-family: "Plus Jakarta Sans", sans-serif;
+
+    color: #1a1a1a;
+
+    padding: 16px;
+  }
+
+  .copykat-container {
+    max-width: 1360px;
+
+    width: 100%;
+
+    margin: auto;
+  }
+
+  .page-header {
+    background: white;
+
+    border-radius: 32px;
+
+    padding: 40px 48px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  }
+
+  .page-title {
+    font-size: 3rem;
+
+    font-weight: 800;
+
+    margin-bottom: 10px;
+  }
+
+  .page-subtitle {
+    color: #6b7280;
+  }
+
+  .main-card {
+    background: white;
+
+    border-radius: 32px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+
+    overflow: hidden;
+  }
+
+  .card-body-custom {
+    padding: 48px;
+  }
+
+  .inner-card {
+    background: #f8f9fa;
+
+    border-radius: 28px;
+
+    overflow: hidden;
+
+    border: 1px solid #e5e7eb;
+  }
+
+  .inner-header {
+    background: white;
+
+    padding: 24px 30px;
+
+    font-weight: 800;
+
+    font-size: 1.2rem;
+
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .warning-header {
+    background: #fef3c7;
+  }
+
+  .inner-body {
+    padding: 30px;
+  }
+
+  .detail-box {
+    background: white;
+
+    padding: 18px;
+
+    border-radius: 20px;
+  }
+
+  .similarity-card {
+    background: #e4e3f8;
+
+    border-radius: 28px;
+
+    padding: 35px;
+
+    text-align: center;
+  }
+
+  .similarity-number {
+    font-size: 4rem;
+
+    font-weight: 800;
+  }
+
+  .similarity-label {
+    color: #6b7280;
+  }
+
+  .custom-alert-success {
+    background: #dcfce7;
+
+    color: #166534;
+
+    border: none;
+
+    border-radius: 20px;
+  }
+
+  .custom-alert-warning {
+    background: #fef3c7;
+
+    color: #92400e;
+
+    border: none;
+
+    border-radius: 20px;
+  }
+
+  .custom-input {
+    padding: 14px 18px;
+
+    border-radius: 18px;
+
+    border: 2px solid #e5e7eb;
+  }
+
+  .custom-input:focus {
+    border-color: #111;
+
+    box-shadow: none;
+  }
+
+  .button-group {
+    display: flex;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+  }
+
+  .dark-pill-btn,
+  .success-pill-btn,
+  .warning-pill-btn,
+  .cancel-pill-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 14px 32px;
+
+    border-radius: 999px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    border: none;
+
+    transition: 0.25s ease;
+  }
+
+  .dark-pill-btn {
+    background: #1a1a1a;
+
+    color: white;
+  }
+
+  .dark-pill-btn:hover {
+    background: #333;
+
+    color: white;
+  }
+
+  .success-pill-btn {
+    background: #16a34a;
+
+    color: white;
+  }
+
+  .success-pill-btn:hover {
+    background: #15803d;
+  }
+
+  .warning-pill-btn {
+    background: #f59e0b;
+
+    color: #111;
+  }
+
+  .warning-pill-btn:hover {
+    background: #d97706;
+  }
+
+  .cancel-pill-btn {
+    background: #1a1a1a;
+
+    color: white;
+  }
+
+  .cancel-pill-btn:hover {
+    background: #333;
+
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding: 10px;
+    }
+
+    .page-header {
+      padding: 30px 24px;
+    }
+
+    .page-title {
+      font-size: 2.2rem;
+    }
+
+    .card-body-custom {
+      padding: 24px;
+    }
+
+    .button-group {
+      flex-direction: column;
+    }
+
+    .dark-pill-btn,
+    .success-pill-btn,
+    .warning-pill-btn,
+    .cancel-pill-btn {
+      width: 100%;
+    }
+
+    .similarity-number {
+      font-size: 3rem;
+    }
+  }
+</style>
 
 {% endblock %}

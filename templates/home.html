@@ -6,81 +6,76 @@
 
 <div class="copykat-container">
 
-  <section class="card hero-section mb-4">
+  <section class="landing-card hero-section mb-4 position-relative overflow-hidden">
 
-    <nav class="navbar">
-      <a class="brand" href="/">
-        <span>CopyKat</span>
-      </a>
+    <div class="d-flex justify-content-between align-items-center mb-4 position-relative" style="z-index: 10;">
+      <a class="fw-bold fs-5 text-dark text-decoration-none" href="/">CopyKat</a>
 
-      <div class="nav-btn">
+      <div>
         {% if request.user.is_authenticated %}
           {% if request.user.role == "student" %}
-            <a href="{% url 'student_dashboard' %}" class="btn-outline-pill">Dashboard</a>
+            <a href="{% url 'student_dashboard' %}" class="btn btn-outline-dark rounded-pill px-4 py-2">Dashboard</a>
           {% elif request.user.role == "teacher" %}
-            <a href="{% url 'teacher_dashboard' %}" class="btn-outline-pill">Dashboard</a>
+            <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-dark rounded-pill px-4 py-2">Dashboard</a>
           {% elif request.user.role == "admin" %}
-            <a href="/admin/" class="btn-outline-pill">Admin Panel</a>
+            <a href="/admin/" class="btn btn-outline-dark rounded-pill px-4 py-2">Admin Panel</a>
           {% endif %}
         {% else %}
-          <a href="{% url 'login' %}" class="btn-outline-pill">Login</a>
+          <a href="{% url 'login' %}" class="btn btn-outline-dark rounded-pill px-4 py-2">Login</a>
         {% endif %}
       </div>
-    </nav>
+    </div>
 
     <svg class="hero-wave-graphic" viewBox="0 0 1000 500" preserveAspectRatio="none">
       <path d="M -100,220 C 150,460 350,40 650,260 C 850,390 1100,90 1200,220 L 1200,500 L -100,500 Z" fill="#DDE2F7" opacity="0.45"/>
       <path d="M -50,320 C 200,120 450,420 750,160 C 950,290 1150,160 1250,260" fill="none" stroke="#C3CDF2" stroke-width="2.5" opacity="0.7"/>
     </svg>
 
-    <div class="hero-content-grid">
-      <div class="hero-left-text">
-        <h1 class="hero-title-text">
-          INTERNAL ASSIGNMENT
-          <span class="hero-italic-accent">SIMILARITY DETECTION</span>
-        </h1>
+    <div class="position-relative" style="z-index: 2;">
+      <h1 class="hero-title-text">
+        INTERNAL ASSIGNMENT
+        <span class="hero-italic-accent">SIMILARITY DETECTION</span>
+      </h1>
 
-        <p class="hero-paragraph-text">
-          Detect copied assignments within your institution. Compare student PDF & DOCX submissions against your internal archive with instant TF-IDF and Cosine similarity scoring.
-        </p>
+      <p class="hero-paragraph-text">
+        Detect copied assignments within your institution. Compare student PDF & DOCX submissions against your internal archive with instant TF-IDF and Cosine similarity scoring.
+      </p>
 
-        <div class="hero-cta-wrapper">
-          {% if request.user.is_authenticated %}
-            {% if request.user.role == "student" %}
-              <a href="{% url 'student_dashboard' %}" class="btn-dark-pill">Get Started</a>
-            {% elif request.user.role == "teacher" %}
-              <a href="{% url 'teacher_dashboard' %}" class="btn-dark-pill">Get Started</a>
-            {% elif request.user.role == "admin" %}
-              <a href="/admin/" class="btn-dark-pill">Admin Panel</a>
-            {% endif %}
-          {% else %}
-            <a href="{% url 'register' %}" class="btn-dark-pill">Get Started</a>
+      <div class="hero-cta-wrapper mb-4">
+        {% if request.user.is_authenticated %}
+          {% if request.user.role == "student" %}
+            <a href="{% url 'student_dashboard' %}" class="btn btn-dark rounded-pill px-5 py-2">Get Started</a>
+          {% elif request.user.role == "teacher" %}
+            <a href="{% url 'teacher_dashboard' %}" class="btn btn-dark rounded-pill px-5 py-2">Get Started</a>
+          {% elif request.user.role == "admin" %}
+            <a href="/admin/" class="btn btn-dark rounded-pill px-5 py-2">Admin Panel</a>
           {% endif %}
-        </div>
+        {% else %}
+          <a href="{% url 'register' %}" class="btn btn-dark rounded-pill px-5 py-2">Get Started</a>
+        {% endif %}
+      </div>
 
-        <div class="hero-app-availability">
-          <span>Self-hosted & free for colleges </span>
-          
-        </div>
+      <div class="small fw-bold text-muted">
+        <span>Self-hosted & free for colleges</span>
       </div>
     </div>
 
   </section>
 
-  <section class="card stats-immense-section mb-4" id="workflow">
+  <section class="landing-card stats-immense-section mb-4">
 
-    <div class="stats-counter-row">
-      <div class="stat-counter-block">
+    <div class="stats-counter-row row text-center pb-4 border-bottom mb-5 g-0">
+      <div class="col-12 col-md-4 mb-3 mb-md-0">
         <div class="stat-number">100%</div>
         <div class="stat-label">INTERNAL ARCHIVE SCANNING</div>
       </div>
 
-      <div class="stat-counter-block">
+      <div class="col-12 col-md-4 mb-3 mb-md-0">
         <div class="stat-number">$0</div>
         <div class="stat-label">RECURRING LICENSE COSTS</div>
       </div>
 
-      <div class="stat-counter-block">
+      <div class="col-12 col-md-4">
         <div class="stat-number">99.4%</div>
         <div class="stat-label">SIMILARITY ACCURACY</div>
       </div>
@@ -97,19 +92,21 @@
         </div>
 
         {% if request.user.is_authenticated %}
-          <a href="{% url 'student_dashboard' %}" class="btn-dark-pill">Go to Dashboard</a>
+          <a href="{% url 'student_dashboard' %}" class="btn btn-dark rounded-pill px-5 py-2 d-inline-block">Go to Dashboard</a>
         {% else %}
-          <a href="{% url 'register' %}" class="btn-dark-pill">Create Account</a>
+          <a href="{% url 'register' %}" class="btn btn-dark rounded-pill px-5 py-2 d-inline-block">Create Account</a>
         {% endif %}
       </div>
     </div>
 
   </section>
-    <section class="card community-section mb-4" id="features">
 
-    <div class="community-top-grid">
+  <!-- Community Section -->
+  <section class="landing-card community-section mb-4">
 
-      <div class="community-left">
+    <div class="community-top-grid row g-5 align-items-center">
+
+      <div class="col-lg-6 community-left">
         <h2 class="community-heading">
           BUILT FOR COLLEGES<br>& UNIVERSITIES
         </h2>
@@ -117,11 +114,9 @@
         <p class="community-subtext">
           Digital submissions made copying easy. CopyKat gives faculty an automated, affordable way to detect internal assignment similarity.
         </p>
-
-        
       </div>
 
-      <div class="community-right">
+      <div class="col-lg-6 community-right">
         <h3 class="community-right-heading">
           THE BEST EXPERIENCE IN ACADEMIC INTEGRITY
         </h3>
@@ -130,10 +125,10 @@
           Students submit, TF-IDF engine compares against internal archives, teachers make final Accept/Reject decisions.
         </p>
 
-        <div class="community-avatar-row">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=60" class="user-avatar" alt="User">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=60" class="user-avatar" alt="User">
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&auto=format&fit=crop&q=60" class="user-avatar" alt="User">
+        <div class="community-avatar-row d-flex align-items-center">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=60" class="user-avatar rounded-circle border border-white" width="32" height="32" alt="User">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=60" class="user-avatar rounded-circle border border-white" width="32" height="32" alt="User">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&auto=format&fit=crop&q=60" class="user-avatar rounded-circle border border-white" width="32" height="32" alt="User">
           <span class="avatar-count-badge">+1K</span>
         </div>
       </div>
@@ -142,9 +137,10 @@
 
   </section>
 
-  <section class="card why-us-section mb-4" id="about">
+  <!-- Why Us Section -->
+  <section class="landing-card why-us-section mb-4">
 
-    <div class="why-us-header">
+    <div class="why-us-header mb-5">
       <h2 class="why-us-heading">
         WHY COLLEGES CHOOSE COPYKAT?
       </h2>
@@ -192,7 +188,8 @@
 
   </section>
 
-  <section class="card final-cta-card mb-4">
+  <!-- Final CTA Section -->
+  <section class="landing-card final-cta-card mb-4 bg-dark text-white text-center">
 
     <h2 class="final-cta-title">JOIN COPYKAT TODAY</h2>
 
@@ -203,20 +200,20 @@
     <div>
       {% if request.user.is_authenticated %}
         {% if request.user.role == "student" %}
-          <a href="{% url 'student_dashboard' %}" class="btn-outline-pill text-white border-white">
+          <a href="{% url 'student_dashboard' %}" class="btn btn-outline-light rounded-pill px-4 py-2">
             Go to Dashboard
           </a>
         {% elif request.user.role == "teacher" %}
-          <a href="{% url 'teacher_dashboard' %}" class="btn-outline-pill text-white border-white">
+          <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-light rounded-pill px-4 py-2">
             Go to Dashboard
           </a>
         {% elif request.user.role == "admin" %}
-          <a href="/admin/" class="btn-outline-pill text-white border-white">
+          <a href="/admin/" class="btn btn-outline-light rounded-pill px-4 py-2">
             Go to Admin Panel
           </a>
         {% endif %}
       {% else %}
-        <a href="{% url 'register' %}" class="btn-outline-pill text-white border-white">
+        <a href="{% url 'register' %}" class="btn btn-outline-light rounded-pill px-4 py-2">
           Create Account
         </a>
       {% endif %}
@@ -224,16 +221,17 @@
 
   </section>
 
-  <footer class="footer">
+  <!-- Footer -->
+  <footer class="landing-card footer d-flex justify-content-between align-items-center">
 
     <div>
-      <div class="footer-brand">CopyKat</div>
-      <div class="footer-sub">
+      <div class="footer-brand fw-bold fs-5">CopyKat</div>
+      <div class="footer-sub small text-muted">
         Assignment Similarity Detection System for Institutions
       </div>
     </div>
 
-    <div class="footer-copy">
+    <div class="footer-copy small text-muted">
       &copy; 2026 CopyKat. All Rights Reserved.
     </div>
 
@@ -242,468 +240,617 @@
 </div>
 
 <style>
-body {
-  background-color: #E6ECEF !important;
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-  color: #1A1A1A;
-  padding: 16px;
-  margin: 0;
-}
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-.copykat-container {
-  max-width: 1360px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 
-.card {
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  body {
+    background-color: #E6ECEF !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    color: #1A1A1A;
+    padding: 16px;
+    margin: 0;
+  }
+
+  .copykat-container {
+    max-width: 1360px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+.landing-card {
   background-color: #FFFFFF;
   border-radius: 32px;
   padding: 48px 56px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  border: none;
+
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity .8s ease, transform .8s ease;
 }
 
-.navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 32px;
-  position: relative;
-  z-index: 10;
+.landing-card.show{
+  opacity:1;
+  transform:translateY(0);
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  font-weight: 800;
-  font-size: 1.25rem;
-  color: #1A1A1A;
-}
-
-.btn-outline-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 9px 22px;
-  border-radius: 999px;
-  border: 1.5px solid #1A1A1A;
-  background: transparent;
-  color: #1A1A1A;
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-decoration: none;
-  transition: all .2s ease;
-}
-
-.btn-outline-pill:hover {
-  background-color: #1A1A1A;
-  color: #FFFFFF;
-}
-
-.btn-dark-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 32px;
-  border-radius: 999px;
-  background-color: #1A1A1A;
-  color: #FFFFFF;
-  font-weight: 700;
-  font-size: .9rem;
-  text-decoration: none;
-  transition: transform .2s ease;
-}
-
-.btn-dark-pill:hover {
-  transform: translateY(-2px);
-  background-color: #333333;
-}
-
-/* Hero */
-
-.hero-section {
-  min-height: 540px;
-}
-
-.hero-wave-graphic {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.hero-content-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  position: relative;
-  z-index: 2;
-}
-
-.hero-title-text {
-  font-size: 3.6rem;
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -1.5px;
-  color: #1A1A1A;
-  margin-bottom: 24px;
-}
-
-.hero-italic-accent {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic;
-  font-weight: 600;
-  display: block;
-}
-
-.hero-paragraph-text {
-  font-size: 1rem;
-  color: #5F6672;
-  line-height: 1.6;
-  margin-bottom: 32px;
-  max-width: 520px;
-}
-
-.hero-cta-wrapper {
-  margin-bottom: 36px;
-}
-
-.hero-app-availability {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: .85rem;
-  font-weight: 600;
-  color: #6B7280;
-}
-
-
-/* Stats Section */
-
-.stats-counter-row {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  text-align: center;
-  padding-bottom: 36px;
-  border-bottom: 1px solid #E5E7EB;
-  margin-bottom: 40px;
-}
-
-.stat-number {
-  font-size: 3.6rem;
-  font-weight: 800;
-  line-height: 1;
-  color: #1A1A1A;
-}
-
-.stat-label {
-  font-size: .8rem;
-  font-weight: 700;
-  color: #6B7280;
-  margin-top: 8px;
-}
-
-.immense-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-}
-
-.immense-heading {
-  font-size: 3rem;
-  font-weight: 800;
-  line-height: 1.08;
-  margin-bottom: 16px;
-}
-
-.immense-italic-subheading {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic;
-  font-size: 1.3rem;
-  color: #4B5563;
-  margin-bottom: 28px;
-}
-.community-top-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 32px;
-}
-
-.community-heading {
-  font-size: 2.3rem;
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -1px;
-  margin-bottom: 14px;
-}
-
-.community-subtext {
-  font-size: .9rem;
-  color: #6B7280;
-  margin-bottom: 24px;
-}
-
-.community-right-heading {
-  font-size: 1.35rem;
-  font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 8px;
-}
-
-.community-right-subtext {
-  font-size: .85rem;
-  color: #6B7280;
-  margin-bottom: 16px;
-}
-
-.community-avatar-row {
-  display: flex;
-  align-items: center;
-}
-
-.user-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid #FFFFFF;
-  margin-left: -8px;
-  object-fit: cover;
-}
-
-.user-avatar:first-child {
-  margin-left: 0;
-}
-
-.avatar-count-badge {
-  background: #111111;
-  color: #FFFFFF;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 20px;
-  margin-left: -4px;
-}
-
-
-/* Why Us Section */
-
-.why-us-header {
-  margin-bottom: 36px;
-}
-
-.why-us-heading {
-  font-size: 2.6rem;
-  font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -1px;
-}
-
-.three-feature-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 20px;
-}
-
-.feature-box {
-  border-radius: 24px;
-  padding: 32px 28px;
-  min-height: 260px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.box-lavender {
-  background-color: #E4E3F8;
-}
-
-.box-white {
-  background-color: #FFFFFF;
-  border: 1px solid #E5E7EB;
-}
-
-.box-sage {
-  background-color: #E2E8D5;
-}
-
-.box-icon-circle {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1.5px solid #1A1A1A;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-
-.box-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  line-height: 1.15;
-  margin-bottom: 8px;
-}
-
-.box-desc {
-  font-size: .85rem;
-  color: #4B5563;
-  line-height: 1.4;
-}
-
-
-/* Final CTA */
-
-.final-cta-card {
-  background-color: #1A1A1A;
-  color: #FFFFFF;
-  text-align: center;
-  padding: 56px 40px;
-}
-
-.final-cta-title {
-  font-size: 2.6rem;
-  font-weight: 800;
-  letter-spacing: -1px;
-  margin-bottom: 8px;
-}
-
-.final-cta-sub {
-  color: #9CA3AF;
-  font-size: 1rem;
-  margin-bottom: 28px;
-}
-
-
-/* Footer */
-
-.footer {
-  background-color: #FFFFFF;
-  border-radius: 32px;
-  padding: 28px 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,.03);
-}
-
-.footer-brand {
-  font-weight: 800;
-  font-size: 1.1rem;
-}
-
-.footer-sub {
-  font-size: .85rem;
-  color: #6B7280;
-}
-
-.footer-copy {
-  font-size: .85rem;
-  color: #6B7280;
-}
-
-
-/* Responsive */
-
-@media (max-width: 1024px) {
-
-  .hero-content-grid,
-  .immense-grid,
-  .three-feature-cards-grid,
-  .community-top-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-title-text {
-    font-size: 3rem;
-  }
-
-}
-@media (max-width: 768px) {
-
-  body {
-    padding: 10px;
-  }
-
-  .card {
-    padding: 32px 24px;
-    border-radius: 24px;
-  }
-
-  .navbar {
-    margin-bottom: 20px;
-  }
-
-  .brand {
-    font-size: 1.1rem;
-  }
-
-  .btn-outline-pill {
-    padding: 8px 16px;
-    font-size: .8rem;
-  }
-
+  /* Hero Section */
   .hero-section {
-    min-height: auto;
+    min-height: 540px;
+  }
+
+  .hero-wave-graphic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    animation: pulse 4s ease-in-out infinite;
   }
 
   .hero-title-text {
-    font-size: 2.2rem;
+    font-size: 3.6rem;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: #1A1A1A;
+    margin-bottom: 24px;
+  }
+
+  .hero-italic-accent {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-weight: 600;
+    display: block;
   }
 
   .hero-paragraph-text {
-    font-size: .9rem;
+    font-size: 1rem;
+    color: #5F6672;
+    line-height: 1.6;
+    margin-bottom: 32px;
+    max-width: 520px;
   }
 
-  .stats-counter-row {
-    grid-template-columns: 1fr;
-    gap: 24px;
+  .hero-cta-wrapper {
+    margin-bottom: 36px;
   }
+
+  .btn {
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .btn-dark {
+    background-color: #1A1A1A;
+    border-color: #1A1A1A;
+  }
+
+  .btn-dark:hover {
+    background-color: #333333;
+    border-color: #333333;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(26, 26, 26, 0.2);
+  }
+
+  .btn-outline-dark {
+    border-color: #1A1A1A;
+    color: #1A1A1A;
+  }
+
+  .btn-outline-dark:hover {
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline-light:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+  }
+
+  /* Stats Section */
+  .stats-counter-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    text-align: center;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+  }
+
+
 
   .stat-number {
-    font-size: 2.8rem;
+    font-size: 3.6rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #1A1A1A;
+    transition: all 0.3s ease;
+  }
+
+  .stats-counter-row > div:hover .stat-number {
+    color: #333333;
+    transform: scale(1.05);
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #6B7280;
+    margin-top: 8px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+
+  .immense-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    animation: fadeInUp 0.8s ease-out 0.3s both;
   }
 
   .immense-heading {
-    font-size: 2.2rem;
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.08;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
   }
+
+  .immense-heading:hover {
+    color: #333333;
+  }
+
+  .immense-italic-subheading {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: #4B5563;
+    margin-bottom: 28px;
+    transition: all 0.3s ease;
+  }
+
+  /* Community Section */
+  .community-top-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 32px;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+  }
+
+
 
   .community-heading {
-    font-size: 2rem;
+    font-size: 2.3rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+    transition: all 0.3s ease;
   }
 
+  .community-heading:hover {
+    color: #333333;
+    transform: translateX(5px);
+  }
+
+  .community-subtext {
+    font-size: 0.9rem;
+    color: #6B7280;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+  }
+
+  .community-right-heading {
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .community-right-heading:hover {
+    color: #333333;
+  }
+
+  .community-right-subtext {
+    font-size: 0.85rem;
+    color: #6B7280;
+    margin-bottom: 16px;
+  }
+
+  .community-avatar-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+    margin-left: -8px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .user-avatar:first-child {
+    margin-left: 0;
+    animation-delay: 0s;
+  }
+
+  .user-avatar:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .user-avatar:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+
+  .user-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .avatar-count-badge {
+    background: #111111;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 20px;
+    margin-left: -4px;
+    animation: float 3s ease-in-out infinite 0.3s;
+    transition: all 0.3s ease;
+  }
+
+  .avatar-count-badge:hover {
+    background: #333333;
+    transform: scale(1.1);
+  }
+
+  /* Why Us Section */
+  
+
   .why-us-heading {
-    font-size: 2rem;
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -1px;
+    transition: all 0.3s ease;
+  }
+
+  .why-us-heading:hover {
+    color: #333333;
   }
 
   .three-feature-cards-grid {
-    gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 
   .feature-box {
-    min-height: auto;
-    padding: 24px;
+    border-radius: 24px;
+    padding: 32px 28px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.8s ease-out;
+    cursor: pointer;
+  }
+
+
+  .feature-box:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .box-lavender {
+    background-color: #E4E3F8;
+  }
+
+  .box-lavender:hover {
+    background: linear-gradient(135deg, #E4E3F8 0%, #D4D1F0 100%);
+  }
+
+  .box-white {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+  }
+
+  .box-white:hover {
+    border-color: #1A1A1A;
+    box-shadow: inset 0 0 0 1px #1A1A1A, 0 16px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .box-sage {
+    background-color: #E2E8D5;
+  }
+
+  .box-sage:hover {
+    background: linear-gradient(135deg, #E2E8D5 0%, #D4DEC5 100%);
+  }
+
+  .box-icon-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1.5px solid #1A1A1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .feature-box:hover .box-icon-circle {
+    transform: scale(1.15) rotate(10deg);
+    background-color: #1A1A1A;
+    color: white;
+  }
+
+  .box-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .feature-box:hover .box-title {
+    color: #333333;
+  }
+
+  .box-desc {
+    font-size: 0.85rem;
+    color: #4B5563;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+  }
+
+  .feature-box:hover .box-desc {
+    color: #333333;
+  }
+
+  /* Final CTA */
+  .final-cta-card {
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 56px 40px;
+    animation: fadeInUp 0.8s ease-out 0.3s both;
+  }
+
+  .final-cta-card:hover {
+    background: linear-gradient(135deg, #1A1A1A 0%, #333333 100%);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
   }
 
   .final-cta-title {
-    font-size: 2rem;
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
   }
 
+  .final-cta-card:hover .final-cta-title {
+    transform: scale(1.05);
+  }
+
+  .final-cta-sub {
+    color: #9CA3AF;
+    font-size: 1rem;
+    margin-bottom: 28px;
+    transition: all 0.3s ease;
+  }
+
+  .final-cta-card:hover .final-cta-sub {
+    color: #D1D5DB;
+  }
+
+  /* Footer */
   .footer {
-    flex-direction: column;
-    gap: 16px;
-    text-align: center;
-    padding: 24px;
+    background-color: #FFFFFF;
+    border-radius: 32px;
+    padding: 28px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,.03);
   }
 
-}
+  .footer-brand {
+    font-weight: 800;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+  }
+
+  .footer:hover .footer-brand {
+    color: #333333;
+  }
+
+  .footer-sub {
+    font-size: 0.85rem;
+    color: #6B7280;
+    transition: all 0.3s ease;
+  }
+
+  .footer-copy {
+    font-size: 0.85rem;
+    color: #6B7280;
+    transition: all 0.3s ease;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .landing-card {
+      padding: 40px;
+    }
+
+    .hero-title-text {
+      font-size: 3rem;
+    }
+
+    .stats-counter-row {
+      grid-template-columns: 1fr;
+    }
+
+    .community-top-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .three-feature-cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding: 10px;
+    }
+
+    .landing-card {
+      padding: 32px 24px;
+      border-radius: 24px;
+    }
+
+    .hero-section {
+      min-height: auto;
+    }
+
+    .hero-title-text {
+      font-size: 2.2rem;
+    }
+
+    .hero-paragraph-text {
+      font-size: 0.9rem;
+    }
+
+    .stat-number {
+      font-size: 2.8rem;
+    }
+
+    .immense-heading {
+      font-size: 2.2rem;
+    }
+
+    .community-heading {
+      font-size: 2rem;
+    }
+
+    .community-top-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .why-us-heading {
+      font-size: 2rem;
+    }
+
+    .three-feature-cards-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .feature-box {
+      min-height: auto;
+      padding: 24px;
+    }
+
+    .final-cta-title {
+      font-size: 2rem;
+    }
+
+    .footer {
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+      padding: 24px;
+    }
+  }
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+
+            if (entry.isIntersecting) {
+                entry.target.classList.add("show");
+            } else {
+                entry.target.classList.remove("show");
+            }
+
+        });
+    }, {
+        threshold: 0.1
+    });
+
+
+    document.querySelectorAll(".landing-card").forEach(function(section) {
+        observer.observe(section);
+    });
+
+});
+</script>
 {% endblock %}

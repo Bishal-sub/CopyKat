@@ -1,304 +1,388 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block title %} CopyKat | Submit Assignment {%endblock %} {% block content %}
 
-{% block title %}
-CopyKat | Submit Assignment
-{% endblock %}
+<div class="container-fluid py-4 px-3 px-lg-5">
+  <div class="submit-wrapper">
+    <!-- Header -->
 
-{% block content %}
+    <div class="submit-header mb-5">
+      <h1 class="submit-title">📤 Submit Assignment</h1>
 
-<div class="container py-5">
-
-    <div class="text-center mb-5">
-
-        <h1 class="display-5 fw-bold">
-            📤 Submit Assignment
-        </h1>
-
-        <p class="text-muted">
-            Upload your assignment and generate a similarity report.
-        </p>
-
+      <p class="submit-subtitle">
+        Upload your assignment and generate a similarity report.
+      </p>
     </div>
 
     <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %} {% if form.errors %}
 
-        {% csrf_token %}
+      <div class="error-box mb-4">
+        <h5 class="fw-bold">Please fix the following errors:</h5>
 
-        {% if form.errors %}
+        <ul class="mb-0">
+          {% for field in form %} {% for error in field.errors %}
 
-        <div class="alert alert-danger">
+          <li><strong>{{ field.label }}</strong>: {{ error }}</li>
 
-            <h5 class="fw-bold">
-                Please fix the following errors:
-            </h5>
+          {% endfor %} {% endfor %} {% for error in form.non_field_errors %}
 
-            <ul class="mb-0">
+          <li>{{ error }}</li>
 
-                {% for field in form %}
+          {% endfor %}
+        </ul>
+      </div>
 
-                    {% for error in field.errors %}
+      {% endif %}
 
-                        <li>
-                            <strong>{{ field.label }}</strong>:
-                            {{ error }}
-                        </li>
+      <div class="row g-4">
+        <!-- Assignment Information -->
 
-                    {% endfor %}
+        <div class="col-lg-7">
+          <div class="submit-card h-100">
+            <div class="card-heading">Assignment Information</div>
 
-                {% endfor %}
+            <div class="card-content">
+              <div class="mb-4">
+                <label class="form-label fw-semibold"> Assignment Title </label>
 
-                {% for error in form.non_field_errors %}
+                {{ form.title }}
+              </div>
 
-                    <li>{{ error }}</li>
+              <div class="mb-4">
+                <label class="form-label fw-semibold"> Student Name </label>
 
-                {% endfor %}
+                <input
+                  type="text"
+                  class="form-control custom-input"
+                  value="{{ request.user.full_name }}"
+                  readonly
+                />
+              </div>
 
-            </ul>
+              <div class="mb-4">
+                <label class="form-label fw-semibold"> Subject </label>
 
-        </div>
+                {{ form.subject }}
+              </div>
 
-        {% endif %}
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold"> Teacher </label>
 
-        <div class="row g-4">
-
-            <div class="col-lg-7">
-
-                <div class="card shadow-sm border-0 h-100">
-
-                    <div class="card-body p-4">
-
-                        <h4 class="fw-bold mb-4">
-                            Assignment Information
-                        </h4>
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-semibold">
-                                Assignment Title
-                            </label>
-
-                            {{ form.title }}
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-semibold">
-                                Student Name
-                            </label>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                value="{{ request.user.full_name }}"
-                                readonly
-                            >
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-semibold">
-                                Subject
-                            </label>
-
-                            {{ form.subject }}
-
-                        </div>
-
-                        <div class="row">
-
-                            <div class="col-md-4">
-
-                                <label class="form-label fw-semibold">
-                                    Teacher
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="teacher_name"
-                                    class="form-control"
-                                    readonly
-                                >
-
-                            </div>
-
-                            <div class="col-md-4">
-
-                                <label class="form-label fw-semibold">
-                                    Level
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="level"
-                                    class="form-control"
-                                    readonly
-                                >
-
-                            </div>
-
-                            <div class="col-md-4">
-
-                                <label class="form-label fw-semibold">
-                                    Semester
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="semester"
-                                    class="form-control"
-                                    readonly
-                                >
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
+                  <input
+                    type="text"
+                    id="teacher_name"
+                    class="form-control custom-input"
+                    readonly
+                  />
                 </div>
 
-            </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold"> Level </label>
 
-            <div class="col-lg-5">
-
-                <div class="card shadow-sm border-0 h-100">
-
-                    <div class="card-body p-4">
-
-                        <h4 class="fw-bold mb-4">
-                            Upload Document
-                        </h4>
-
-                        <div class="border rounded-4 p-5 text-center bg-light">
-
-                            <div class="display-4 mb-3">
-                                📄
-                            </div>
-
-                            <h5 class="fw-bold">
-                                Upload Assignment File
-                            </h5>
-
-                            <p class="text-muted small">
-                                Supported formats:
-                                PDF, DOC, DOCX
-                            </p>
-
-                            {{ form.file }}
-
-                            <small class="text-muted d-block mt-3">
-                                Maximum file size: 10 MB
-                            </small>
-
-                        </div>
-
-                        <div class="d-grid mt-4">
-
-                            <button
-                                type="submit"
-                                class="btn btn-warning btn-lg fw-bold"
-                            >
-                                Submit Assignment
-                            </button>
-
-                        </div>
-
-                    </div>
-
+                  <input
+                    type="text"
+                    id="level"
+                    class="form-control custom-input"
+                    readonly
+                  />
                 </div>
 
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold"> Semester </label>
+
+                  <input
+                    type="text"
+                    id="semester"
+                    class="form-control custom-input"
+                    readonly
+                  />
+                </div>
+              </div>
             </div>
-
+          </div>
         </div>
+        <!-- Upload Document -->
 
+        <div class="col-lg-5">
+          <div class="submit-card h-100">
+            <div class="card-heading">Upload Document</div>
+
+            <div class="card-content">
+              <div class="upload-box">
+                <div class="upload-icon">📄</div>
+
+                <h5 class="fw-bold">Upload Assignment File</h5>
+
+                <p class="upload-text">Supported formats: PDF, DOC, DOCX</p>
+
+                {{ form.file }}
+
+                <small class="upload-limit"> Maximum file size: 10 MB </small>
+              </div>
+
+              <div class="d-grid mt-4">
+                <button type="submit" class="submit-btn">
+                  Submit Assignment
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </form>
+  </div>
+</div>
 
-</div><script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const subjectSelect = document.getElementById("subject-select");
 
-document.addEventListener("DOMContentLoaded", function () {
+    const teacherField = document.getElementById("teacher_name");
 
-    const subjectSelect =
-        document.getElementById("subject-select");
+    const levelField = document.getElementById("level");
 
-    const teacherField =
-        document.getElementById("teacher_name");
-
-    const levelField =
-        document.getElementById("level");
-
-    const semesterField =
-        document.getElementById("semester");
-
-    console.log("Subject Select:", subjectSelect);
+    const semesterField = document.getElementById("semester");
 
     if (!subjectSelect) {
-        alert("Subject dropdown not found!");
-        return;
+      return;
     }
 
     function loadSubjectInfo() {
+      const subjectId = subjectSelect.value;
 
-        const subjectId = subjectSelect.value;
+      if (!subjectId) {
+        teacherField.value = "";
 
-        if (!subjectId) {
+        levelField.value = "";
 
+        semesterField.value = "";
+
+        return;
+      }
+
+      fetch(`/assignments/subject-details/${subjectId}/`)
+        .then((response) => response.json())
+
+        .then((data) => {
+          if (data.success) {
+            teacherField.value = data.teacher;
+
+            levelField.value =
+              data.level.charAt(0).toUpperCase() + data.level.slice(1);
+
+            semesterField.value = data.semester;
+          } else {
             teacherField.value = "";
+
             levelField.value = "";
+
             semesterField.value = "";
-
-            return;
-        }
-
-        fetch(
-            `/assignments/subject-details/${subjectId}/`
-        )
-        .then(response => response.json())
-        .then(data => {
-
-            console.log("API Response:", data);
-
-            if (data.success) {
-
-                teacherField.value =
-                    data.teacher;
-
-                levelField.value =
-                    data.level.charAt(0).toUpperCase() +
-                    data.level.slice(1);
-
-                semesterField.value =
-                    data.semester;
-
-            } else {
-
-                teacherField.value = "";
-                levelField.value = "";
-                semesterField.value = "";
-
-            }
-
+          }
         })
-        .catch(error => {
 
-            console.error(
-                "Fetch Error:",
-                error
-            );
-
+        .catch((error) => {
+          console.error("Fetch Error:", error);
         });
-
     }
 
-    subjectSelect.addEventListener(
-        "change",
-        loadSubjectInfo
-    );
+    subjectSelect.addEventListener("change", loadSubjectInfo);
 
     loadSubjectInfo();
-
-});
-
+  });
 </script>
+
+<style>
+  body {
+    background: #e6ecef;
+
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+
+  .submit-wrapper {
+    max-width: 1400px;
+
+    margin: auto;
+  }
+
+  .submit-header {
+    background: white;
+
+    padding: 40px;
+
+    border-radius: 32px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  }
+
+  .submit-title {
+    font-size: 3rem;
+
+    font-weight: 800;
+
+    letter-spacing: -1px;
+
+    margin-bottom: 10px;
+  }
+
+  .submit-subtitle {
+    color: #6b7280;
+
+    font-size: 1rem;
+  }
+
+  .error-box {
+    background: #fee2e2;
+
+    border-radius: 24px;
+
+    padding: 25px;
+
+    color: #991b1b;
+  }
+
+  .submit-card {
+    background: white;
+
+    border-radius: 32px;
+
+    overflow: hidden;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+
+    transition: 0.3s ease;
+  }
+
+  .submit-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .card-heading {
+    padding: 25px 32px;
+
+    font-size: 1.25rem;
+
+    font-weight: 800;
+
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .card-content {
+    padding: 32px;
+  }
+
+  .custom-input,
+  select,
+  textarea {
+    width: 100%;
+
+    padding: 14px 18px;
+
+    border-radius: 18px;
+
+    border: 2px solid #e5e7eb;
+
+    font-size: 1rem;
+
+    transition: 0.2s;
+  }
+
+  .custom-input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+
+    border-color: #1a1a1a;
+
+    box-shadow: none;
+  }
+
+  .upload-box {
+    background: #f8f9fa;
+
+    border: 2px dashed #d1d5db;
+
+    border-radius: 28px;
+
+    padding: 50px 25px;
+
+    text-align: center;
+  }
+
+  .upload-icon {
+    font-size: 4rem;
+
+    margin-bottom: 20px;
+  }
+
+  .upload-text {
+    color: #6b7280;
+
+    font-size: 0.9rem;
+  }
+
+  .upload-limit {
+    display: block;
+
+    margin-top: 20px;
+
+    color: #6b7280;
+  }
+
+  .submit-btn {
+    background: #1a1a1a;
+
+    color: white;
+
+    border: none;
+
+    padding: 16px;
+
+    border-radius: 999px;
+
+    font-weight: 700;
+
+    font-size: 1rem;
+
+    transition: 0.25s;
+  }
+
+  .submit-btn:hover {
+    background: #333;
+
+    transform: translateY(-3px);
+  }
+
+  input[type="file"] {
+    margin-top: 15px;
+
+    width: 100%;
+
+    padding: 12px;
+
+    border-radius: 16px;
+
+    background: white;
+
+    border: 1px solid #d1d5db;
+  }
+
+  @media (max-width: 768px) {
+    .submit-header {
+      padding: 28px;
+    }
+
+    .submit-title {
+      font-size: 2.2rem;
+    }
+
+    .card-content {
+      padding: 24px;
+    }
+
+    .upload-box {
+      padding: 35px 15px;
+    }
+  }
+</style>
+
 {% endblock %}
