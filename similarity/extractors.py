@@ -1,65 +1,74 @@
 import fitz
-
 from docx import Document
 
 
-def extract_pdf_text(file_path):
+# PDF file bata text extract garne function
+def extract_pdf_text(file_path: str) -> str:
 
     try:
 
-        pdf = fitz.open(
-            file_path
-        )
+        # PDF file open garne
+        with fitz.open(file_path) as pdf:
 
-        text = ""
+            # sabai page ko text store garna list
+            text_parts = []
 
-        for page in pdf:
+            # PDF ko harek page ma loop chalaune
+            for page in pdf:
 
-            text += page.get_text()
+                # page ko text nikalera extra space hataune
+                page_text = page.get_text().strip()
 
-        pdf.close()
+                # khali page ignore garne
+                if page_text:
+                    text_parts.append(page_text)
 
-        if not text.strip():
+        # sabai page ko text combine garne
+        extracted_text = "\n".join(text_parts)
 
-            raise Exception(
-                "PDF contains no readable text."
-            )
-
-        return text
+        # empty PDF ko case ma empty string return garne
+        # analyze_assignment() le yo handle garxa
+        return extracted_text
 
     except Exception as e:
 
-        raise Exception(
-            f"PDF extraction failed: {str(e)}"
-        )
+        # PDF read garna error aayo vane exception throw garne
+        raise RuntimeError(
+            f"PDF extraction failed: {e}"
+        ) from e
 
 
-def extract_docx_text(file_path):
+# DOCX file bata text extract garne function
+def extract_docx_text(file_path: str) -> str:
 
     try:
 
-        document = Document(
-            file_path
-        )
+        # DOCX file open garne
+        document = Document(file_path)
 
-        text = "\n".join(
+        # paragraph haru ko text store garna list
+        text_parts = []
 
-            paragraph.text
+        # document ko harek paragraph ma loop chalaune
+        for paragraph in document.paragraphs:
 
-            for paragraph in document.paragraphs
+            # paragraph ko text nikalera extra space hataune
+            paragraph_text = paragraph.text.strip()
 
-        )
+            # khali paragraph ignore garne
+            if paragraph_text:
+                text_parts.append(paragraph_text)
 
-        if not text.strip():
+        # sabai paragraph ko text combine garne
+        extracted_text = "\n".join(text_parts)
 
-            raise Exception(
-                "DOCX contains no readable text."
-            )
-
-        return text
+        # empty DOCX ko case ma empty string return garne
+        # analyze_assignment() le yo handle garxa
+        return extracted_text
 
     except Exception as e:
 
-        raise Exception(
-            f"DOCX extraction failed: {str(e)}"
-        ) 
+        # DOCX read garna error aayo vane exception throw garne
+        raise RuntimeError(
+            f"DOCX extraction failed: {e}"
+        ) from e

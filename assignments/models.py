@@ -65,8 +65,9 @@ class Assignment(models.Model):
         auto_now_add=True,
     )
 
-    similarity_percentage = models.FloatField(
-        default=0,
+    similarity_percentage = models.CharField(
+        default="0%",
+        max_length=50,
     )
 
     matched_assignment = models.ForeignKey(

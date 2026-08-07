@@ -1,19 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.shortcuts import (
-    render,
-    redirect,
-    get_object_or_404,
-)
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-
+from django.http import JsonResponse
 import os
 
 from accounts.models import TeacherAssignment
-
 from .models import Assignment
 from .forms import AssignmentForm
-
 from similarity.services import analyze_assignment
 
 
@@ -27,11 +21,9 @@ def submit_assignment(request):
     if request.user.role != "student":
         return redirect("login")
 
-    teacher_assignments = (
-        TeacherAssignment.objects.select_related(
-            "teacher",
-            "subject",
-        )
+    teacher_assignments = TeacherAssignment.objects.select_related(
+        "teacher",
+        "subject",
     )
 
     if request.method == "POST":
@@ -47,11 +39,9 @@ def submit_assignment(request):
                 commit=False
             )
 
-            teacher_assignment = (
-                TeacherAssignment.objects.filter(
-                    subject=assignment.subject
-                ).first()
-            )
+            teacher_assignment = TeacherAssignment.objects.filter(
+                subject=assignment.subject
+            ).first()
 
             if not teacher_assignment:
 
@@ -110,10 +100,7 @@ def submit_assignment(request):
 # ==========================================
 
 @login_required
-def resubmit_assignment(
-    request,
-    assignment_id,
-):
+def resubmit_assignment(request, assignment_id):
 
     if request.user.role != "student":
         return redirect("login")
@@ -166,7 +153,7 @@ def resubmit_assignment(
 
             messages.error(
                 request,
-                "Only PDF, DOC and DOCX files are allowed."
+                "Only PDF and DOCX files are allowed."
             )
 
             return redirect(
@@ -174,9 +161,7 @@ def resubmit_assignment(
                 assignment_id=assignment.id,
             )
 
-        max_size = (
-            10 * 1024 * 1024
-        )
+        max_size = 10 * 1024 * 1024
 
         if new_file.size > max_size:
 
@@ -192,13 +177,12 @@ def resubmit_assignment(
 
         if assignment.file:
 
-            old_file_path = (
-                assignment.file.path
-            )
+            old_file_path = assignment.file.path
 
             if os.path.exists(
                 old_file_path
             ):
+
                 os.remove(
                     old_file_path
                 )
@@ -211,7 +195,9 @@ def resubmit_assignment(
 
         assignment.reviewed_at = None
 
-        assignment.similarity_percentage = 0
+        # purano similarity clear garne
+        # analysis paxi new value save hunxa
+        assignment.similarity_percentage = ""
 
         assignment.matched_assignment = None
 
@@ -246,10 +232,7 @@ def resubmit_assignment(
 # ==========================================
 
 @login_required
-def teacher_review(
-    request,
-    id,
-):
+def teacher_review(request, id):
 
     if request.user.role != "teacher":
         return redirect("login")
@@ -262,23 +245,17 @@ def teacher_review(
 
     if request.method == "POST":
 
-        assignment.teacher_remark = (
-            request.POST.get(
-                "remark",
-                ""
-            )
+        assignment.teacher_remark = request.POST.get(
+            "remark",
+            ""
         )
 
-        assignment.status = (
-            request.POST.get(
-                "status",
-                "pending"
-            )
+        assignment.status = request.POST.get(
+            "status",
+            "pending"
         )
 
-        assignment.reviewed_at = (
-            timezone.now()
-        )
+        assignment.reviewed_at = timezone.now()
 
         assignment.save()
 
@@ -298,23 +275,20 @@ def teacher_review(
             "assignment": assignment,
         },
     )
-    
-from django.http import JsonResponse
-from accounts.models import TeacherAssignment
 
+
+# ==========================================
+# SUBJECT DETAILS API
+# ==========================================
 
 def subject_details(request, subject_id):
 
-    teacher_assignment = (
-        TeacherAssignment.objects.filter(
-            subject_id=subject_id
-        )
-        .select_related(
-            "teacher",
-            "subject",
-        )
-        .first()
-    )
+    teacher_assignment = TeacherAssignment.objects.filter(
+        subject_id=subject_id
+    ).select_related(
+        "teacher",
+        "subject",
+    ).first()
 
     if not teacher_assignment:
 
