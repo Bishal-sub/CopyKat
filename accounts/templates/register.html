@@ -1,458 +1,186 @@
-{% extends 'base.html' %}
-
-{% block title %}
-Register | CopyKat
-{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% block title %} Register | CopyKat {% endblock %} {%block content %}
 
 <div class="container-fluid py-4 px-3 px-lg-5">
+  <div class="register-wrapper">
+   
 
+    <nav class="navbar register-navbar mb-4">
+      <a href="{% url 'home' %}" class="navbar-brand fw-bold fs-3 text-dark">
+        CopyKat
+      </a>
 
-    <div class="register-wrapper">
+      <a href="{% url 'login' %}" class="btn-outline-pill"> Login </a>
+    </nav>
 
 
-        <!-- Navbar -->
+    <div class="register-card">
+      <div class="text-center mb-5">
+        <h2 class="register-title">Create Account</h2>
 
-        <nav class="navbar register-navbar mb-4">
+        <p class="text-secondary">Start using CopyKat today</p>
+      </div>
 
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %} {% if form.non_field_errors %}
 
-            <a href="{% url 'home' %}"
-               class="navbar-brand fw-bold fs-3 text-dark">
+        <div class="alert alert-danger rounded-4">
+          {% for error in form.non_field_errors %}
 
-                CopyKat
+          <div>{{ error }}</div>
 
-            </a>
-
-
-
-            <a href="{% url 'login' %}"
-               class="btn-outline-pill">
-
-                Login
-
-            </a>
-
-
-        </nav>
-
-
-
-
-
-
-        <!-- Register Card -->
-
-
-        <div class="register-card">
-
-
-
-            <div class="text-center mb-5">
-
-
-                <h2 class="register-title">
-
-                    Create Account
-
-                </h2>
-
-
-
-                <p class="text-secondary">
-
-                    Start using CopyKat today
-
-                </p>
-
-
-            </div>
-
-
-
-
-
-
-
-            <form method="POST"
-                  enctype="multipart/form-data">
-
-
-                {% csrf_token %}
-
-
-
-
-                {% if form.non_field_errors %}
-
-
-                <div class="alert alert-danger rounded-4">
-
-
-                    {% for error in form.non_field_errors %}
-
-
-                    <div>
-
-                        {{ error }}
-
-                    </div>
-
-
-                    {% endfor %}
-
-
-                </div>
-
-
-                {% endif %}
-
-
-
-
-
-
-
-
-                <div class="row g-4">
-
-
-
-                    {% for field in form %}
-
-
-
-                    <div class="col-md-6">
-
-
-                        <label class="form-label fw-semibold">
-
-                            {{ field.label }}
-
-                        </label>
-
-
-
-
-                        {{ field }}
-
-
-
-
-
-                        {% if field.errors %}
-
-
-                        <div class="text-danger small mt-2">
-
-
-                            {% for error in field.errors %}
-
-
-                            <div>
-
-                                {{ error }}
-
-                            </div>
-
-
-                            {% endfor %}
-
-
-                        </div>
-
-
-                        {% endif %}
-
-
-
-                    </div>
-
-
-
-                    {% endfor %}
-
-
-
-                </div>
-
-
-
-
-
-
-
-                <button type="submit"
-                        class="btn register-btn w-100 mt-5">
-
-
-                    Create Account
-
-
-                </button>
-
-
-
-
-
-            </form>
-
-
-
-
-
-
-
-            <div class="text-center mt-4 text-secondary">
-
-
-                Already have an account?
-
-
-
-                <a href="{% url 'login' %}"
-                   class="fw-bold text-dark text-decoration-none">
-
-
-                    Login
-
-
-                </a>
-
-
-            </div>
-
-
-
-
+          {% endfor %}
         </div>
 
+        {% endif %}
 
+        <div class="row g-4">
+          {% for field in form %}
 
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"> {{ field.label }} </label>
+
+            {{ field }} {% if field.errors %}
+
+            <div class="text-danger small mt-2">
+              {% for error in field.errors %}
+
+              <div>{{ error }}</div>
+
+              {% endfor %}
+            </div>
+
+            {% endif %}
+          </div>
+
+          {% endfor %}
+        </div>
+
+        <button type="submit" class="btn register-btn w-100 mt-5">
+          Create Account
+        </button>
+      </form>
+
+      <div class="text-center mt-4 text-secondary">
+        Already have an account?
+
+        <a
+          href="{% url 'login' %}"
+          class="fw-bold text-dark text-decoration-none"
+        >
+          Login
+        </a>
+      </div>
     </div>
-
-
+  </div>
 </div>
 
-
-
-
-
-
-
-
-
 <style>
+  body {
+    background: #e6ecef;
 
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
 
-body{
+  /* Bigger main container */
 
-    background:#E6ECEF;
+  .register-wrapper {
+    width: 100%;
 
-    font-family:'Plus Jakarta Sans',sans-serif;
+    max-width: 1200px;
 
-}
+    margin: auto;
+  }
 
+  /* Navbar same size style */
 
+  .register-navbar {
+    width: 100%;
 
+    min-height: 80px;
 
+    background: #ffffff;
 
+    border-radius: 32px;
 
+    padding: 22px 40px;
 
-/* Bigger main container */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  }
 
+  /* Register Card */
 
-.register-wrapper{
+  .register-card {
+    width: 100%;
 
+    background: #ffffff;
 
-    width:100%;
+    border-radius: 32px;
 
-    max-width:1200px;
+    padding: 56px;
 
-    margin:auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
 
+    transition: 0.3s ease;
+  }
 
-}
+  .register-card:hover {
+    transform: translateY(-5px);
 
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.09);
+  }
 
+  .register-title {
+    font-size: 2.8rem;
 
+    font-weight: 800;
 
+    letter-spacing: -1px;
+  }
 
+  /* Django generated inputs */
 
+  input,
+  select,
+  textarea {
+    width: 100%;
 
-/* Navbar same size style */
+    padding: 15px 20px;
 
+    border-radius: 999px;
 
-.register-navbar{
+    border: 1px solid #e5e7eb;
 
+    background: #fafafa;
 
-    width:100%;
+    font-size: 16px;
+  }
 
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
 
-    min-height:80px;
+    border-color: #1a1a1a;
 
+    box-shadow: none;
 
-    background:#FFFFFF;
+    background: white;
+  }
 
-
-    border-radius:32px;
-
-
-    padding:22px 40px;
-
-
-    box-shadow:
-
-    0 4px 20px rgba(0,0,0,.03);
-
-
-}
-
-
-
-
-
-
-
-/* Register Card */
-
-
-.register-card{
-
-
-    width:100%;
-
-
-    background:#FFFFFF;
-
-
-    border-radius:32px;
-
-
-    padding:56px;
-
-
-
-    box-shadow:
-
-    0 10px 40px rgba(0,0,0,.06);
-
-
-    transition:.3s ease;
-
-
-}
-
-
-
-.register-card:hover{
-
-
-    transform:translateY(-5px);
-
-
-    box-shadow:
-
-    0 20px 45px rgba(0,0,0,.09);
-
-
-}
-
-
-
-
-
-
-
-.register-title{
-
-
-    font-size:2.8rem;
-
-
-    font-weight:800;
-
-
-    letter-spacing:-1px;
-
-
-}
-
-
-
-
-
-
-
-/* Django generated inputs */
-
-
-input,
-select,
-textarea{
-
-
-    width:100%;
-
-
-    padding:15px 20px;
-
-
-    border-radius:999px;
-
-
-    border:1px solid #E5E7EB;
-
-
-    background:#FAFAFA;
-
-
-    font-size:16px;
-
-
-}
-
-
-
-input:focus,
-select:focus,
-textarea:focus{
-
-
-    outline:none;
-
-
-    border-color:#1A1A1A;
-
-
-    box-shadow:none;
-
-
-    background:white;
-
-
-}
-
-
-
-
-
-
-
-/* Password wrapper */
-.password-field-wrapper {
+  /* Password wrapper */
+  .password-field-wrapper {
     position: relative;
     display: inline-block;
     width: 100%;
-}
+  }
 
-.password-field-wrapper input {
+  .password-field-wrapper input {
     width: 100%;
     padding-right: 40px;
     box-sizing: border-box;
-}
+  }
 
-.password-eye {
+  .password-eye {
     position: absolute;
     top: 50%;
     right: 10px;
@@ -462,194 +190,87 @@ textarea:focus{
     cursor: pointer;
     color: #666;
     font-size: 16px;
-}
+  }
 
-.password-eye:hover {
+  .password-eye:hover {
     color: #000;
-}
+  }
 
+  /* Main button */
 
+  .register-btn {
+    height: 58px;
 
+    border-radius: 999px;
 
-/* Main button */
+    background: #1a1a1a;
 
+    color: #ffffff;
 
-.register-btn{
+    font-weight: 700;
 
+    font-size: 1.05rem;
 
-    height:58px;
+    border: none;
 
+    transition: 0.25s ease;
+  }
 
-    border-radius:999px;
+  .register-btn:hover {
+    background: #333333;
 
+    color: white;
 
-    background:#1A1A1A;
+    transform: translateY(-3px);
+  }
 
+  /* Navbar button */
 
-    color:#FFFFFF;
+  .btn-outline-pill {
+    display: inline-flex;
 
+    align-items: center;
 
-    font-weight:700;
+    justify-content: center;
 
+    padding: 12px 28px;
 
-    font-size:1.05rem;
+    border-radius: 999px;
 
+    border: 1.5px solid #1a1a1a;
 
-    border:none;
+    color: #1a1a1a;
 
+    text-decoration: none;
 
-    transition:.25s ease;
+    font-weight: 700;
 
+    transition: 0.25s ease;
+  }
 
-}
+  .btn-outline-pill:hover {
+    background: #1a1a1a;
 
+    color: white;
+  }
 
-
-.register-btn:hover{
-
-
-    background:#333333;
-
-
-    color:white;
-
-
-    transform:translateY(-3px);
-
-
-}
-
-
-
-
-
-
-
-
-/* Navbar button */
-
-
-.btn-outline-pill{
-
-
-    display:inline-flex;
-
-
-    align-items:center;
-
-
-    justify-content:center;
-
-
-
-    padding:12px 28px;
-
-
-
-    border-radius:999px;
-
-
-
-    border:1.5px solid #1A1A1A;
-
-
-
-    color:#1A1A1A;
-
-
-
-    text-decoration:none;
-
-
-
-    font-weight:700;
-
-
-
-    transition:.25s ease;
-
-
-
-}
-
-
-
-.btn-outline-pill:hover{
-
-
-    background:#1A1A1A;
-
-
-    color:white;
-
-
-}
-
-
-
-
-
-
-
-
-
-@media(max-width:768px){
-
-
-
-    .register-card{
-
-
-        padding:35px 25px;
-
-
+  @media (max-width: 768px) {
+    .register-card {
+      padding: 35px 25px;
     }
 
-
-
-
-    .register-navbar{
-
-
-        padding:18px 25px;
-
-
+    .register-navbar {
+      padding: 18px 25px;
     }
 
-
-
-    .register-title{
-
-
-        font-size:2.1rem;
-
-
+    .register-title {
+      font-size: 2.1rem;
     }
-
-
-
-}
-
-
-
-
-
-
-
+  }
 </style>
 
-
-
-
-
-
-
-
-
 <script>
-
-document.querySelectorAll('input[type="password"]').forEach(function (input) {
-
+  document.querySelectorAll('input[type="password"]').forEach(function (input) {
     let wrapper = document.createElement("div");
     wrapper.className = "password-field-wrapper";
 
@@ -664,31 +285,15 @@ document.querySelectorAll('input[type="password"]').forEach(function (input) {
     wrapper.appendChild(button);
 
     button.addEventListener("click", function () {
-
-        if (input.type === "password") {
-
-            input.type = "text";
-            button.innerHTML = '<i class="fa-solid fa-eye"></i>';
-
-
-        } else {
-
-            input.type = "password";
-            button.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
-
-
-        }
-
+      if (input.type === "password") {
+        input.type = "text";
+        button.innerHTML = '<i class="fa-solid fa-eye"></i>';
+      } else {
+        input.type = "password";
+        button.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+      }
     });
-
-});
-
-
-
-
-
+  });
 </script>
-
-
 
 {% endblock %}

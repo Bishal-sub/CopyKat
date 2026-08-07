@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
-import os
 
 
 
@@ -35,25 +34,24 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="127.0.0.1,localhost,outcast-itunes-backfire.ngrok-free.dev",
+    default="127.0.0.1,localhost",
     cast=lambda v: [host.strip() for host in v.split(",")]
 )
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "outcast-itunes-backfire.ngrok-free.dev",
-]
+
+
 
 AUTH_USER_MODEL = "accounts.User"
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://outcast-itunes-backfire.ngrok-free.dev",
-    "https://*.ngrok-free.dev",
-]
 
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="",
+    cast=lambda v: [origin.strip() for origin in v.split(",") if origin.strip()]
+)
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -161,6 +159,27 @@ LOGIN_REDIRECT_URL = "student_dashboard"
 
 LOGOUT_REDIRECT_URL = "login"
 
+JAZZMIN_SETTINGS = {
+    "site_title": "CopyKat Admin",
+    "site_header": "CopyKat",
+    "site_brand": "CopyKat Dashboard",
+
+    "welcome_sign": "Welcome to the Admin Panel",
+
+    "copyright": "CopyKat",
+
+    "show_sidebar": True,
+    "navigation_expanded": True,
+
+    "icons": {
+        "auth.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+ 
+    },
+}
+JAZZMIN_UI_TWEAKS = {
+    "theme": "Simplex",
+}
 
 
 from dotenv import load_dotenv

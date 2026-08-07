@@ -5,6 +5,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
+from django.conf import settings
+
 
 
 def validate_admission_year(value):
@@ -58,8 +60,9 @@ class User(AbstractUser):
     photo = models.ImageField(
         upload_to="students/",
         blank=True,
-        null=True,
+        null=False,
     )
+    first_login = models.BooleanField(default=True)
 
     USERNAME_FIELD = "username"
 
@@ -161,3 +164,20 @@ class EmailVerificationOTP(models.Model):
     def __str__(self):
 
         return f"{self.user.email} - {self.otp}"        
+    
+    
+class PasswordResetOTP(models.Model):
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+
+    otp = models.CharField(max_length=6)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+
+        return timezone.now() > self.created_at + timedelta(minutes=10)
+
+    def __str__(self):
+
+        return self.user.username    
