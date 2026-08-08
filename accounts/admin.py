@@ -79,12 +79,10 @@ class StudentDetailsAdmin(admin.ModelAdmin):
         "full_name",
         "admission_year",
         "barcode_number",
-        "is_registered",
     )
 
     list_filter = (
         "admission_year",
-        "is_registered",
     )
 
     search_fields = (

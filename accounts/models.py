@@ -53,14 +53,10 @@ class User(AbstractUser):
 
     admission_year = models.PositiveIntegerField(
         validators=[validate_admission_year],
-        null=True,
-        blank=True,
     )
 
     photo = models.ImageField(
         upload_to="students/",
-        blank=True,
-        null=False,
     )
     first_login = models.BooleanField(default=True)
 
@@ -180,4 +176,4 @@ class PasswordResetOTP(models.Model):
 
     def __str__(self):
 
-        return self.user.username    
+        return self.user.username 
