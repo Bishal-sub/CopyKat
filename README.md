@@ -7,7 +7,6 @@ CopyKat is a web-based assignment similarity detection system developed for acad
 The project aims to provide an affordable, institution-hosted alternative to commercial plagiarism detection systems by focusing on internal assignment comparisons rather than internet-wide plagiarism checks.
 
 ---
-
 ## Features
 
 ### Student Features
