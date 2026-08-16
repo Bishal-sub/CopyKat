@@ -1,44 +1,34 @@
-{% extends 'base.html' %} {% block title %} Login | CopyKat {% endblock %}
-{%block content %}
+{% extends 'base.html' %} {% block title %} Login | CopyKat {% endblock %} {%block content %}
 
 <div class="container">
   <div class="row justify-content-center align-items-center min-vh-100 py-4">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-      <div class="card border-dark border-3 rounded-5 shadow">
+      <div class="card login-card border-0 shadow-sm">
         <div class="card-body p-4 p-md-5">
           <div class="text-center mb-4">
             <h1 class="fw-bold display-5 mb-2">
-              <a
-                href="{% url 'home' %}"
-                class="text-decoration-none text-reset"
-              >
+              <a href="{% url 'home' %}" class="text-decoration-none text-dark">
                 CopyKat
               </a>
             </h1>
 
-            <p class="text-muted small mb-0">
+            <p class="text-secondary small mb-0">
               Detect Similarity. Protect Originality.
             </p>
           </div>
 
           <h2 class="text-center fw-bold mb-4">Welcome Back</h2>
 
-          {% if messages %}
+          {% if messages %} {% for message in messages %}
 
-    {% for message in messages %}
+          <div class="alert alert-info rounded-4">{{ message }}</div>
 
-        <div class="alert alert-danger">
-
-            {{ message }}
-
-        </div>
-
-    {% endfor %}
-
-{% endif %}
+          {% endfor %} {% endif %}
 
           <form method="POST">
             {% csrf_token %}
+
+            <!-- Username -->
 
             <div class="mb-3">
               <label class="form-label fw-semibold"> Username </label>
@@ -46,28 +36,57 @@
               <input
                 type="text"
                 name="username"
-                class="form-control border-dark border-2 rounded-4"
+                class="form-control custom-input"
                 placeholder="Enter username"
                 required
               />
             </div>
 
+            <!-- Password -->
+
             <div class="mb-4">
               <label class="form-label fw-semibold"> Password </label>
 
-              <input
-                type="password"
-                name="password"
-                class="form-control border-dark border-2 rounded-4"
-                placeholder="Enter password"
-                required
-              />
+              <div class="password-wrapper">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  class="form-control custom-input"
+                  placeholder="Enter password"
+                  required
+                />
+
+                <button
+                  type="button"
+                  id="togglePassword"
+                  class="password-eye"
+                ></button>
+              </div>
+
+              <div class="mt-2">
+                <a
+                  href="{% url 'forgot_password' %}"
+                  id="forgotPassword"
+                  class="text-decoration-none text-secondary small"
+                >
+                  Forgot password?
+                </a>
+              </div>
+
+              <div id="adminMessage" class="mt-2 d-none">
+                <small class="text-secondary">
+                  Please contact your administrator to reset your password.
+                </small>
+              </div>
             </div>
+
+            <!-- Login Button -->
 
             <div class="d-grid">
               <button
                 type="submit"
-                class="btn btn-warning btn-lg fw-bold border-dark border-2 rounded-pill"
+                class="btn login-btn btn-lg fw-bold rounded-pill"
               >
                 Login
               </button>
@@ -77,12 +96,12 @@
           <hr class="my-4" />
 
           <div class="text-center">
-            <p class="mb-0">
+            <p class="mb-0 text-secondary">
               Don't have an account?
 
               <a
                 href="{% url 'register' %}"
-                class="fw-bold text-decoration-none"
+                class="fw-bold text-dark text-decoration-none"
               >
                 Register
               </a>
@@ -96,24 +115,105 @@
 
 <style>
   body {
-    background: #f8f8f5;
+    background: #e6ecef;
+
+    font-family: "Plus Jakarta Sans", sans-serif;
   }
 
-  .card {
-    transition: all 0.3s ease;
+  /* Card */
+
+  .login-card {
+    background: #ffffff;
+
+    border-radius: 32px;
+
+    transition: 0.3s ease;
   }
 
-  .card:hover {
-    transform: translateY(-4px);
+  .login-card:hover {
+    transform: translateY(-6px);
+
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08) !important;
   }
 
-  .form-control {
-    padding: 12px 16px;
+  /* Inputs */
+
+  .custom-input {
+    height: 52px;
+
+    padding: 12px 20px;
+
+    border-radius: 999px;
+
+    border: 1px solid #e5e7eb;
+
+    background: #fafafa;
   }
 
-  .form-control:focus {
-    border-color: #000;
+  .custom-input:focus {
+    border-color: #1a1a1a;
+
     box-shadow: none;
+
+    background: #ffffff;
+  }
+
+  /* Password eye */
+
+  .password-field-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .password-field-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+    box-sizing: border-box;
+  }
+
+  .password-eye {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+  }
+
+  .password-eye:hover {
+    color: #000;
+  }
+
+  /* Login Button */
+
+  .login-btn {
+    height: 52px;
+
+    background: #1a1a1a;
+
+    color: #ffffff;
+
+    border: none;
+
+    transition: 0.25s ease;
+  }
+
+  .login-btn:hover {
+    background: #333333;
+
+    color: #ffffff;
+
+    transform: translateY(-3px);
+  }
+
+  /* Links */
+
+  a:hover {
+    opacity: 0.8;
   }
 
   /* Mobile */
@@ -130,19 +230,36 @@
     h2 {
       font-size: 1.5rem !important;
     }
-
-    .btn-lg {
-      padding: 12px;
-      font-size: 1rem;
-    }
-  }
-
-  @media (min-width: 1200px) {
-    .card {
-      max-width: 550px;
-      margin: auto;
-    }
   }
 </style>
+
+<script>
+  // Password show/hide
+
+  document.querySelectorAll('input[type="password"]').forEach(function (input) {
+    let wrapper = document.createElement("div");
+    wrapper.className = "password-field-wrapper";
+
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+
+    let button = document.createElement("button");
+    button.type = "button";
+    button.className = "password-eye";
+    button.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+
+    wrapper.appendChild(button);
+
+    button.addEventListener("click", function () {
+      if (input.type === "password") {
+        input.type = "text";
+        button.innerHTML = '<i class="fa-solid fa-eye"></i>';
+      } else {
+        input.type = "password";
+        button.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+      }
+    });
+  });
+</script>
 
 {% endblock %}

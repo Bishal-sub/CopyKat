@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 from decouple import config
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,17 +31,27 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 
+
 ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='127.0.0.1,localhost',
-    cast=lambda v: [host.strip() for host in v.split(',')]
+    "ALLOWED_HOSTS",
+    default="127.0.0.1,localhost",
+    cast=lambda v: [host.strip() for host in v.split(",")]
 )
+
+
 
 AUTH_USER_MODEL = "accounts.User"
 
+
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="",
+    cast=lambda v: [origin.strip() for origin in v.split(",") if origin.strip()]
+)
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -121,7 +133,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Asia/Kathmandu"
+USE_TZ = True
+
 
 USE_I18N = True
 
@@ -147,3 +161,50 @@ LOGIN_REDIRECT_URL = "student_dashboard"
 
 LOGOUT_REDIRECT_URL = "login"
 
+JAZZMIN_SETTINGS = {
+    "site_title": "CopyKat Admin",
+    "site_header": "CopyKat",
+    "site_brand": "CopyKat Dashboard",
+
+    "welcome_sign": "Welcome to the Admin Panel",
+
+    "copyright": "CopyKat",
+
+    "show_sidebar": True,
+    "navigation_expanded": True,
+
+    "icons": {
+        "auth.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+ 
+    },
+}
+JAZZMIN_UI_TWEAKS = {
+    "theme": "Simplex",
+}
+
+
+from dotenv import load_dotenv
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / ".env")
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = os.getenv(
+    "EMAIL_HOST_USER"
+)
+
+EMAIL_HOST_PASSWORD = os.getenv(
+    "EMAIL_HOST_PASSWORD"
+)
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

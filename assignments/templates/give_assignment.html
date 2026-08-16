@@ -1,0 +1,557 @@
+{% extends "base.html" %}
+
+{% block title %}CopyKat | Give Assignment{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4 px-3 px-lg-5">
+    <div class="container-xl">
+        <div class="bg-white rounded-4 p-5 shadow-sm mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h1 class="display-5 fw-bold m-0">Give Assignment</h1>
+                    <p class="text-muted mt-2 mb-0">Create and schedule an assignment for your students.</p>
+                </div>
+                <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-dark rounded-pill px-4">Back</a>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-header bg-white border-bottom fw-bold py-3">Create a Assignment</div>
+
+                <div class="card-body p-5">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger rounded-4">
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.batch.id_for_label }}" class="form-label fw-semibold">Batch</label>
+                                {{ form.batch }}
+                                {% if form.batch.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.batch.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.department.id_for_label }}" class="form-label fw-semibold">Department</label>
+                                {{ form.department }}
+                                {% if form.department.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.department.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.semester.id_for_label }}" class="form-label fw-semibold">Semester</label>
+                                {{ form.semester }}
+                                {% if form.semester.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.semester.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.level.id_for_label }}" class="form-label fw-semibold">Level</label>
+                                {{ form.level }}
+                                {% if form.level.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.level.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label fw-semibold">Subject</label>
+                                {{ form.subject }}
+                                {% if form.subject.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.subject.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.topic.id_for_label }}" class="form-label fw-semibold">Topic</label>
+                                {{ form.topic }}
+                                {% if form.topic.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.topic.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">Description</label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.description.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="date-card">
+                                    <div class="date-card-header">
+                                        <div>
+                                            <label for="{{ form.show_at.id_for_label }}" class="form-label fw-bold mb-0">Schedule Assignment</label>
+                                        </div>
+                                    </div>
+
+                                    {{ form.show_at }}
+
+                                    {% if form.show_at.errors %}
+                                        <div class="text-danger small mt-2">
+                                            {% for error in form.show_at.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="form-text mt-2">You can schedule this for a future date and time.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="date-card">
+                                    <div class="date-card-header">
+                                        <div>
+                                            <label for="{{ form.due_date.id_for_label }}" class="form-label fw-bold mb-0">Due Date</label>
+                                            <small class="text-muted d-block">Final submission deadline</small>
+                                        </div>
+                                    </div>
+
+                                    {{ form.due_date }}
+
+                                    {% if form.due_date.errors %}
+                                        <div class="text-danger small mt-2">
+                                            {% for error in form.due_date.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="form-text mt-2">Students cannot submit after this time.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 d-flex gap-3 flex-wrap">
+                            <button type="submit" class="btn btn-dark rounded-pill px-5 py-2">Create Assignment</button>
+                            <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-secondary rounded-pill px-5 py-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const departmentSelect = document.getElementById("id_department");
+    const semesterSelect = document.getElementById("id_semester");
+    const subjectSelect = document.getElementById("id_subject");
+    const levelSelect = document.getElementById("id_level");
+    const batchSelect = document.getElementById("id_batch");
+    const showAtInput = document.getElementById("id_show_at");
+    const dueDateInput = document.getElementById("id_due_date");
+    const scheduleWarning = document.getElementById("scheduleWarning");
+    const targetInfo = document.getElementById("targetInfo");
+
+    const subjectData = [
+        {% for item in form.subject_data %}
+        {
+            id: "{{ item.id }}",
+            name: "{{ item.name|escapejs }}",
+            semester: "{{ item.semester }}",
+            level_id: "{{ item.level_id }}",
+            department_id: "{{ item.department_id }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const departmentSemesterMap = {
+        {% for department_id, semesters in form.department_semester_map.items %}
+        "{{ department_id }}": [
+            {% for semester in semesters %}
+            "{{ semester }}"{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    const currentDepartment = "{{ form.department.value|default:'' }}";
+    const currentSemester = "{{ form.semester.value|default:'' }}";
+    const currentSubject = "{{ form.subject.value|default:'' }}";
+
+    function clearSemesters() {
+        if (semesterSelect) semesterSelect.innerHTML = '<option value="">Select Semester</option>';
+    }
+
+    function clearSubjects() {
+        if (subjectSelect) subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+    }
+
+    function clearLevel() {
+        if (levelSelect) levelSelect.value = "";
+    }
+
+    function updateTargetInfo() {
+        if (!targetInfo) return;
+
+        const batch = batchSelect ? batchSelect.value : "";
+        const department = departmentSelect ? departmentSelect.value : "";
+        const level = levelSelect ? levelSelect.value : "";
+
+        targetInfo.classList.toggle("d-none", !(batch && department && level));
+    }
+
+    function updateLevel(subject) {
+        if (!levelSelect) return;
+
+        if (subject && subject.level_id) {
+            levelSelect.value = String(subject.level_id);
+        } else {
+            clearLevel();
+        }
+
+        updateTargetInfo();
+    }
+
+    function updateSemesters() {
+        if (!departmentSelect || !semesterSelect) return;
+
+        const departmentId = departmentSelect.value;
+
+        clearSemesters();
+        clearSubjects();
+        clearLevel();
+
+        if (!departmentId) {
+            updateTargetInfo();
+            return;
+        }
+
+        const semesters = departmentSemesterMap[departmentId] || [];
+
+        if (!semesters.length) {
+            semesterSelect.innerHTML = '<option value="">No semester assigned</option>';
+            updateTargetInfo();
+            return;
+        }
+
+        semesters.forEach(function(semester) {
+            const option = document.createElement("option");
+            option.value = String(semester);
+            option.textContent = "Semester " + semester;
+            semesterSelect.appendChild(option);
+        });
+
+        if (currentSemester && semesters.map(String).includes(String(currentSemester))) {
+            semesterSelect.value = String(currentSemester);
+        }
+
+        updateSubjects();
+    }
+
+    function updateSubjects() {
+        if (!semesterSelect || !subjectSelect) return;
+
+        const semester = semesterSelect.value;
+        const departmentId = departmentSelect ? departmentSelect.value : "";
+
+        clearSubjects();
+        clearLevel();
+
+        if (!semester || !departmentId) {
+            updateTargetInfo();
+            return;
+        }
+
+        const matchingSubjects = subjectData.filter(function(subject) {
+            return String(subject.semester) === String(semester) && String(subject.department_id) === String(departmentId);
+        });
+
+        if (!matchingSubjects.length) {
+            subjectSelect.innerHTML = '<option value="">No subject assigned for this semester</option>';
+            updateTargetInfo();
+            return;
+        }
+
+        const uniqueSubjects = [];
+        const seenSubjects = new Set();
+
+        matchingSubjects.forEach(function(subject) {
+            if (!seenSubjects.has(String(subject.id))) {
+                seenSubjects.add(String(subject.id));
+                uniqueSubjects.push(subject);
+            }
+        });
+
+        uniqueSubjects.forEach(function(subject) {
+            const option = document.createElement("option");
+            option.value = String(subject.id);
+            option.textContent = subject.name;
+            option.dataset.levelId = String(subject.level_id);
+            subjectSelect.appendChild(option);
+        });
+
+        let selectedSubject = null;
+
+        if (currentSubject && uniqueSubjects.some(function(subject) {
+            return String(subject.id) === String(currentSubject);
+        })) {
+            subjectSelect.value = String(currentSubject);
+            selectedSubject = uniqueSubjects.find(function(subject) {
+                return String(subject.id) === String(currentSubject);
+            });
+        } else if (uniqueSubjects.length === 1) {
+            subjectSelect.value = String(uniqueSubjects[0].id);
+            selectedSubject = uniqueSubjects[0];
+        } else {
+            subjectSelect.selectedIndex = 1;
+        }
+
+        if (selectedSubject) {
+            updateLevel(selectedSubject);
+        } else if (subjectSelect.value) {
+            updateLevel(uniqueSubjects.find(function(subject) {
+                return String(subject.id) === String(subjectSelect.value);
+            }));
+        }
+
+        updateTargetInfo();
+    }
+
+    function checkScheduleDates() {
+        if (!showAtInput || !dueDateInput) return;
+
+        if (showAtInput.value && dueDateInput.value) {
+            const showAt = new Date(showAtInput.value);
+            const dueDate = new Date(dueDateInput.value);
+            dueDateInput.setCustomValidity(dueDate <= showAt ? "Due date must be after the show date." : "");
+        } else {
+            dueDateInput.setCustomValidity("");
+        }
+
+        if (showAtInput.value && scheduleWarning) {
+            const showAt = new Date(showAtInput.value);
+            const now = new Date();
+            scheduleWarning.classList.toggle("d-none", showAt <= now);
+        }
+    }
+
+    if (departmentSelect) {
+        departmentSelect.addEventListener("change", function() {
+            updateSemesters();
+            updateTargetInfo();
+        });
+    }
+
+    if (semesterSelect) {
+        semesterSelect.addEventListener("change", updateSubjects);
+    }
+
+    if (subjectSelect) {
+        subjectSelect.addEventListener("change", function() {
+            const selectedSubject = subjectData.find(function(subject) {
+                return String(subject.id) === String(subjectSelect.value);
+            });
+
+            updateLevel(selectedSubject);
+        });
+    }
+
+    if (batchSelect) batchSelect.addEventListener("change", updateTargetInfo);
+    if (showAtInput) showAtInput.addEventListener("change", checkScheduleDates);
+    if (dueDateInput) dueDateInput.addEventListener("change", checkScheduleDates);
+
+    if (departmentSelect && departmentSelect.value) {
+        updateSemesters();
+    } else {
+        clearSemesters();
+        clearSubjects();
+        clearLevel();
+    }
+
+    if (semesterSelect && semesterSelect.value) updateSubjects();
+
+    checkScheduleDates();
+    updateTargetInfo();
+});
+</script>
+
+<style>
+body {
+    background: #e6ecef;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.card {
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.teacher-photo {
+    object-fit: cover;
+    border-color: #111 !important;
+}
+
+.teacher-avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 40px;
+    font-weight: 800;
+}
+
+.form-control,
+.form-select {
+    width: 100%;
+    min-height: 50px;
+    border-radius: 14px;
+    border: 1px solid #d1d5db;
+    padding: 10px 15px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+
+textarea.form-control {
+    min-height: 140px;
+}
+
+.date-card {
+    height: 100%;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    background: #fafafa;
+    transition: all 0.25s ease;
+}
+
+.date-card:hover {
+    background: #fff;
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+}
+
+.date-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.date-icon,
+.schedule-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.date-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    font-size: 18px;
+}
+
+.publish-icon {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.due-icon {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.schedule-info {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 16px;
+    border-radius: 18px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.schedule-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #111827;
+    color: #fff;
+}
+
+.btn-dark {
+    transition: all 0.25s ease;
+}
+
+.btn-dark:hover {
+    transform: translateY(-2px);
+    background: #333;
+}
+
+@media (max-width: 992px) {
+    .display-5 {
+        font-size: 2rem;
+    }
+
+    .card-body {
+        padding: 2rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+
+    .date-card {
+        padding: 16px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+</style>
+
+{% endblock %}

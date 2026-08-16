@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}
+CopyKat | Assignments To Do
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4 px-3 px-lg-5">
+    <div class="container-xl">
+        <div class="bg-white rounded-4 p-4 shadow-sm mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h1 class="fw-bold mb-1">Assignments To Do</h1>
+                    <p class="text-muted mb-0">View assignments assigned to you</p>
+                </div>
+                <a href="{% url 'student_dashboard' %}" class="btn btn-outline-dark rounded-pill px-4">Back</a>
+            </div>
+        </div>
+
+        {% if tasks %}
+        <div class="row g-4">
+            {% for item in tasks %}
+            <div class="col-lg-6">
+                <div class="card border-0 rounded-4 shadow-sm h-100 task-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h4 class="fw-bold mb-1">{{ item.task.topic }}</h4>
+                                <p class="text-muted mb-0">{{ item.task.subject.name }}</p>
+                            </div>
+
+                            {% if item.assignment %}
+                                {% if item.assignment.status == "accepted" %}
+                                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">Accepted</span>
+                                {% elif item.assignment.status == "pending_review" %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2">Pending</span>
+                                {% elif item.assignment.status == "rejected" %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2">Rejected</span>
+                                {% elif item.assignment.status == "final_rejected" %}
+                                    <span class="badge bg-danger px-3 py-2">Rejected</span>
+                                {% elif item.assignment.status == "resubmission_required" %}
+                                    <span class="badge bg-warning text-dark px-3 py-2">Resubmit</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary px-3 py-2">Not Submitted</span>
+                            {% endif %}
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            <strong>Teacher:</strong>
+                            {{ item.task.teacher.full_name }}
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Semester:</strong>
+                            {{ item.task.subject.semester }}
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Due Date:</strong>
+                            {{ item.task.due_date }}
+                        </div>
+
+                        <div class="mb-4">
+                            <strong>Description:</strong>
+                            <p class="text-muted mt-2 mb-0">{{ item.task.description }}</p>
+                        </div>
+
+                        {% if item.assignment %}
+                            {% if item.assignment.status == "resubmission_required" and not item.assignment.resubmission_used %}
+                                <a href="{% url 'resubmit_assignment' item.assignment.id %}" class="btn btn-dark rounded-pill px-4">Resubmit Assignment</a>
+                            {% elif item.assignment.file %}
+                                <a href="{{ item.assignment.file.url }}" target="_blank" class="btn btn-outline-dark rounded-pill px-4">View Submission</a>
+                            {% endif %}
+                        {% else %}
+                            {% if item.task and item.task.id %}
+                                <a href="{% url 'submit_assignment' item.task.id %}" class="btn btn-dark rounded-pill px-4">Submit Assignment</a>
+                            {% else %}
+                                <button class="btn btn-secondary rounded-pill px-4" disabled>Task Not Available</button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card border-0 rounded-4 shadow-sm">
+            <div class="card-body text-center py-5">
+                <h3 class="fw-bold">No Assignments Available</h3>
+                <p class="text-muted">Your teachers have not assigned any work yet.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+body{
+    background:#e6ecef;
+    font-family:"Plus Jakarta Sans",sans-serif;
+}
+
+.task-card{
+    transition:all .3s ease;
+}
+
+.task-card:hover{
+    transform:translateY(-6px);
+}
+
+.btn-dark{
+    transition:.25s;
+}
+
+.btn-dark:hover{
+    transform:translateY(-2px);
+}
+
+@media(max-width:768px){
+    .display-5{
+        font-size:2rem;
+    }
+}
+</style>
+
+{% endblock %}

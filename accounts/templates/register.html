@@ -1,161 +1,344 @@
-{% extends 'base.html' %} {% block title %} Register | CopyKat {% endblock %} {%block content %}
+{% extends 'base.html' %}
 
-<div class="container">
+{% block title %}
+Register | CopyKat
+{% endblock %}
 
-  <nav
-    class="navbar navbar-expand-lg bg-white border border-3 border-dark rounded-4 px-4 mb-4 custom-navbar"
-  >
-    <a class="navbar-brand fw-bold fs-3" href="{% url 'home' %}">  CopyKat </a>
+{% block content %}
 
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<div class="container-fluid py-4 px-3 px-lg-5">
+  <div class="register-wrapper">
+    <nav class="navbar register-navbar mb-4">
+      <a href="{% url 'home' %}" class="navbar-brand fw-bold fs-3 text-dark">CopyKat</a>
+      <a href="{% url 'login' %}" class="btn-outline-pill">Login</a>
+    </nav>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
-          <a
-            href="{% url 'login' %}"
-            class="btn btn-warning border border-2 border-dark rounded-pill px-4 fw-bold"
-          >
-            Login
-          </a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+    <div class="register-card">
+      <div class="text-center mb-5">
+        <h2 class="register-title">Create Account</h2>
+        <p class="text-secondary">Start using CopyKat today</p>
+      </div>
 
-  <!-- Register Form -->
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-  <div class="row">
-    <div class="col-12">
-      <div class="register-card">
-        <h2 class="fw-bold mb-2 text-center">Create Account</h2>
-
-        <p class="text-muted mb-4 text-center">Start using CopyKat today</p>
-
-        <form method="POST" enctype="multipart/form-data">
-          {% csrf_token %}
-
-          <div class="row">
-            {% for field in form %}
-
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-semibold"> {{ field.label }} </label>
-
-              {{ field }} {% if field.errors %}
-
-              <div class="text-danger small mt-1">{{ field.errors }}</div>
-
-              {% endif %}
-            </div>
-
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger rounded-4">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
             {% endfor %}
           </div>
+        {% endif %}
 
-          <button
-            type="submit"
-            class="btn btn-warning w-100 fw-bold py-3 border-dark border-3 rounded-pill"
-          >
-            Create Account
-          </button>
-        </form>
+        <div class="row g-4">
+          {% for field in form %}
+            <div class="col-md-6">
+              <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                {{ field.label }}
+                {% if field.field.required %}
+                  <span class="text-danger">*</span>
+                {% endif %}
+              </label>
 
-        <div class="text-center mt-4">
-          Already have an account?
+              {% if field.name == "department" %}
+                <div class="custom-select-wrapper">
+                  {{ field }}
+                  <span class="select-arrow"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+              {% elif field.name == "level" %}
+                <div class="custom-select-wrapper">
+                  {{ field }}
+                  <span class="select-arrow"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+              {% elif field.name == "admission_year" %}
+                <div class="custom-select-wrapper">
+                  {{ field }}
+                  <span class="select-arrow"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+              {% else %}
+                {{ field }}
+              {% endif %}
 
-          <a href="{% url 'login' %}" class="fw-bold text-decoration-none">
-            Login
-          </a>
+              {% if field.help_text %}
+                <div class="form-text">{{ field.help_text|safe }}</div>
+              {% endif %}
+
+              {% if field.errors %}
+                <div class="text-danger small mt-2">
+                  {% for error in field.errors %}
+                    <div>{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
         </div>
+
+        <button type="submit" class="btn register-btn w-100 mt-5">Create Account</button>
+      </form>
+
+      <div class="text-center mt-4 text-secondary">
+        Already have an account?
+        <a href="{% url 'login' %}" class="fw-bold text-dark text-decoration-none">Login</a>
       </div>
     </div>
   </div>
 </div>
 
 <style>
-  body {
-    background: #f8f8f5;
-  }
+body {
+  background: #e6ecef;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
 
+.register-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+}
 
-  .custom-navbar {
-    width: 100%;
-  }
+.register-navbar {
+  width: 100%;
+  min-height: 80px;
+  background: #ffffff;
+  border-radius: 32px;
+  padding: 22px 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
 
+.register-card {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 32px;
+  padding: 56px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
+.register-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.09);
+}
+
+.register-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.form-label {
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 15px 20px;
+  min-height: 52px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fafafa;
+  color: #1a1a1a;
+  font-size: 16px;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: #cfd3d8;
+  background: #ffffff;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #1a1a1a;
+  box-shadow: none;
+  background: #ffffff;
+}
+
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-wrapper select {
+  width: 100%;
+  padding-right: 50px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+  pointer-events: none;
+  font-size: 13px;
+}
+
+.password-field-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.password-field-wrapper input {
+  width: 100%;
+  padding-right: 50px;
+  box-sizing: border-box;
+}
+
+.password-eye {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #666;
+  font-size: 16px;
+  border-radius: 50%;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.password-eye:hover {
+  background: #f1f1f1;
+  color: #000;
+}
+
+input[type="file"] {
+  border-radius: 999px;
+  padding: 12px 20px;
+  cursor: pointer;
+}
+
+.form-text {
+  margin-top: 6px;
+  color: #777;
+  font-size: 13px;
+}
+
+.text-danger {
+  color: #dc2626 !important;
+}
+
+.register-btn {
+  height: 58px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border: none;
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.register-btn:hover {
+  background: #333333;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.btn-outline-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: 1.5px solid #1a1a1a;
+  color: #1a1a1a;
+  text-decoration: none;
+  font-weight: 700;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.btn-outline-pill:hover {
+  background: #1a1a1a;
+  color: white;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
   .register-card {
-    width: 100%;
-
-    background: white;
-
-    border: 4px solid #111;
-
-    border-radius: 35px;
-
-    padding: 40px;
-
-    box-shadow: 12px 12px 0px #111;
+    padding: 35px 25px;
   }
 
-
-  input,
-  select,
-  textarea {
-    width: 100%;
-
-    padding: 14px 16px;
-
-    border: 3px solid #111;
-
-    border-radius: 16px;
-
-    font-size: 16px;
+  .register-navbar {
+    padding: 18px 25px;
   }
 
-  input:focus,
-  select:focus,
-  textarea:focus {
-    outline: none;
+  .register-title {
+    font-size: 2.1rem;
+  }
+}
 
-    border-color: #111;
-
-    box-shadow: none;
+@media (max-width: 576px) {
+  .register-card {
+    padding: 30px 18px;
   }
 
-
-  .btn-warning {
-    background: #ffc107;
+  .register-navbar {
+    padding: 18px 20px;
+    border-radius: 24px;
   }
 
-  .btn-warning:hover {
-    background: #ffca2c;
+  .register-title {
+    font-size: 1.9rem;
   }
 
-
-  @media (max-width: 991px) {
-    .register-card {
-      padding: 35px;
-
-      border-radius: 30px;
-    }
+  .btn-outline-pill {
+    padding: 10px 20px;
+    font-size: 14px;
   }
-
-
-  @media (max-width: 576px) {
-    .register-card {
-      padding: 25px;
-
-      border-radius: 25px;
-
-      box-shadow: 8px 8px 0px #111;
-    }
-  }
+}
 </style>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('input[type="password"]').forEach(function (input) {
+    if (input.parentElement && input.parentElement.classList.contains("password-field-wrapper")) {
+      return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "password-field-wrapper";
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "password-eye";
+    button.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+    button.setAttribute("aria-label", "Show password");
+    wrapper.appendChild(button);
+
+    button.addEventListener("click", function () {
+      if (input.type === "password") {
+        input.type = "text";
+        button.innerHTML = '<i class="fa-solid fa-eye"></i>';
+        button.setAttribute("aria-label", "Hide password");
+      } else {
+        input.type = "password";
+        button.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+        button.setAttribute("aria-label", "Show password");
+      }
+    });
+  });
+});
+</script>
+
 {% endblock %}
+

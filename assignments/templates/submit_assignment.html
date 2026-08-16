@@ -6,306 +6,233 @@ CopyKat | Submit Assignment
 
 {% block content %}
 
-<div class="container py-5">
+<div class="container-fluid py-4 px-3 px-lg-5">
+    <div class="submit-wrapper">
+        <div class="submit-header mb-5 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="submit-title">Submit Assignment</h1>
+                <p class="submit-subtitle">Upload your work for the assigned task.</p>
+            </div>
+            <a href="{% url 'student_dashboard' %}" class="btn btn-outline-dark rounded-pill px-4">Back</a>
+        </div>
 
-    <div class="text-center mb-5">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        <h1 class="display-5 fw-bold">
-            📤 Submit Assignment
-        </h1>
-
-        <p class="text-muted">
-            Upload your assignment and generate a similarity report.
-        </p>
-
-    </div>
-
-    <form method="POST" enctype="multipart/form-data">
-
-        {% csrf_token %}
-
-        {% if form.errors %}
-
-        <div class="alert alert-danger">
-
-            <h5 class="fw-bold">
-                Please fix the following errors:
-            </h5>
-
-            <ul class="mb-0">
-
-                {% for field in form %}
-
-                    {% for error in field.errors %}
-
-                        <li>
-                            <strong>{{ field.label }}</strong> :
-                            {{ error }}
-                        </li>
-
+            {% if form.errors %}
+            <div class="error-box mb-4">
+                <h5 class="fw-bold">Please fix the following errors:</h5>
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li><strong>{{ field.label }}</strong>: {{ error }}</li>
+                        {% endfor %}
                     {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
 
-                {% endfor %}
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="submit-card h-100">
+                        <div class="card-heading">Assignment Details</div>
 
-                {% for error in form.non_field_errors %}
-
-                    <li>{{ error }}</li>
-
-                {% endfor %}
-
-            </ul>
-
-        </div>
-
-        {% endif %}
-
-        <div class="row g-4">
-
-            <!-- Assignment Information -->
-
-            <div class="col-lg-7">
-
-                <div class="card shadow-sm border-0 h-100">
-
-                    <div class="card-body p-4">
-
-                        <h4 class="fw-bold mb-4">
-                            Assignment Information
-                        </h4>
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-semibold">
-                                Assignment Title
-                            </label>
-
-                            <input
-                                type="text"
-                                name="title"
-                                class="form-control"
-                                placeholder="Enter assignment title"
-                                value="{{ request.POST.title }}"
-                                required
-                            >
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-semibold">
-                                Student Name
-                            </label>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                value="{{ request.user.full_name }}"
-                                readonly
-                            >
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label fw-semibold">
-                                Select Teacher
-                            </label>
-
-                            <select
-                                name="teacher"
-                                class="form-select"
-                                required
-                            >
-
-                                <option value="">
-                                    Choose Teacher
-                                </option>
-
-                                {% for teacher in teachers %}
-
-                                <option
-                                    value="{{ teacher.id }}"
-                                    {% if request.POST.teacher == teacher.id|stringformat:"s" %}
-                                        selected
-                                    {% endif %}
-                                >
-                                    {{ teacher.full_name }}
-                                </option>
-
-                                {% endfor %}
-
-                            </select>
-
-                        </div>
-
-                        <div class="row">
-
-                            <div class="col-md-6">
-
-                                <label class="form-label fw-semibold">
-                                    Level
-                                </label>
-
-                                <select
-                                    name="level"
-                                    id="level"
-                                    class="form-select"
-                                    onchange="semesterLoad()"
-                                >
-
-                                    <option
-                                        value="bachelor"
-                                        {% if request.POST.level == "bachelor" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        Bachelor
-                                    </option>
-
-                                    <option
-                                        value="master"
-                                        {% if request.POST.level == "master" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        Master
-                                    </option>
-
-                                </select>
-
+                        <div class="card-content">
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Topic</label>
+                                <input type="text" class="form-control custom-input" value="{{ task.topic }}" readonly>
                             </div>
 
-                            <div class="col-md-6">
-
-                                <label class="form-label fw-semibold">
-                                    Semester
-                                </label>
-
-                                <select
-                                    name="semester"
-                                    id="semester"
-                                    class="form-select"
-                                >
-                                </select>
-
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Subject</label>
+                                <input type="text" class="form-control custom-input" value="{{ task.subject.name }}" readonly>
                             </div>
 
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Teacher</label>
+                                    <input type="text" class="form-control custom-input" value="{{ task.teacher.full_name }}" readonly>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Semester</label>
+                                    <input type="text" class="form-control custom-input" value="{{ task.subject.semester }}" readonly>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Due Date</label>
+                                    <input type="text" class="form-control custom-input" value="{{ task.due_date|date:'M d, Y H:i' }}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <label class="form-label fw-semibold">Description</label>
+                                <textarea class="form-control custom-input" rows="7" readonly>{{ task.description }}</textarea>
+                            </div>
                         </div>
-
                     </div>
-
                 </div>
 
-            </div>
+                <div class="col-lg-5">
+                    <div class="submit-card h-100">
+                        <div class="card-heading">Upload Document</div>
 
-            <!-- Upload Section -->
+                        <div class="card-content">
+                            <div class="upload-box">
+                                <div class="upload-icon">📄</div>
+                                <h5 class="fw-bold">Upload Assignment File</h5>
+                                <p class="upload-text">Supported formats: PDF, DOC, DOCX</p>
+                                {{ form.file }}
+                                <small class="upload-limit">Maximum file size: 10 MB</small>
+                            </div>
 
-            <div class="col-lg-5">
-
-                <div class="card shadow-sm border-0 h-100">
-
-                    <div class="card-body p-4">
-
-                        <h4 class="fw-bold mb-4">
-                            Upload Document
-                        </h4>
-
-                        <div class="border rounded-4 p-5 text-center bg-light">
-                            <h5 class="fw-bold">
-                                Upload Assignment File
-                            </h5>
-
-                            <p class="text-muted small">
-                                Supported formats:
-                                PDF, DOCX
-                            </p>
-
-                            <input
-                                type="file"
-                                name="file"
-                                class="form-control mt-3"
-                                required
-                            >
-
-                            <small class="text-muted d-block mt-2">
-                                Maximum file size: 10 MB
-                            </small>
-
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="submit-btn">Submit Assignment</button>
+                            </div>
                         </div>
-
-                        <div class="d-grid mt-4">
-
-                            <button
-                                type="submit"
-                                class="btn btn-warning btn-lg fw-bold">
-
-                                Submit Assignment
-
-                            </button>
-
-                        </div>
-
                     </div>
-
                 </div>
-
             </div>
-
-        </div>
-
-    </form>
-
+        </form>
+    </div>
 </div>
 
-<script>
-
-function semesterLoad() {
-
-    let level =
-    document.getElementById(
-        "level"
-    ).value;
-
-    let semester =
-    document.getElementById(
-        "semester"
-    );
-
-    semester.innerHTML = "";
-
-    let total =
-    level === "bachelor"
-    ? 10
-    : 4;
-
-    for(let i = 1; i <= total; i++) {
-
-        let option =
-        document.createElement(
-            "option"
-        );
-
-        option.value = i;
-
-        option.text =
-        "Semester " + i;
-
-        if(
-            "{{ request.POST.semester }}"
-            ==
-            i
-        ){
-            option.selected = true;
-        }
-
-        semester.appendChild(
-            option
-        );
-    }
+<style>
+body{
+    background:#e6ecef;
+    font-family:"Plus Jakarta Sans",sans-serif;
 }
 
-semesterLoad();
+.submit-wrapper{
+    max-width:1400px;
+    margin:auto;
+}
 
-</script>
+.submit-header{
+    background:white;
+    padding:40px;
+    border-radius:32px;
+    box-shadow:0 4px 20px rgba(0,0,0,.03);
+}
+
+.submit-title{
+    font-size:3rem;
+    font-weight:800;
+    letter-spacing:-1px;
+    margin-bottom:10px;
+}
+
+.submit-subtitle{
+    color:#6b7280;
+}
+
+.error-box{
+    background:#fee2e2;
+    border-radius:24px;
+    padding:25px;
+    color:#991b1b;
+}
+
+.submit-card{
+    background:white;
+    border-radius:32px;
+    overflow:hidden;
+    box-shadow:0 8px 30px rgba(0,0,0,.05);
+}
+
+.card-heading{
+    padding:25px 32px;
+    font-size:1.25rem;
+    font-weight:800;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.card-content{
+    padding:32px;
+}
+
+.custom-input,
+textarea{
+    width:100%;
+    padding:14px 18px;
+    border-radius:18px;
+    border:2px solid #e5e7eb;
+    font-size:1rem;
+}
+
+.custom-input:focus,
+textarea:focus{
+    outline:none;
+    box-shadow:none;
+    border-color:#111827;
+}
+
+.upload-box{
+    background:#f8f9fa;
+    border:2px dashed #d1d5db;
+    border-radius:28px;
+    padding:50px 25px;
+    text-align:center;
+}
+
+.upload-icon{
+    font-size:4rem;
+    margin-bottom:20px;
+}
+
+.upload-text{
+    color:#6b7280;
+}
+
+.upload-limit{
+    display:block;
+    margin-top:20px;
+    color:#6b7280;
+}
+
+.submit-btn{
+    background:#111827;
+    color:white;
+    border:none;
+    padding:16px;
+    border-radius:999px;
+    font-weight:700;
+    transition:.25s;
+}
+
+.submit-btn:hover{
+    transform:translateY(-3px);
+}
+
+input[type="file"]{
+    margin-top:15px;
+    width:100%;
+    padding:12px;
+    border-radius:16px;
+    background:white;
+    border:1px solid #d1d5db;
+}
+
+@media(max-width:768px){
+    .submit-header{
+        padding:28px;
+    }
+
+    .submit-title{
+        font-size:2.2rem;
+    }
+
+    .card-content{
+        padding:24px;
+    }
+
+    .upload-box{
+        padding:35px 15px;
+    }
+}
+</style>
 
 {% endblock %}

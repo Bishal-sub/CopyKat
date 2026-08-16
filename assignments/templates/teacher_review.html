@@ -1,93 +1,538 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
+{% block title %}CopyKat | Review Assignment{% endblock %}
 
 {% block content %}
 
+<div class="container-fluid py-4 px-3 px-lg-5">
+    <div class="container-xl">
 
-<div class="container py-5">
+        <div class="bg-white rounded-4 p-5 shadow-sm mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h1 class="display-5 fw-bold m-0">Review Assignment</h1>
+                    <p class="text-muted mt-2 mb-0">{{ assignment.title }}</p>
+                </div>
 
+                <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-dark rounded-pill px-4">
+                    Back
+                </a>
+            </div>
+        </div>
 
-<div class="card border border-dark border-3 rounded-5 p-5">
+        <div class="card border-0 rounded-4 shadow-sm">
+            <div class="card-header bg-white border-bottom fw-bold py-3 px-4">
+                Assignment Details
+            </div>
 
+            <div class="card-body p-5">
 
-<h2>
-Review Assignment
-</h2>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success rounded-4">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
 
+                <div class="row g-4">
 
-<h4>
-{{assignment.title}}
-</h4>
+                    <!-- Current Submission -->
+                    <div class="col-lg-6">
+                        <div class="submission-card h-100">
 
+                            <div class="submission-header">
+                                <h2>Current Submission</h2>
+                            </div>
 
-<p>
-Student:
-{{assignment.student.full_name}}
-</p>
+                            <div class="submission-body">
 
+                                <div class="student-info mb-4">
+                                    <small>Student</small>
+                                    <strong>{{ assignment.student.full_name }}</strong>
+                                </div>
 
-<p>
-Similarity:
-{{assignment.similarity_percentage}}%
-</p>
+                                <div class="row g-3">
 
+                                    <div class="col-md-6">
+                                        <div class="detail">
+                                            <small>Subject</small>
+                                            <strong>{{ assignment.subject.name }}</strong>
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-6">
+                                        <div class="detail">
+                                            <small>Topic</small>
+                                            <strong>{{ assignment.task.topic }}</strong>
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-6">
+                                        <div class="detail">
+                                            <small>Semester</small>
+                                            <strong>{{ assignment.semester }}</strong>
+                                        </div>
+                                    </div>
 
-<form method="POST">
+                                    <div class="col-md-6">
+                                        <div class="detail">
+                                            <small>Attempt</small>
+                                            <strong>{{ assignment.submission_attempt }}/2</strong>
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-6">
+                                        <div class="detail">
+                                            <small>Submitted</small>
+                                            <strong>{{ assignment.submitted_at }}</strong>
+                                        </div>
+                                    </div>
 
-{% csrf_token %}
+                                    <div class="col-md-6">
+                                        <div class="detail">
+                                            <small>Status</small>
+                                            <strong>
+                                                {% if assignment.status == "accepted" %}
+                                                    Accepted
+                                                {% elif assignment.status == "pending_review" %}
+                                                    Pending Review
+                                                {% elif assignment.status == "resubmission_required" %}
+                                                    Resubmission Required
+                                                {% elif assignment.status == "final_rejected" %}
+                                                    Final Rejected
+                                                {% endif %}
+                                            </strong>
+                                        </div>
+                                    </div>
 
+                                </div>
 
+                                <a href="{{ assignment.matched_assignment.file.url }}" target="_blank"
+                                       class="btn btn-outline-dark rounded-pill px-4 mt-4">
+                                        View Document
+                                    </a>
 
-<textarea
-name="remark"
-class="form-control mb-3"
-placeholder="Write remark"
->{{assignment.teacher_remark}}</textarea>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Matched Submission -->
+                    <div class="col-lg-6">
+                        <div class="submission-card h-100">
 
+                            {% if assignment.matched_assignment %}
 
+                                <div class="submission-header">
+                                    <h2>Matched Submission</h2>
+                                </div>
 
+                                <div class="submission-body">
 
-<select
-name="status"
-class="form-control mb-3"
->
+                                    <div class="student-info mb-4">
+                                        <small>Student</small>
+                                        <strong>{{ assignment.matched_assignment.student.full_name }}</strong>
+                                    </div>
 
+                                    <div class="row g-3">
 
-<option value="accepted">
-Accept
-</option>
+                                        <div class="col-md-6">
+                                            <div class="detail">
+                                                <small>Subject</small>
+                                                <strong>{{ assignment.matched_assignment.subject.name }}</strong>
+                                            </div>
+                                        </div>
 
+                                        <div class="col-md-6">
+                                            <div class="detail">
+                                                <small>Topic</small>
+                                                <strong>{{ assignment.matched_assignment.task.topic }}</strong>
+                                            </div>
+                                        </div>
 
-<option value="rejected">
-Reject
-</option>
+                                        <div class="col-md-6">
+                                            <div class="detail">
+                                                <small>Semester</small>
+                                                <strong>{{ assignment.matched_assignment.semester }}</strong>
+                                            </div>
+                                        </div>
 
+                                        <div class="col-md-6">
+                                            <div class="detail">
+                                                <small>Submitted</small>
+                                                <strong>{{ assignment.matched_assignment.submitted_at }}</strong>
+                                            </div>
+                                        </div>
 
-</select>
+                                        <div class="col-md-6">
+                                            <div class="detail">
+                                                <small>Similarity</small>
+                                                <strong>{{ assignment.similarity_percentage }}</strong>
+                                            </div>
+                                        </div>
 
+                                    </div>
 
+                                    <a href="{{ assignment.matched_assignment.file.url }}" target="_blank"
+                                       class="btn btn-outline-dark rounded-pill px-4 mt-4">
+                                        View Document
+                                    </a>
 
+                                </div>
 
-<button class="btn btn-success">
+                            {% else %}
 
-Save
+                                <div class="no-match">
+                                    <h2>No Matching Document</h2>
+                                    <p>CopyKat did not find a matching assignment.</p>
+                                </div>
 
-</button>
+                            {% endif %}
 
+                        </div>
+                    </div>
 
+                </div>
 
-</form>
+                <!-- Similarity -->
+                <div class="similarity-card mt-4">
+                    <div>
+                        <small>CopyKat Similarity Analysis</small>
+                        <h2 class="mb-0 mt-1">Similarity Score</h2>
+                    </div>
 
+                    <strong>{{ assignment.similarity_percentage }}</strong>
+                </div>
 
+                <!-- Matched Content -->
+                {% if matching_sentences %}
+
+                    <div class="section-card mt-4">
+
+                        <div class="section-title">
+                            <h2>Matched Content</h2>
+                        </div>
+
+                        {% for match in matching_sentences %}
+
+                            <div class="match-card">
+
+                                <div class="match-header">
+                                    <strong>Match </strong>
+                                    <span>{{ match.similarity }}%</span>
+                                </div>
+
+                                <div class="row g-3 p-3">
+
+                                    <div class="col-md-6">
+                                        <div class="content-box">
+                                            <strong>{{ assignment.student.full_name }}  </strong>
+                                            <p>{{ match.current_text }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="content-box"> 
+                                            <strong>Matches with </strong>
+                                            <strong>{{ assignment.matched_assignment.student.full_name }} </strong>
+                                            <p>{{ match.matched_text }}</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+                <!-- Teacher Review -->
+                <div class="section-card mt-4">
+
+                    <div class="section-title">
+                        <h2>Teacher Review</h2>
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Teacher Remark</label>
+
+                            <textarea name="remark"
+                                      class="form-control"
+                                      rows="5"
+                                      placeholder="Write your feedback...">{{ assignment.teacher_remark }}</textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Review Status</label>
+
+                            <select name="status" class="form-select">
+
+                                <option value="accepted"
+                                    {% if assignment.status == "accepted" %}selected{% endif %}>
+                                    Accept
+                                </option>
+
+                                {% if assignment.submission_attempt == 1 %}
+                                    <option value="resubmission_required"
+                                        {% if assignment.status == "resubmission_required" %}selected{% endif %}>
+                                        Reject & Allow Resubmission
+                                    </option>
+                                {% endif %}
+
+                                <option value="final_rejected"
+                                    {% if assignment.status == "final_rejected" %}selected{% endif %}>
+                                    Final Reject
+                                </option>
+
+                                <option value="pending_review"
+                                    {% if assignment.status == "pending_review" %}selected{% endif %}>
+                                    Pending Review
+                                </option>
+
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-3 flex-wrap">
+                            <button type="submit" class="btn btn-dark rounded-pill px-5 py-2">
+                                Save Review
+                            </button>
+
+                            <a href="{% url 'teacher_dashboard' %}"
+                               class="btn btn-outline-secondary rounded-pill px-5 py-2">
+                                Cancel
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 </div>
 
+<style>
+    body {
+        background: #e6ecef;
+        font-family: "Plus Jakarta Sans", sans-serif;
+    }
 
-</div>
+    .submission-card,
+    .section-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        overflow: hidden;
+    }
 
+    .submission-header {
+        padding: 22px;
+        border-bottom: 1px solid #e5e7eb;
+    }
 
+    .submission-header h2,
+    .section-title h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .submission-header span {
+        display: block;
+        margin-top: 5px;
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+
+    .submission-body {
+        padding: 22px;
+    }
+
+    .student-info {
+        padding-bottom: 18px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .student-info small,
+    .detail small,
+    .similarity-card small {
+        display: block;
+        margin-bottom: 5px;
+        color: #6b7280;
+        font-size: 0.78rem;
+    }
+
+    .student-info strong {
+        font-size: 1.05rem;
+    }
+
+    .detail {
+        height: 100%;
+        padding: 15px;
+        background: #fafafa;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+    }
+
+    .detail strong {
+        display: block;
+        font-size: 0.9rem;
+        overflow-wrap: anywhere;
+    }
+
+    .no-match {
+        padding: 90px 20px;
+        text-align: center;
+    }
+
+    .no-match h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .no-match p {
+        margin: 5px 0 0;
+        color: #6b7280;
+    }
+
+    .similarity-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 25px;
+        background: #f8f9fa;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+    }
+
+    .similarity-card h2 {
+        margin-top: 5px;
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .similarity-card > strong {
+        font-size: 2.4rem;
+        font-weight: 800;
+    }
+
+    .section-card {
+        padding: 24px;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 16px;
+        margin-bottom: 18px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .section-title span {
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+
+    .match-card {
+        margin-bottom: 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .match-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .match-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .match-header span {
+        font-weight: 700;
+    }
+
+    .content-box {
+        height: 100%;
+        padding: 18px;
+        background: #fafafa;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+    }
+
+    .content-box strong {
+        font-size: 0.9rem;
+    }
+
+    .content-box p {
+        margin: 12px 0 0;
+        font-size: 0.9rem;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 52px;
+        padding: 10px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 14px;
+        font-size: 0.9rem;
+    }
+
+    textarea.form-control {
+        min-height: 140px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #111827;
+        box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+    }
+
+    .btn-dark {
+        transition: 0.2s;
+    }
+
+    .btn-dark:hover {
+        background: #333;
+        transform: translateY(-1px);
+    }
+
+    .alert {
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 1.5rem !important;
+        }
+
+        .similarity-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .similarity-card > strong {
+            font-size: 2rem;
+        }
+
+        .section-card {
+            padding: 18px;
+        }
+    }
+</style>
 
 {% endblock %}

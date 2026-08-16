@@ -1,0 +1,107 @@
+{% extends 'base.html' %} {% block title %} Verify OTP | CopyKat {% endblock %}
+{% block content %}
+
+<div class="container py-4">
+  <div class="verify-wrapper">
+    <div class="verify-card">
+      <div class="text-center mb-4">
+        <a href="{% url 'home' %}" class="brand-title"> CopyKat </a>
+
+        <p class="text-secondary mt-3 mb-0">Enter the OTP sent to your email</p>
+      </div>
+
+      <h3 class="verify-heading text-center mb-4">Verify OTP</h3>
+
+      {% if messages %} {% for message in messages %}
+
+      <div class="alert alert-danger rounded-4">{{ message }}</div>
+
+      {% endfor %} {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <label class="form-label fw-semibold"> Enter OTP </label>
+
+        <input
+          type="text"
+          name="otp"
+          class="form-control otp-input mb-4"
+          placeholder="Enter 6 digit OTP"
+          maxlength="6"
+        />
+
+        <button type="submit" class="btn verify-btn w-100">Verify OTP</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  body {
+    background: #e6ecef;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+
+  .verify-wrapper {
+    min-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .verify-card {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    border-radius: 32px;
+    padding: 48px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  }
+
+  .brand-title {
+    font-size: 2rem;
+    font-weight: 800;
+    text-decoration: none;
+    color: #1a1a1a;
+  }
+
+  .verify-heading {
+    font-size: 2rem;
+    font-weight: 800;
+  }
+
+  .otp-input {
+    height: 55px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: #fafafa;
+    padding: 0 24px;
+    text-align: center;
+    letter-spacing: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .otp-input:focus {
+    border-color: #1a1a1a;
+    box-shadow: none;
+    background: white;
+  }
+
+  .verify-btn {
+    height: 55px;
+    border-radius: 999px;
+    background: #1a1a1a;
+    color: white;
+    font-weight: 700;
+    border: none;
+  }
+
+  .verify-btn:hover {
+    background: #333333;
+    color: white;
+  }
+</style>
+
+{% endblock %}
