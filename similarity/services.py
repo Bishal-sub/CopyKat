@@ -1,5 +1,4 @@
 import re
-import hashlib
 
 from langdetect import detect
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -9,38 +8,27 @@ from assignments.models import Assignment
 from .extractors import extract_pdf_text, extract_docx_text
 
 
-# Similarity check agadi text lai same format ma lyaune
+# Text lai compare garna sajilo hune gari common format ma lyaune
 def clean_text(text):
     if not text:
         return ""
 
-    # Capital ra small letter ko farak hataune
     text = text.lower()
-
-    # Punctuation ra unwanted characters hataune
     text = re.sub(r"[^a-zA-Z\s]", " ", text)
-
-    # Extra spaces lai single space ma lyaune
     text = re.sub(r"\s+", " ", text)
 
     return text.strip()
 
 
-# Document English ma cha ki chaina check garne
+# Document English language ma cha ki chaina check garne
 def is_english(text):
     try:
         return detect(text) == "en"
     except Exception:
-        # Language detect huna nasake document accept nagarne
         return False
 
 
-# Exact duplicate check ko lagi document ko hash banaune
-def get_document_hash(text):
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
-# File ko extension herera text extract garne
+# File ko extension herera appropriate text extractor use garne
 def get_text_from_file(file_path):
     file_path = file_path.lower()
 
@@ -53,20 +41,20 @@ def get_text_from_file(file_path):
     raise ValueError("Only PDF and DOCX files are allowed.")
 
 
-# Invalid assignment lai resubmission ko lagi mark garne
+# Assignment valid chaina bhane resubmission ko lagi mark garne
 def reject_assignment(assignment, reason):
     assignment.status = "resubmission_required"
     assignment.similarity_percentage = reason
+    assignment.matched_assignment = None
     assignment.save()
 
 
-# Dui document bich ko similarity calculate garne
+# Dui ota document ko overall similarity percentage calculate garne
 def calculate_similarity(text1, text2):
     if not text1 or not text2:
         return 0
 
     try:
-        # Single word ra two-word phrase dubai compare garne
         vectorizer = TfidfVectorizer(
             stop_words="english",
             lowercase=True,
@@ -75,100 +63,205 @@ def calculate_similarity(text1, text2):
 
         vectors = vectorizer.fit_transform([text1, text2])
 
-        # Dui document ko vector similarity nikalne
-        similarity = cosine_similarity(
-            vectors[0:1],
-            vectors[1:2],
-        )[0][0]
-
+        similarity = cosine_similarity(vectors[0:1], vectors[1:2])[0][0]
         similarity = round(similarity * 100, 2)
 
-        # Sano similarity lai meaningful match namanne
         return similarity if similarity >= 15 else 0
 
     except Exception:
         return 0
 
 
-# Document lai sentence haru ma divide garne
+# Document lai sentence haru ma todne ra original text ko position pani save garne
 def split_into_sentences(text):
     if not text:
         return []
 
-    sentences = re.split(r"[.!?]+", text)
+    sentences = []
 
-    return [
-        sentence.strip()
-        for sentence in sentences
-        if sentence.strip()
-    ]
+    # Original/raw text ko exact position preserve garera sentence split garne
+    pattern = re.compile(r".*?(?:[.!?](?=\s|$)|$)", re.DOTALL)
+
+    for match in pattern.finditer(text):
+        sentence = match.group().strip()
+
+        if sentence:
+            # Strip bhayeko text ko actual start/end position calculate garne
+            leading_spaces = len(match.group()) - len(match.group().lstrip())
+            trailing_spaces = len(match.group()) - len(match.group().rstrip())
+
+            start = match.start() + leading_spaces
+            end = match.end() - trailing_spaces
+
+            sentences.append({
+                "text": sentence,
+                "start": start,
+                "end": end,
+            })
+
+    return sentences
 
 
-# Dui document ma similar sentences haru khojne
+# Dui document ko similar sentence haru khojne
 def find_matching_sentences(current_text, old_text):
-    MATCH_THRESHOLD = 70
-    matches = []
+    MATCH_THRESHOLD = 75
 
     current_sentences = split_into_sentences(current_text)
     old_sentences = split_into_sentences(old_text)
+    sentence_matches = []
 
-    for current_sentence in current_sentences:
+    # Current document ko each sentence check garne
+    for current_index, current_sentence in enumerate(current_sentences):
+        current_sentence_text = current_sentence["text"]
+
+        if len(current_sentence_text.split()) < 5:
+            continue
+
         best_similarity = 0
-        best_old_sentence = ""
+        best_old_index = None
+        best_old_sentence = None
 
-        # Current sentence lai purano document ko sabai sentence sanga compare garne
-        for old_sentence in old_sentences:
+        # Current sentence lai old document ko sabai sentence sanga compare garne
+        for old_index, old_sentence in enumerate(old_sentences):
+            old_sentence_text = old_sentence["text"]
+
+            if len(old_sentence_text.split()) < 5:
+                continue
+
             similarity = calculate_similarity(
-                clean_text(current_sentence),
-                clean_text(old_sentence),
+                clean_text(current_sentence_text),
+                clean_text(old_sentence_text),
             )
 
             if similarity > best_similarity:
                 best_similarity = similarity
+                best_old_index = old_index
                 best_old_sentence = old_sentence
 
-        # Threshold pugyo bhane matching sentence result ma rakhne
-        if best_similarity >= MATCH_THRESHOLD:
-            matches.append(
-                {
-                    "current_text": current_sentence,
-                    "matched_text": best_old_sentence,
-                    "similarity": round(best_similarity, 2),
-                }
-            )
+        # 75% bhanda mathi ko matching sentence matra rakhne
+        if best_similarity >= MATCH_THRESHOLD and best_old_index is not None:
+            sentence_matches.append({
+                "current_index": current_index,
+                "old_index": best_old_index,
+                "current_text": current_sentence_text,
+                "matched_text": best_old_sentence["text"],
+                "start": current_sentence["start"],
+                "end": current_sentence["end"],
+                "similarity": round(best_similarity, 2),
+            })
+
+    # Consecutive matching sentences lai एउटै block ma combine garne
+    matching_blocks = []
+    current_block = None
+
+    for match in sentence_matches:
+        if current_block is None:
+            current_block = {
+                "current_start": match["current_index"],
+                "current_end": match["current_index"],
+                "old_start": match["old_index"],
+                "old_end": match["old_index"],
+                "text_start": match["start"],
+                "text_end": match["end"],
+                "current_text": [match["current_text"]],
+                "matched_text": [match["matched_text"]],
+                "similarities": [match["similarity"]],
+            }
+            continue
+
+        is_consecutive = (
+            match["current_index"] == current_block["current_end"] + 1
+            and match["old_index"] == current_block["old_end"] + 1
+        )
+
+        if is_consecutive:
+            current_block["current_end"] = match["current_index"]
+            current_block["old_end"] = match["old_index"]
+            current_block["text_end"] = match["end"]
+            current_block["current_text"].append(match["current_text"])
+            current_block["matched_text"].append(match["matched_text"])
+            current_block["similarities"].append(match["similarity"])
+        else:
+            matching_blocks.append(current_block)
+
+            current_block = {
+                "current_start": match["current_index"],
+                "current_end": match["current_index"],
+                "old_start": match["old_index"],
+                "old_end": match["old_index"],
+                "text_start": match["start"],
+                "text_end": match["end"],
+                "current_text": [match["current_text"]],
+                "matched_text": [match["matched_text"]],
+                "similarities": [match["similarity"]],
+            }
+
+    if current_block is not None:
+        matching_blocks.append(current_block)
+
+    matches = []
+
+    # Only matched sentence/block return garne
+    for block in matching_blocks:
+        matches.append({
+            "current_text": " ".join(block["current_text"]),
+            "matched_text": " ".join(block["matched_text"]),
+            "start": block["text_start"],
+            "end": block["text_end"],
+            "similarity": round(
+                sum(block["similarities"]) / len(block["similarities"]),
+                2,
+            ),
+        })
 
     return matches
 
 
-# Assignment ko overall plagiarism check handle garne
+# Assignment ko complete similarity analysis handle garne
 def analyze_assignment(assignment):
     try:
-        # Uploaded file bata text nikalera clean garne
-        current_text = clean_text(
-            get_text_from_file(assignment.file.path)
-        )
+        # Uploaded file bata original/raw text nikalne
+        raw_current_text = get_text_from_file(assignment.file.path)
+        current_text = clean_text(raw_current_text)
 
+        # File empty cha bhane reject garne
         if not current_text:
             reject_assignment(assignment, "Empty file")
-            return "Empty file"
+            return {
+                "similarity": 0,
+                "document_text": raw_current_text,
+                "matched_text": [],
+                "matched_assignment": None,
+                "reason": "Empty file",
+            }
 
         # English document matra process garne
         if not is_english(current_text):
             reject_assignment(assignment, "Non-English")
-            return "Non-English"
+            return {
+                "similarity": 0,
+                "document_text": raw_current_text,
+                "matched_text": [],
+                "matched_assignment": None,
+                "reason": "Non-English",
+            }
 
-        # Dherai sano document ko result reliable nahuna sakcha
+        # Dherai sano document ko similarity reliable nahuna sakcha
         if len(current_text.split()) < 50:
             reject_assignment(assignment, "Too Short")
-            return "Too Short"
-
-        # Current document ko hash banaune
-        current_hash = get_document_hash(current_text)
+            return {
+                "similarity": 0,
+                "document_text": raw_current_text,
+                "matched_text": [],
+                "matched_assignment": None,
+                "reason": "Too Short",
+            }
 
         highest_similarity = 0
         matched_assignment = None
+        matched_text = []
 
-        # Same task, semester ra subject ko purano submissions matra compare garne
+        # Same topic, semester ra subject ko previous assignments matra compare garne
         previous_assignments = (
             Assignment.objects
             .filter(
@@ -180,58 +273,58 @@ def analyze_assignment(assignment):
             .exclude(student=assignment.student)
         )
 
+        # Purana assignments haru one by one compare garne
         for old_assignment in previous_assignments:
             try:
                 if not old_assignment.file:
                     continue
 
-                # Purano assignment ko text extract garne
-                old_text = clean_text(
-                    get_text_from_file(old_assignment.file.path)
-                )
+                # Purano assignment ko original/raw text extract garne
+                raw_old_text = get_text_from_file(old_assignment.file.path)
+                old_text = clean_text(raw_old_text)
 
                 if not old_text:
                     continue
 
-                old_hash = get_document_hash(old_text)
+                # Overall document similarity calculate garne
+                similarity = calculate_similarity(current_text, old_text)
 
-                # Hash same bhaye document exact duplicate ho
-                if current_hash == old_hash:
-                    highest_similarity = 100
-                    matched_assignment = old_assignment
-                    break
-
-                # Exact duplicate nabhaye normal similarity check garne
-                similarity = calculate_similarity(
-                    current_text,
-                    old_text,
+                # Matched sentence ko lagi raw text use garne
+                sentence_matches = find_matching_sentences(
+                    raw_current_text,
+                    raw_old_text,
                 )
 
-                # Ahile samma ko highest score store garne
+                # Highest similarity bhayeko assignment ko result store garne
                 if similarity > highest_similarity:
                     highest_similarity = similarity
                     matched_assignment = old_assignment
+                    matched_text = sentence_matches
 
             except Exception:
-                # Euta file process nabhaye aru file check gardai jane
+                # Euta old file ma problem aaye pani aru file check garirakhne
                 continue
 
-        # Exact duplicate bhaye resubmission ko lagi pathaune
-        if highest_similarity == 100:
-            assignment.status = "resubmission_required"
-            assignment.similarity_percentage = "100%"
-        else:
-            assignment.similarity_percentage = f"{highest_similarity}%"
-
+        assignment.similarity_percentage = f"{highest_similarity}%"
         assignment.matched_assignment = matched_assignment
         assignment.save()
 
-        return highest_similarity
+        return {
+            "similarity": highest_similarity,
+            "document_text": raw_current_text,
+            "matched_text": matched_text,
+            "matched_assignment": matched_assignment.id if matched_assignment else None,
+        }
 
     except Exception:
-        # Unexpected error aaye assignment ko error state ma save garne
         assignment.similarity_percentage = "Error"
         assignment.matched_assignment = None
         assignment.save()
 
-        return "Error"
+        return {
+            "similarity": 0,
+            "document_text": "",
+            "matched_text": [],
+            "matched_assignment": None,
+            "reason": "Error",
+        }

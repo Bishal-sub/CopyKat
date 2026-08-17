@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from similarity.services import analyze_assignment, clean_text, get_text_from_file, find_matching_sentences
+from similarity.services import analyze_assignment, get_text_from_file, find_matching_sentences
 
 from .forms import AssignmentSubmissionForm, TeacherTaskForm
 from .models import Assignment, TeacherTask
@@ -39,14 +39,21 @@ def view_assignments(request):
 
     now = timezone.now()
 
-    tasks = TeacherTask.objects.filter(batch=request.user.admission_year, department_id=request.user.department_id, level_id=request.user.level_id, show_at__lte=now).select_related("teacher", "subject", "level", "department").order_by("-show_at")
+    tasks = TeacherTask.objects.filter(
+        batch=request.user.admission_year,
+        department_id=request.user.department_id,
+        level_id=request.user.level_id,
+        show_at__lte=now
+    ).select_related(
+        "teacher", "subject", "level", "department"
+    ).order_by("-show_at")
 
     task_data = []
 
     for task in tasks:
         submission = Assignment.objects.filter(task=task, student=request.user).first()
 
-        if submission and submission.status == "accepted":
+        if submission and submission.status in ("accepted", "final_rejected"):
             continue
 
         task_data.append({"task": task, "assignment": submission})
@@ -59,7 +66,10 @@ def submit_assignment(request, task_id):
     if request.user.role != "student":
         return redirect("login")
 
-    task = get_object_or_404(TeacherTask.objects.select_related("teacher", "subject", "level", "department"), id=task_id)
+    task = get_object_or_404(
+        TeacherTask.objects.select_related("teacher", "subject", "level", "department"),
+        id=task_id
+    )
 
     if task.batch != request.user.admission_year or task.department_id != request.user.department_id or task.level_id != request.user.level_id:
         messages.error(request, "This assignment is not assigned to you.")
@@ -95,9 +105,25 @@ def submit_assignment(request, task_id):
             assignment.level = task.level
             assignment.department = task.department
             assignment.status = "pending_review"
+            assignment.submission_attempt = 1
+            assignment.resubmission_used = False
+            assignment.resubmission_deadline = None
+            assignment.teacher_remark = ""
+            assignment.reviewed_at = None
+            assignment.similarity_percentage = "0%"
+            assignment.matched_assignment = None
+            assignment.matching_text = ""
             assignment.save()
 
             analyze_assignment(assignment)
+
+            assignment.refresh_from_db()
+
+            if assignment.matched_assignment and assignment.matched_assignment.student_id == assignment.student_id:
+                assignment.matched_assignment = None
+                assignment.similarity_percentage = "0%"
+                assignment.matching_text = ""
+                assignment.save(update_fields=["matched_assignment", "similarity_percentage", "matching_text"])
 
             messages.success(request, "Assignment submitted successfully.")
             return redirect("view_assignments")
@@ -112,24 +138,33 @@ def resubmit_assignment(request, assignment_id):
     if request.user.role != "student":
         return redirect("login")
 
-    assignment = get_object_or_404(Assignment.objects.select_related("task", "teacher", "subject", "level", "department"), id=assignment_id, student=request.user, status="resubmission_required")
+    assignment = get_object_or_404(
+        Assignment.objects.select_related("task", "teacher", "subject", "level", "department"),
+        id=assignment_id,
+        student=request.user,
+        status="resubmission_required"
+    )
 
     if not assignment.task:
         messages.error(request, "This assignment is no longer available.")
         return redirect("view_assignments")
 
-    now = timezone.now()
+    if assignment.submission_attempt != 1:
+        messages.error(request, "This assignment cannot be resubmitted.")
+        return redirect("view_assignments")
+
+    if assignment.resubmission_used:
+        messages.error(request, "Resubmission already used.")
+        return redirect("view_assignments")
 
     if assignment.task.batch != request.user.admission_year or assignment.task.department_id != request.user.department_id or assignment.task.level_id != request.user.level_id:
         messages.error(request, "This assignment is not assigned to you.")
         return redirect("view_assignments")
 
+    now = timezone.now()
+
     if now > assignment.task.due_date:
         messages.error(request, "Assignment due date has passed.")
-        return redirect("view_assignments")
-
-    if assignment.resubmission_used:
-        messages.error(request, "Resubmission already used.")
         return redirect("view_assignments")
 
     if assignment.resubmission_deadline and now > assignment.resubmission_deadline:
@@ -165,6 +200,7 @@ def resubmit_assignment(request, assignment_id):
         assignment.reviewed_at = None
         assignment.similarity_percentage = "0%"
         assignment.matched_assignment = None
+        assignment.matching_text = ""
         assignment.resubmission_used = True
         assignment.resubmission_deadline = None
         assignment.submission_attempt = 2
@@ -177,6 +213,14 @@ def resubmit_assignment(request, assignment_id):
                 pass
 
         analyze_assignment(assignment)
+
+        assignment.refresh_from_db()
+
+        if assignment.matched_assignment and assignment.matched_assignment.student_id == assignment.student_id:
+            assignment.matched_assignment = None
+            assignment.similarity_percentage = "0%"
+            assignment.matching_text = ""
+            assignment.save(update_fields=["matched_assignment", "similarity_percentage", "matching_text"])
 
         messages.success(request, "Assignment resubmitted successfully.")
         return redirect("view_assignments")
@@ -198,6 +242,7 @@ def teacher_review(request, id):
             "department",
             "task",
             "matched_assignment",
+            "matched_assignment__student",
         ),
         id=id,
         teacher=request.user,
@@ -207,22 +252,31 @@ def teacher_review(request, id):
         status = request.POST.get("status")
         assignment.teacher_remark = request.POST.get("remark", "").strip()
 
-        if status == "rejected":
-            if assignment.submission_attempt == 1:
-                assignment.status = "resubmission_required"
-                assignment.resubmission_deadline = timezone.now() + timedelta(days=2)
+        if status == "accepted":
+            assignment.status = "accepted"
+            assignment.resubmission_deadline = None
 
-                if assignment.task and assignment.resubmission_deadline > assignment.task.due_date:
-                    assignment.resubmission_deadline = assignment.task.due_date
-            else:
-                assignment.status = "final_rejected"
-                assignment.resubmission_deadline = None
+        elif status == "resubmission_required":
+            if assignment.submission_attempt != 1:
+                messages.error(request, "A second submission cannot be rejected for another resubmission.")
+                return redirect("teacher_dashboard")
 
-        elif status in ("accepted", "pending_review"):
-            assignment.status = status
+            if assignment.resubmission_used:
+                messages.error(request, "Resubmission has already been used.")
+                return redirect("teacher_dashboard")
 
-            if status == "accepted":
-                assignment.resubmission_deadline = None
+            assignment.status = "resubmission_required"
+            assignment.resubmission_deadline = timezone.now() + timedelta(days=2)
+
+            if assignment.task and assignment.resubmission_deadline > assignment.task.due_date:
+                assignment.resubmission_deadline = assignment.task.due_date
+
+        elif status == "final_rejected":
+            assignment.status = "final_rejected"
+            assignment.resubmission_deadline = None
+
+        elif status == "pending_review":
+            assignment.status = "pending_review"
 
         else:
             messages.error(request, "Invalid review status.")
@@ -235,17 +289,23 @@ def teacher_review(request, id):
         return redirect("teacher_dashboard")
 
     matching_sentences = []
+    document_text = ""
 
-    if assignment.matched_assignment:
+    # Current assignment ko original/raw text UI ko display garna nikalne
+    try:
+        document_text = get_text_from_file(assignment.file.path)
+    except Exception:
+        document_text = ""
+
+    # Different student ko assignment sanga matra matching content check garne
+    if assignment.matched_assignment and assignment.matched_assignment.student_id != assignment.student_id:
         try:
-            current_text = clean_text(get_text_from_file(assignment.file.path))
-            old_text = clean_text(get_text_from_file(assignment.matched_assignment.file.path))
+            # Similarity ko lagi clean text use garne hoina, matching ko lagi raw text use garne
+            current_text = get_text_from_file(assignment.file.path)
+            old_text = get_text_from_file(assignment.matched_assignment.file.path)
 
-            matching_sentences = find_matching_sentences(
-                current_text,
-                old_text,
-            )
-
+            # Raw text use gareko le original capital letter, punctuation ra position preserve huncha
+            matching_sentences = find_matching_sentences(current_text, old_text)
         except Exception:
             matching_sentences = []
 
@@ -254,7 +314,7 @@ def teacher_review(request, id):
         "teacher_review.html",
         {
             "assignment": assignment,
+            "document_text": document_text,
             "matching_sentences": matching_sentences,
         },
     )
-
