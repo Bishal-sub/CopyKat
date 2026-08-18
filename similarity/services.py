@@ -20,7 +20,7 @@ def clean_text(text):
     return text.strip()
 
 
-# Document English language ma cha ki chaina check garne
+# Document English language ma cha ki chaina check 
 def is_english(text):
     try:
         return detect(text) == "en"
@@ -28,7 +28,7 @@ def is_english(text):
         return False
 
 
-# File ko extension herera appropriate text extractor use garne
+# File ko extension herera appropriate text extractor use 
 def get_text_from_file(file_path):
     file_path = file_path.lower()
 
@@ -41,7 +41,7 @@ def get_text_from_file(file_path):
     raise ValueError("Only PDF and DOCX files are allowed.")
 
 
-# Assignment valid chaina bhane resubmission ko lagi mark garne
+# Assignment valid chaina bhane resubmission ko lagi mark 
 def reject_assignment(assignment, reason):
     assignment.status = "resubmission_required"
     assignment.similarity_percentage = reason
@@ -49,7 +49,7 @@ def reject_assignment(assignment, reason):
     assignment.save()
 
 
-# Dui ota document ko overall similarity percentage calculate garne
+# Dui ota document ko overall similarity percentage calculate 
 def calculate_similarity(text1, text2):
     if not text1 or not text2:
         return 0
@@ -72,21 +72,21 @@ def calculate_similarity(text1, text2):
         return 0
 
 
-# Document lai sentence haru ma todne ra original text ko position pani save garne
+# Document lai sentence haru ma todne ra original text ko position pani save 
 def split_into_sentences(text):
     if not text:
         return []
 
     sentences = []
 
-    # Original/raw text ko exact position preserve garera sentence split garne
+    # Original/raw text ko exact position preserve garera sentence split 
     pattern = re.compile(r".*?(?:[.!?](?=\s|$)|$)", re.DOTALL)
 
     for match in pattern.finditer(text):
         sentence = match.group().strip()
 
         if sentence:
-            # Strip bhayeko text ko actual start/end position calculate garne
+            # Strip bhayeko text ko actual start/end position calculate 
             leading_spaces = len(match.group()) - len(match.group().lstrip())
             trailing_spaces = len(match.group()) - len(match.group().rstrip())
 
@@ -150,7 +150,7 @@ def find_matching_sentences(current_text, old_text):
                 "similarity": round(best_similarity, 2),
             })
 
-    # Consecutive matching sentences lai एउटै block ma combine garne
+    # Consecutive matching sentences lai yeautai block ma combine 
     matching_blocks = []
     current_block = None
 
@@ -217,7 +217,7 @@ def find_matching_sentences(current_text, old_text):
     return matches
 
 
-# Assignment ko complete similarity analysis handle garne
+# Assignment ko complete similarity analysis handle 
 def analyze_assignment(assignment):
     try:
         # Uploaded file bata original/raw text nikalne
@@ -235,7 +235,7 @@ def analyze_assignment(assignment):
                 "reason": "Empty file",
             }
 
-        # English document matra process garne
+        # English document matra process 
         if not is_english(current_text):
             reject_assignment(assignment, "Non-English")
             return {

@@ -14,6 +14,7 @@ def validate_admission_year(value):
 
 
 class User(AbstractUser):
+    
     ROLE_CHOICES = (
         ("student", "Student"),
         ("teacher", "Teacher"),

@@ -1,557 +1,547 @@
-
-{% extends "base.html" %}
-
-{% block title %}CopyKat | Review Assignment{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}CopyKat | Review Assignment{%endblock %} {% block content %}
 
 <div class="container-fluid py-4 px-3 px-lg-5">
-    <div class="container-xl">
-
-        <div class="bg-white rounded-4 p-5 shadow-sm mb-4">
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                <div>
-                    <h1 class="display-5 fw-bold m-0">Review Assignment</h1>
-                    <p class="text-muted mt-2 mb-0">{{ assignment.title }}</p>
-                </div>
-
-                <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-dark rounded-pill px-4">
-                    Back
-                </a>
-            </div>
+  <div class="container-xl">
+    <div class="bg-white rounded-4 p-5 shadow-sm mb-4">
+      <div
+        class="d-flex justify-content-between align-items-center flex-wrap gap-3"
+      >
+        <div>
+          <h1 class="display-5 fw-bold m-0">Review Assignment</h1>
+          <p class="text-muted mt-2 mb-0">{{ assignment.title }}</p>
         </div>
 
-        <div class="card border-0 rounded-4 shadow-sm">
-            <div class="card-header bg-white border-bottom fw-bold py-3 px-4">
-                Assignment Details
-            </div>
-
-            <div class="card-body p-5">
-
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-success rounded-4">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-
-                <div class="row g-4">
-
-                    <!-- Current Submission -->
-                    <div class="col-lg-6">
-                        <div class="submission-card h-100">
-
-                            <div class="submission-header">
-                                <h2>Current Submission</h2>
-                            </div>
-
-                            <div class="submission-body">
-
-                                <div class="student-info mb-4">
-                                    <small>Student</small>
-                                    <strong>{{ assignment.student.full_name }}</strong>
-                                </div>
-
-                                <div class="row g-3">
-
-                                    <div class="col-md-6">
-                                        <div class="detail">
-                                            <small>Subject</small>
-                                            <strong>{{ assignment.subject.name }}</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="detail">
-                                            <small>Topic</small>
-                                            <strong>{{ assignment.task.topic }}</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="detail">
-                                            <small>Semester</small>
-                                            <strong>{{ assignment.semester }}</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="detail">
-                                            <small>Attempt</small>
-                                            <strong>{{ assignment.submission_attempt }}/2</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="detail">
-                                            <small>Submitted</small>
-                                            <strong>{{ assignment.submitted_at }}</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="detail">
-                                            <small>Status</small>
-                                            <strong>
-                                                {% if assignment.status == "accepted" %}
-                                                    Accepted
-                                                {% elif assignment.status == "pending_review" %}
-                                                    Pending Review
-                                                {% elif assignment.status == "resubmission_required" %}
-                                                    Resubmission Required
-                                                {% elif assignment.status == "final_rejected" %}
-                                                    Final Rejected
-                                                {% endif %}
-                                            </strong>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                {% if assignment.matched_assignment %}
-                                    <a
-                                        href="{{ assignment.matched_assignment.file.url }}"
-                                        target="_blank"
-                                        class="btn btn-outline-dark rounded-pill px-4 mt-4"
-                                    >
-                                        View Document
-                                    </a>
-                                {% endif %}
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Matched Submission -->
-                    <div class="col-lg-6">
-                        <div class="submission-card h-100">
-
-                            {% if assignment.matched_assignment %}
-
-                                <div class="submission-header">
-                                    <h2>Matched Submission</h2>
-                                </div>
-
-                                <div class="submission-body">
-
-                                    <div class="student-info mb-4">
-                                        <small>Student</small>
-                                        <strong>
-                                            {{ assignment.matched_assignment.student.full_name }}
-                                        </strong>
-                                    </div>
-
-                                    <div class="row g-3">
-
-                                        <div class="col-md-6">
-                                            <div class="detail">
-                                                <small>Subject</small>
-                                                <strong>
-                                                    {{ assignment.matched_assignment.subject.name }}
-                                                </strong>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="detail">
-                                                <small>Topic</small>
-                                                <strong>
-                                                    {{ assignment.matched_assignment.task.topic }}
-                                                </strong>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="detail">
-                                                <small>Semester</small>
-                                                <strong>
-                                                    {{ assignment.matched_assignment.semester }}
-                                                </strong>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="detail">
-                                                <small>Submitted</small>
-                                                <strong>
-                                                    {{ assignment.matched_assignment.submitted_at }}
-                                                </strong>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="detail">
-                                                <small>Similarity</small>
-                                                <strong>{{ assignment.similarity_percentage }}</strong>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <a
-                                        href="{{ assignment.matched_assignment.file.url }}"
-                                        target="_blank"
-                                        class="btn btn-outline-dark rounded-pill px-4 mt-4"
-                                    >
-                                        View Document
-                                    </a>
-
-                                </div>
-
-                            {% else %}
-
-                                <div class="no-match">
-                                    <h2>No Matching Document</h2>
-                                    <p>CopyKat did not find a matching assignment.</p>
-                                </div>
-
-                            {% endif %}
-
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <!-- Matched Content -->
-                {% if matching_sentences %}
-
-                    <div class="section-card mt-4">
-
-                        <div class="section-title">
-                            <h2>Matched Content</h2>
-                        </div>
-
-                        {% for match in matching_sentences %}
-
-                            <div class="match-card">
-
-                                <div class="match-header">
-                                    <strong>Match </strong>
-                                    <span>{{ assignment.similarity_percentage }}</span>
-                                </div>
-
-                                <div class="row g-3 p-3">
-
-                                    <div class="col-md-6">
-                                        <div class="content-box">
-                                            <strong>{{ assignment.student.full_name }}</strong>
-                                                    <div id="document-viewer" class="document-viewer"></div>
-
-                                                    <!-- Original/raw document lai JavaScript ma safe tarikale pathaune -->
-                                                    {{ document_text|json_script:"document-text-data" }}
-
-                                                    <!-- Matching sentence ko start/end position JavaScript ma safe tarikale pathaune -->
-                                                    {{ matching_sentences|json_script:"matching-data" }}
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="content-box">
-                                            <strong>Matches with </strong>
-                                            <strong>
-                                                {{ assignment.matched_assignment.student.full_name }}
-                                            </strong>
-
-                                            <p>{{ match.matched_text }}</p>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        {% endfor %}
-
-                    </div>
-
-                {% endif %}
-
-                <!-- Teacher Review -->
-                <div class="section-card mt-4">
-
-                    <div class="section-title">
-                        <h2>Teacher Review</h2>
-                    </div>
-
-                    <form method="POST">
-                        {% csrf_token %}
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">Teacher Remark</label>
-
-                            <textarea
-                                name="remark"
-                                class="form-control"
-                                rows="5"
-                                placeholder="Write your feedback..."
-                            >{{ assignment.teacher_remark }}</textarea>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">Review Status</label>
-
-                            <select name="status" class="form-select">
-
-                                <option
-                                    value="accepted"
-                                    {% if assignment.status == "accepted" %}selected{% endif %}
-                                >
-                                    Accept
-                                </option>
-
-                                {% if assignment.submission_attempt == 1 %}
-                                    <option
-                                        value="resubmission_required"
-                                        {% if assignment.status == "resubmission_required" %}selected{% endif %}
-                                    >
-                                        Reject & Allow Resubmission
-                                    </option>
-                                {% endif %}
-
-                                <option
-                                    value="final_rejected"
-                                    {% if assignment.status == "final_rejected" %}selected{% endif %}
-                                >
-                                    Final Reject
-                                </option>
-
-                                <option
-                                    value="pending_review"
-                                    {% if assignment.status == "pending_review" %}selected{% endif %}
-                                >
-                                    Pending Review
-                                </option>
-
-                            </select>
-                        </div>
-
-                        <div class="d-flex gap-3 flex-wrap">
-
-                            <button
-                                type="submit"
-                                class="btn btn-dark rounded-pill px-5 py-2"
-                            >
-                                Save Review
-                            </button>
-
-                            <a
-                                href="{% url 'teacher_dashboard' %}"
-                                class="btn btn-outline-secondary rounded-pill px-5 py-2"
-                            >
-                                Cancel
-                            </a>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-            </div>
-        </div>
-
+        <a
+          href="{% url 'teacher_dashboard' %}"
+          class="btn btn-outline-dark rounded-pill px-4"
+        >
+          Back
+        </a>
+      </div>
     </div>
+
+    <div class="card border-0 rounded-4 shadow-sm">
+      <div class="card-header bg-white border-bottom fw-bold py-3 px-4">
+        Assignment Details
+      </div>
+
+      <div class="card-body p-5">
+        {% if messages %} {% for message in messages %}
+        <div class="alert alert-success rounded-4">{{ message }}</div>
+        {% endfor %} {% endif %}
+
+        <div class="row g-4">
+          <!-- Current Submission -->
+          <div class="col-lg-6">
+            <div class="submission-card h-100">
+              <div class="submission-header">
+                <h2>Current Submission</h2>
+              </div>
+
+              <div class="submission-body">
+                <div class="student-info mb-4">
+                  <small>Student</small>
+                  <strong>{{ assignment.student.full_name }}</strong>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Subject</small>
+                      <strong>{{ assignment.subject.name }}</strong>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Topic</small>
+                      <strong>{{ assignment.task.topic }}</strong>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Semester</small>
+                      <strong>{{ assignment.semester }}</strong>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Attempt</small>
+                      <strong>{{ assignment.submission_attempt }}/2</strong>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Submitted</small>
+                      <strong>{{ assignment.submitted_at }}</strong>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Status</small>
+                      <strong>
+                        {% if assignment.status == "accepted" %} Accepted {%
+                        elif assignment.status == "pending_review" %} Pending
+                        Review {% elif assignment.status ==
+                        "resubmission_required" %} Resubmission Required {% elif
+                        assignment.status == "final_rejected" %} Final Rejected
+                        {% endif %}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                {% if assignment.matched_assignment %}
+                <a
+                  href="{{ assignment.matched_assignment.file.url }}"
+                  target="_blank"
+                  class="btn btn-outline-dark rounded-pill px-4 mt-4"
+                >
+                  View Document
+                </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Matched Submission -->
+          <div class="col-lg-6">
+            <div class="submission-card h-100">
+              {% if assignment.matched_assignment %}
+
+              <div class="submission-header">
+                <h2>Matched Submission</h2>
+              </div>
+
+              <div class="submission-body">
+                <div class="student-info mb-4">
+                  <small>Student</small>
+                  <strong>
+                    {{ assignment.matched_assignment.student.full_name }}
+                  </strong>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Subject</small>
+                      <strong>
+                        {{ assignment.matched_assignment.subject.name }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Topic</small>
+                      <strong>
+                        {{ assignment.matched_assignment.task.topic }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Semester</small>
+                      <strong>
+                        {{ assignment.matched_assignment.semester }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Submitted</small>
+                      <strong>
+                        {{ assignment.matched_assignment.submitted_at }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="detail">
+                      <small>Similarity</small>
+                      <strong>{{ assignment.similarity_percentage }}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <a
+                  href="{{ assignment.matched_assignment.file.url }}"
+                  target="_blank"
+                  class="btn btn-outline-dark rounded-pill px-4 mt-4"
+                >
+                  View Document
+                </a>
+              </div>
+
+              {% else %}
+
+              <div class="no-match">
+                <h2>No Matching Document</h2>
+                <p>CopyKat did not find a matching assignment.</p>
+              </div>
+
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Matched Content -->
+        <!-- Matched Content -->
+        {% if matching_sentences %}
+
+        <div class="section-card mt-4">
+          <div class="section-title">
+            <h2>Matched Content</h2>
+          </div>
+
+          {% with match=matching_sentences|first %}
+
+          <div class="match-card">
+            <div class="match-header">
+              <strong>Match</strong>
+              <span>{{ assignment.similarity_percentage }}</span>
+            </div>
+
+            <div class="row g-3 p-3">
+              <div class="col-md-6">
+                <div class="content-box">
+                  <strong>{{ assignment.student.full_name }}</strong>
+
+                  <div id="document-viewer" class="document-viewer"></div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="content-box">
+                  <strong>Matches with </strong>
+                  <strong>
+                    {{ assignment.matched_assignment.student.full_name }}
+                  </strong>
+
+                  <p>{{ match.matched_text }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% endwith %}
+
+          <!-- Send document text to JavaScript only once -->
+          {{ document_text|json_script:"document-text-data" }}
+
+          <!-- Keep all matching positions for highlighting -->
+          {{ matching_sentences|json_script:"matching-data" }}
+        </div>
+
+        {% endif %}
+
+        <!-- Teacher Review -->
+        <div class="section-card mt-4">
+          <div class="section-title">
+            <h2>Teacher Review</h2>
+          </div>
+
+          <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Teacher Remark</label>
+
+              <textarea
+                name="remark"
+                class="form-control"
+                rows="5"
+                placeholder="Write your feedback..."
+              >
+{{ assignment.teacher_remark }}</textarea
+              >
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Review Status</label>
+
+              <select name="status" class="form-select">
+                <option
+                  value="accepted"
+                  {%
+                  if
+                  assignment.status=""
+                  ="accepted"
+                  %}selected{%
+                  endif
+                  %}
+                >
+                  Accept
+                </option>
+
+                {% if assignment.submission_attempt == 1 %}
+                <option
+                  value="resubmission_required"
+                  {%
+                  if
+                  assignment.status=""
+                  ="resubmission_required"
+                  %}selected{%
+                  endif
+                  %}
+                >
+                  Reject & Allow Resubmission
+                </option>
+                {% endif %}
+
+                <option
+                  value="final_rejected"
+                  {%
+                  if
+                  assignment.status=""
+                  ="final_rejected"
+                  %}selected{%
+                  endif
+                  %}
+                >
+                  Final Reject
+                </option>
+
+                <option
+                  value="pending_review"
+                  {%
+                  if
+                  assignment.status=""
+                  ="pending_review"
+                  %}selected{%
+                  endif
+                  %}
+                >
+                  Pending Review
+                </option>
+              </select>
+            </div>
+
+            <div class="d-flex gap-3 flex-wrap">
+              <button type="submit" class="btn btn-dark rounded-pill px-5 py-2">
+                Save Review
+              </button>
+
+              <a
+                href="{% url 'teacher_dashboard' %}"
+                class="btn btn-outline-secondary rounded-pill px-5 py-2"
+              >
+                Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <style>
-    body {
-        background: #e6ecef;
-        font-family: "Plus Jakarta Sans", sans-serif;
-    }
+  body {
+    background: #e6ecef;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
 
-    .submission-card,
-    .section-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 20px;
-        overflow: hidden;
-    }
+  .submission-card,
+  .section-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+  }
 
-    .submission-header {
-        padding: 22px;
-        border-bottom: 1px solid #e5e7eb;
-    }
+  .submission-header {
+    padding: 22px;
+    border-bottom: 1px solid #e5e7eb;
+  }
 
-    .submission-header h2,
-    .section-title h2 {
-        margin: 0;
-        font-size: 1.25rem;
-        font-weight: 700;
-    }
+  .submission-header h2,
+  .section-title h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
 
-    .submission-header span {
-        display: block;
-        margin-top: 5px;
-        color: #6b7280;
-        font-size: 0.85rem;
-    }
+  .submission-header span {
+    display: block;
+    margin-top: 5px;
+    color: #6b7280;
+    font-size: 0.85rem;
+  }
 
-    .submission-body {
-        padding: 22px;
-    }
+  .submission-body {
+    padding: 22px;
+  }
 
-    .student-info {
-        padding-bottom: 18px;
-        border-bottom: 1px solid #e5e7eb;
-    }
+  .student-info {
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e5e7eb;
+  }
 
-    .student-info small,
-    .detail small,
-    .similarity-card small {
-        display: block;
-        margin-bottom: 5px;
-        color: #6b7280;
-        font-size: 0.78rem;
-    }
+  .student-info small,
+  .detail small,
+  .similarity-card small {
+    display: block;
+    margin-bottom: 5px;
+    color: #6b7280;
+    font-size: 0.78rem;
+  }
 
-    .student-info strong {
-        font-size: 1.05rem;
-    }
+  .student-info strong {
+    font-size: 1.05rem;
+  }
 
-    .detail {
-        height: 100%;
-        padding: 15px;
-        background: #fafafa;
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
-    }
+  .detail {
+    height: 100%;
+    padding: 15px;
+    background: #fafafa;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+  }
 
-    .detail strong {
-        display: block;
-        font-size: 0.9rem;
-        overflow-wrap: anywhere;
-    }
+  .detail strong {
+    display: block;
+    font-size: 0.9rem;
+    overflow-wrap: anywhere;
+  }
 
-    .no-match {
-        padding: 90px 20px;
-        text-align: center;
-    }
+  .no-match {
+    padding: 90px 20px;
+    text-align: center;
+  }
 
-    .no-match h2 {
-        font-size: 1.2rem;
-        font-weight: 700;
-    }
+  .no-match h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
 
-    .no-match p {
-        margin: 5px 0 0;
-        color: #6b7280;
-    }
+  .no-match p {
+    margin: 5px 0 0;
+    color: #6b7280;
+  }
 
-    .similarity-card {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 25px;
-        background: #f8f9fa;
-        border: 1px solid #e5e7eb;
-        border-radius: 20px;
-    }
+  .similarity-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px;
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+  }
 
-    .similarity-card h2 {
-        margin-top: 5px;
-        font-size: 1.25rem;
-        font-weight: 700;
-    }
+  .similarity-card h2 {
+    margin-top: 5px;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
 
-    .similarity-card > strong {
-        font-size: 2.4rem;
-        font-weight: 800;
-    }
+  .similarity-card > strong {
+    font-size: 2.4rem;
+    font-weight: 800;
+  }
 
-    .section-card {
-        padding: 24px;
-    }
+  .section-card {
+    padding: 24px;
+  }
 
-    .section-title {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-bottom: 16px;
-        margin-bottom: 18px;
-        border-bottom: 1px solid #e5e7eb;
-    }
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #e5e7eb;
+  }
 
-    .section-title span {
-        color: #6b7280;
-        font-size: 0.85rem;
-    }
+  .section-title span {
+    color: #6b7280;
+    font-size: 0.85rem;
+  }
 
-    .match-card {
-        margin-bottom: 15px;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        overflow: hidden;
-    }
+  .match-card {
+    margin-bottom: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+  }
 
-    .match-card:last-child {
-        margin-bottom: 0;
-    }
+  .match-card:last-child {
+    margin-bottom: 0;
+  }
 
-    .match-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 16px;
-        border-bottom: 1px solid #e5e7eb;
-    }
+  .match-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5e7eb;
+  }
 
-    .match-header span {
-        font-weight: 700;
-    }
+  .match-header span {
+    font-weight: 700;
+  }
 
-    .content-box {
-        height: 100%;
-        padding: 18px;
-        background: #fafafa;
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
-    }
+  .content-box {
+    height: 100%;
+    padding: 18px;
+    background: #fafafa;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+  }
 
-    .content-box strong {
-        font-size: 0.9rem;
-    }
+  .content-box strong {
+    font-size: 0.9rem;
+  }
 
-    .content-box p {
-        margin: 12px 0 0;
-        font-size: 0.9rem;
-        line-height: 1.7;
-        white-space: normal;
-        overflow-wrap: anywhere;
-    }
+  .content-box p {
+    margin: 12px 0 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 
-    .form-control,
-    .form-select {
-        min-height: 52px;
-        padding: 10px 15px;
-        border: 1px solid #d1d5db;
-        border-radius: 14px;
-        font-size: 0.9rem;
-    }
+  .form-control,
+  .form-select {
+    min-height: 52px;
+    padding: 10px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 14px;
+    font-size: 0.9rem;
+  }
 
-    textarea.form-control {
-        min-height: 140px;
-    }
+  textarea.form-control {
+    min-height: 140px;
+  }
 
-    .form-control:focus,
-    .form-select:focus {
-        border-color: #111827;
-        box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
-    }
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+  }
 
-    .btn-dark {
-        transition: 0.2s;
-    }
+  .btn-dark {
+    transition: 0.2s;
+  }
 
-    .btn-dark:hover {
-        background: #333;
-        transform: translateY(-1px);
-    }
+  .btn-dark:hover {
+    background: #333;
+    transform: translateY(-1px);
+  }
 
-    .alert {
-        font-size: 0.9rem;
-    }
+  .alert {
+    font-size: 0.9rem;
+  }
 
-    /* Original document ko readable format ma display garne */
-    .document-viewer {
+  /* Original document ko readable format ma display garne */
+  .document-viewer {
     margin-top: 12px;
     padding: 0;
     background: transparent;
@@ -561,106 +551,104 @@
     line-height: 1.7;
     overflow-wrap: anywhere;
     color: #1f2937;
-}
+  }
 
-    /* Matching content lai yellow background ra red text dine */
-    .highlighted-match {
-        background: #fff3a3;
-        border-radius: 4px;
-        padding: 2px 3px;
+  /* Matching content lai yellow background ra red text dine */
+  .highlighted-match {
+    background: #fff3a3;
+    border-radius: 4px;
+    padding: 2px 3px;
+  }
+
+  @media (max-width: 576px) {
+    .card-body {
+      padding: 1.5rem !important;
     }
 
-    @media (max-width: 576px) {
-        .card-body {
-            padding: 1.5rem !important;
-        }
-
-        .similarity-card {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .similarity-card > strong {
-            font-size: 2rem;
-        }
-
-        .section-card {
-            padding: 18px;
-        }
+    .similarity-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
     }
+
+    .similarity-card > strong {
+      font-size: 2rem;
+    }
+
+    .section-card {
+      padding: 18px;
+    }
+  }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Backend bata original/raw document text nikalne
-        const documentText = JSON.parse(
-            document.getElementById("document-text-data").textContent
-        );
+  document.addEventListener("DOMContentLoaded", function () {
+    // Backend bata original/raw document text nikalne
+    const documentText = JSON.parse(
+      document.getElementById("document-text-data").textContent,
+    );
 
-        // Backend bata matching sentence haru nikalne
-        const matches = JSON.parse(
-            document.getElementById("matching-data").textContent
-        );
+    // Backend bata matching sentence haru nikalne
+    const matches = JSON.parse(
+      document.getElementById("matching-data").textContent,
+    );
 
-        const viewer = document.getElementById("document-viewer");
+    const viewer = document.getElementById("document-viewer");
 
-        // Match nabhaye original document matra display garne
-        if (!matches || matches.length === 0) {
-            viewer.textContent = documentText || "No document text available.";
-            return;
-        }
+    // Match nabhaye original document matra display garne
+    if (!matches || matches.length === 0) {
+      viewer.textContent = documentText || "No document text available.";
+      return;
+    }
 
-        // Start/end position anusar matches lai sort garne
-        const sortedMatches = [...matches].sort(function (a, b) {
-            return a.start - b.start;
-        });
-
-        let html = "";
-        let currentPosition = 0;
-
-        // Matching content ko exact position highlight garne
-        sortedMatches.forEach(function (match) {
-            const start = Number(match.start);
-            const end = Number(match.end);
-
-            // Invalid position bhaye skip garne
-            if (
-                Number.isNaN(start) ||
-                Number.isNaN(end) ||
-                start < currentPosition ||
-                end <= start ||
-                start > documentText.length
-            ) {
-                return;
-            }
-
-            // Match bhanda agadi ko normal text add garne
-            html += escapeHtml(
-                documentText.substring(currentPosition, start)
-            );
-
-            // Matching text lai highlight garne
-            html += '<span class="highlighted-match">' +
-                escapeHtml(documentText.substring(start, end)) +
-                '</span>';
-
-            currentPosition = end;
-        });
-
-        // Last matching text pachi ko normal text add garne
-        html += escapeHtml(documentText.substring(currentPosition));
-
-        viewer.innerHTML = html;
+    // Start/end position anusar matches lai sort garne
+    const sortedMatches = [...matches].sort(function (a, b) {
+      return a.start - b.start;
     });
 
-    // Text lai safe HTML ma convert garne
-    function escapeHtml(text) {
-        const div = document.createElement("div");
-        div.textContent = text;
-        return div.innerHTML;
-    }
+    let html = "";
+    let currentPosition = 0;
+
+    // Matching content ko exact position highlight garne
+    sortedMatches.forEach(function (match) {
+      const start = Number(match.start);
+      const end = Number(match.end);
+
+      // Invalid position bhaye skip garne
+      if (
+        Number.isNaN(start) ||
+        Number.isNaN(end) ||
+        start < currentPosition ||
+        end <= start ||
+        start > documentText.length
+      ) {
+        return;
+      }
+
+      // Match bhanda agadi ko normal text add garne
+      html += escapeHtml(documentText.substring(currentPosition, start));
+
+      // Matching text lai highlight garne
+      html +=
+        '<span class="highlighted-match">' +
+        escapeHtml(documentText.substring(start, end)) +
+        "</span>";
+
+      currentPosition = end;
+    });
+
+    // Last matching text pachi ko normal text add garne
+    html += escapeHtml(documentText.substring(currentPosition));
+
+    viewer.innerHTML = html;
+  });
+
+  // Text lai safe HTML ma convert garne
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
 </script>
 
 {% endblock %}
-
