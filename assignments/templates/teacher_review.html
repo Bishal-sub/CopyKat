@@ -1,37 +1,33 @@
-{% extends "base.html" %} {% block title %}CopyKat | Review Assignment{%endblock %} {% block content %}
+{% extends "base.html" %}
+{% block title %}CopyKat | Review Assignment{% endblock %}
+{% block content %}
 
 <div class="container-fluid py-4 px-3 px-lg-5">
   <div class="container-xl">
     <div class="bg-white rounded-4 p-5 shadow-sm mb-4">
-      <div
-        class="d-flex justify-content-between align-items-center flex-wrap gap-3"
-      >
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
           <h1 class="display-5 fw-bold m-0">Review Assignment</h1>
           <p class="text-muted mt-2 mb-0">{{ assignment.title }}</p>
         </div>
-
-        <a
-          href="{% url 'teacher_dashboard' %}"
-          class="btn btn-outline-dark rounded-pill px-4"
-        >
-          Back
-        </a>
+        <!-- Teacher dashboard tira farkina ko lagi back button -->
+        <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-dark rounded-pill px-4">Back</a>
       </div>
     </div>
 
     <div class="card border-0 rounded-4 shadow-sm">
-      <div class="card-header bg-white border-bottom fw-bold py-3 px-4">
-        Assignment Details
-      </div>
+      <div class="card-header bg-white border-bottom fw-bold py-3 px-4">Assignment Details</div>
 
       <div class="card-body p-5">
-        {% if messages %} {% for message in messages %}
-        <div class="alert alert-success rounded-4">{{ message }}</div>
-        {% endfor %} {% endif %}
+        <!-- Django messages cha bhane success message dekhaune -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-success rounded-4">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
 
         <div class="row g-4">
-          <!-- Current Submission -->
+          <!-- Student ko current submission dekhaune section -->
           <div class="col-lg-6">
             <div class="submission-card h-100">
               <div class="submission-header">
@@ -84,164 +80,126 @@
                     <div class="detail">
                       <small>Status</small>
                       <strong>
-                        {% if assignment.status == "accepted" %} Accepted {%
-                        elif assignment.status == "pending_review" %} Pending
-                        Review {% elif assignment.status ==
-                        "resubmission_required" %} Resubmission Required {% elif
-                        assignment.status == "final_rejected" %} Final Rejected
+                        {% if assignment.status == "accepted" %}Accepted
+                        {% elif assignment.status == "pending_review" %}Pending Review
+                        {% elif assignment.status == "resubmission_required" %}Resubmission Required
+                        {% elif assignment.status == "final_rejected" %}Final Rejected
                         {% endif %}
                       </strong>
                     </div>
                   </div>
                 </div>
 
-                {% if assignment.matched_assignment %}
-                <a
-                  href="{{ assignment.matched_assignment.file.url }}"
-                  target="_blank"
-                  class="btn btn-outline-dark rounded-pill px-4 mt-4"
-                >
-                  View Document
-                </a>
+                <!-- File available cha bhane document herne button dekhaune -->
+                {% if assignment.file %}
+                  <a href="{{ assignment.file.url }}" target="_blank" class="btn btn-outline-dark rounded-pill px-4 mt-4">View Document</a>
                 {% endif %}
               </div>
             </div>
           </div>
 
-          <!-- Matched Submission -->
+          <!-- Similarity bata match bhayeko submission dekhaune section -->
           <div class="col-lg-6">
             <div class="submission-card h-100">
               {% if assignment.matched_assignment %}
-
-              <div class="submission-header">
-                <h2>Matched Submission</h2>
-              </div>
-
-              <div class="submission-body">
-                <div class="student-info mb-4">
-                  <small>Student</small>
-                  <strong>
-                    {{ assignment.matched_assignment.student.full_name }}
-                  </strong>
+                <div class="submission-header">
+                  <h2>Matched Submission</h2>
                 </div>
 
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <div class="detail">
-                      <small>Subject</small>
-                      <strong>
-                        {{ assignment.matched_assignment.subject.name }}
-                      </strong>
+                <div class="submission-body">
+                  <div class="student-info mb-4">
+                    <small>Student</small>
+                    <strong>{{ assignment.matched_assignment.student.full_name }}</strong>
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="detail">
+                        <small>Subject</small>
+                        <strong>{{ assignment.matched_assignment.subject.name }}</strong>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="detail">
+                        <small>Topic</small>
+                        <strong>{{ assignment.matched_assignment.task.topic }}</strong>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="detail">
+                        <small>Semester</small>
+                        <strong>{{ assignment.matched_assignment.semester }}</strong>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="detail">
+                        <small>Submitted</small>
+                        <strong>{{ assignment.matched_assignment.submitted_at }}</strong>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="detail">
+                        <small>Similarity</small>
+                        <strong>{{ assignment.similarity_percentage }}</strong>
+                      </div>
                     </div>
                   </div>
 
-                  <div class="col-md-6">
-                    <div class="detail">
-                      <small>Topic</small>
-                      <strong>
-                        {{ assignment.matched_assignment.task.topic }}
-                      </strong>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="detail">
-                      <small>Semester</small>
-                      <strong>
-                        {{ assignment.matched_assignment.semester }}
-                      </strong>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="detail">
-                      <small>Submitted</small>
-                      <strong>
-                        {{ assignment.matched_assignment.submitted_at }}
-                      </strong>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="detail">
-                      <small>Similarity</small>
-                      <strong>{{ assignment.similarity_percentage }}</strong>
-                    </div>
-                  </div>
+                  <a href="{{ assignment.matched_assignment.file.url }}" target="_blank" class="btn btn-outline-dark rounded-pill px-4 mt-4">View Document</a>
                 </div>
-
-                <a
-                  href="{{ assignment.matched_assignment.file.url }}"
-                  target="_blank"
-                  class="btn btn-outline-dark rounded-pill px-4 mt-4"
-                >
-                  View Document
-                </a>
-              </div>
-
               {% else %}
-
-              <div class="no-match">
-                <h2>No Matching Document</h2>
-                <p>CopyKat did not find a matching assignment.</p>
-              </div>
-
+                <!-- Matching document nabheko bela yo message dekhaune -->
+                <div class="no-match">
+                  <h2>No Matching Document</h2>
+                  <p>CopyKat did not find a matching assignment.</p>
+                </div>
               {% endif %}
             </div>
           </div>
         </div>
 
-        <!-- Matched Content -->
-        <!-- Matched Content -->
+        <!-- Matching sentences available cha bhane matched content dekhaune -->
         {% if matching_sentences %}
-
-        <div class="section-card mt-4">
-          <div class="section-title">
-            <h2>Matched Content</h2>
-          </div>
-
-          {% with match=matching_sentences|first %}
-
-          <div class="match-card">
-            <div class="match-header">
-              <strong>Match</strong>
-              <span>{{ assignment.similarity_percentage }}</span>
+          <div class="section-card mt-4">
+            <div class="section-title">
+              <h2>Matched Content</h2>
             </div>
 
-            <div class="row g-3 p-3">
-              <div class="col-md-6">
-                <div class="content-box">
-                  <strong>{{ assignment.student.full_name }}</strong>
-
-                  <div id="document-viewer" class="document-viewer"></div>
-                </div>
+            <div class="match-card">
+              <div class="match-header">
+                <strong>Matched Content</strong>
+                <span>{{ assignment.similarity_percentage }}</span>
               </div>
 
-              <div class="col-md-6">
-                <div class="content-box">
-                  <strong>Matches with </strong>
-                  <strong>
-                    {{ assignment.matched_assignment.student.full_name }}
-                  </strong>
+              <div class="row g-3 p-3">
+                <div class="col-md-6">
+                  <div class="content-box">
+                    <strong>{{ assignment.student.full_name }}</strong>
+                    <div id="document-viewer" class="document-viewer"></div>
+                  </div>
+                </div>
 
-                  <p>{{ match.matched_text }}</p>
+                <div class="col-md-6">
+                  <div class="content-box">
+                    <strong>Matches with {{ assignment.matched_assignment.student.full_name }}</strong>
+                    <div id="matched-document-viewer" class="document-viewer"></div>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <!-- Django json_script bata data JavaScript ma safely pathaune -->
+            {{ document_text|json_script:"document-text-data" }}
+            {{ matched_document_text|json_script:"matched-document-text-data" }}
+            {{ matching_sentences|json_script:"matching-data" }}
           </div>
-
-          {% endwith %}
-
-          <!-- Send document text to JavaScript only once -->
-          {{ document_text|json_script:"document-text-data" }}
-
-          <!-- Keep all matching positions for highlighting -->
-          {{ matching_sentences|json_script:"matching-data" }}
-        </div>
-
         {% endif %}
 
-        <!-- Teacher Review -->
+        <!-- Teacher le remark ra review status update garne section -->
         <div class="section-card mt-4">
           <div class="section-title">
             <h2>Teacher Review</h2>
@@ -252,88 +210,24 @@
 
             <div class="mb-4">
               <label class="form-label fw-semibold">Teacher Remark</label>
-
-              <textarea
-                name="remark"
-                class="form-control"
-                rows="5"
-                placeholder="Write your feedback..."
-              >
-{{ assignment.teacher_remark }}</textarea
-              >
+              <textarea name="remark" class="form-control" rows="5" placeholder="Write your feedback...">{{ assignment.teacher_remark }}</textarea>
             </div>
 
             <div class="mb-4">
               <label class="form-label fw-semibold">Review Status</label>
-
               <select name="status" class="form-select">
-                <option
-                  value="accepted"
-                  {%
-                  if
-                  assignment.status=""
-                  ="accepted"
-                  %}selected{%
-                  endif
-                  %}
-                >
-                  Accept
-                </option>
-
+                <option value="accepted" {% if assignment.status == "accepted" %}selected{% endif %}>Accept</option>
                 {% if assignment.submission_attempt == 1 %}
-                <option
-                  value="resubmission_required"
-                  {%
-                  if
-                  assignment.status=""
-                  ="resubmission_required"
-                  %}selected{%
-                  endif
-                  %}
-                >
-                  Reject & Allow Resubmission
-                </option>
+                  <option value="resubmission_required" {% if assignment.status == "resubmission_required" %}selected{% endif %}>Reject & Allow Resubmission</option>
                 {% endif %}
-
-                <option
-                  value="final_rejected"
-                  {%
-                  if
-                  assignment.status=""
-                  ="final_rejected"
-                  %}selected{%
-                  endif
-                  %}
-                >
-                  Final Reject
-                </option>
-
-                <option
-                  value="pending_review"
-                  {%
-                  if
-                  assignment.status=""
-                  ="pending_review"
-                  %}selected{%
-                  endif
-                  %}
-                >
-                  Pending Review
-                </option>
+                <option value="final_rejected" {% if assignment.status == "final_rejected" %}selected{% endif %}>Final Reject</option>
+                <option value="pending_review" {% if assignment.status == "pending_review" %}selected{% endif %}>Pending Review</option>
               </select>
             </div>
 
             <div class="d-flex gap-3 flex-wrap">
-              <button type="submit" class="btn btn-dark rounded-pill px-5 py-2">
-                Save Review
-              </button>
-
-              <a
-                href="{% url 'teacher_dashboard' %}"
-                class="btn btn-outline-secondary rounded-pill px-5 py-2"
-              >
-                Cancel
-              </a>
+              <button type="submit" class="btn btn-dark rounded-pill px-5 py-2">Save Review</button>
+              <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-secondary rounded-pill px-5 py-2">Cancel</a>
             </div>
           </form>
         </div>
@@ -385,8 +279,7 @@
   }
 
   .student-info small,
-  .detail small,
-  .similarity-card small {
+  .detail small {
     display: block;
     margin-bottom: 5px;
     color: #6b7280;
@@ -424,27 +317,6 @@
   .no-match p {
     margin: 5px 0 0;
     color: #6b7280;
-  }
-
-  .similarity-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 25px;
-    background: #f8f9fa;
-    border: 1px solid #e5e7eb;
-    border-radius: 20px;
-  }
-
-  .similarity-card h2 {
-    margin-top: 5px;
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-
-  .similarity-card > strong {
-    font-size: 2.4rem;
-    font-weight: 800;
   }
 
   .section-card {
@@ -540,7 +412,6 @@
     font-size: 0.9rem;
   }
 
-  /* Original document ko readable format ma display garne */
   .document-viewer {
     margin-top: 12px;
     padding: 0;
@@ -553,26 +424,18 @@
     color: #1f2937;
   }
 
-  /* Matching content lai yellow background ra red text dine */
   .highlighted-match {
-    background: #fff3a3;
+    background: #fff176;
+    color: #111827;
     border-radius: 4px;
     padding: 2px 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
 
   @media (max-width: 576px) {
     .card-body {
       padding: 1.5rem !important;
-    }
-
-    .similarity-card {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 15px;
-    }
-
-    .similarity-card > strong {
-      font-size: 2rem;
     }
 
     .section-card {
@@ -582,73 +445,98 @@
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Backend bata original/raw document text nikalne
-    const documentText = JSON.parse(
-      document.getElementById("document-text-data").textContent,
-    );
+document.addEventListener("DOMContentLoaded", function() {
+  // Django bata pathaeko JSON data haru element bata lina
+  const documentData = document.getElementById("document-text-data");
+  const matchedDocumentData = document.getElementById("matched-document-text-data");
+  const matchingData = document.getElementById("matching-data");
+  const viewer = document.getElementById("document-viewer");
+  const matchedViewer = document.getElementById("matched-document-viewer");
 
-    // Backend bata matching sentence haru nikalne
-    const matches = JSON.parse(
-      document.getElementById("matching-data").textContent,
-    );
+  // Required element haru nabhaye script lai agadi execute nagarne
+  if (!documentData || !matchedDocumentData || !matchingData || !viewer || !matchedViewer) return;
 
-    const viewer = document.getElementById("document-viewer");
+  const documentText = JSON.parse(documentData.textContent || '""');
+  const matchedDocumentText = JSON.parse(matchedDocumentData.textContent || '""');
+  const matches = JSON.parse(matchingData.textContent || "[]");
 
-    // Match nabhaye original document matra display garne
-    if (!matches || matches.length === 0) {
-      viewer.textContent = documentText || "No document text available.";
-      return;
-    }
+  // Match nabhaye dubai document plain text ma dekhaune
+  if (!matches.length) {
+    viewer.textContent = documentText || "No document text available.";
+    matchedViewer.textContent = matchedDocumentText || "No document text available.";
+    return;
+  }
 
-    // Start/end position anusar matches lai sort garne
-    const sortedMatches = [...matches].sort(function (a, b) {
-      return a.start - b.start;
-    });
+  // Current document ko matching position anusar highlight garne
+  viewer.innerHTML = highlightDocument(documentText, matches, "current");
 
-    let html = "";
-    let currentPosition = 0;
+  // Matched document ko matching position anusar highlight garne
+  matchedViewer.innerHTML = highlightDocument(matchedDocumentText, matches, "matched");
+});
 
-    // Matching content ko exact position highlight garne
-    sortedMatches.forEach(function (match) {
-      const start = Number(match.start);
-      const end = Number(match.end);
+function highlightDocument(text, matches, type) {
+  // Document text nai chaina bhane default message dekhaune
+  if (!text) return "No document text available.";
 
-      // Invalid position bhaye skip garne
-      if (
-        Number.isNaN(start) ||
-        Number.isNaN(end) ||
-        start < currentPosition ||
-        end <= start ||
-        start > documentText.length
-      ) {
-        return;
-      }
+  const positions = [];
 
-      // Match bhanda agadi ko normal text add garne
-      html += escapeHtml(documentText.substring(currentPosition, start));
+  // Backend bata aayeko harek match ko start ra end position nikalne
+  matches.forEach(function(match) {
+    const start = type === "current" ? Number(match.start) : Number(match.matched_start);
+    const end = type === "current" ? Number(match.end) : Number(match.matched_end);
+    const similarity = Number(match.similarity || 0);
 
-      // Matching text lai highlight garne
-      html +=
-        '<span class="highlighted-match">' +
-        escapeHtml(documentText.substring(start, end)) +
-        "</span>";
+    // Invalid position bhaye tyo match lai skip garne
+    if (Number.isNaN(start) || Number.isNaN(end) || start < 0 || end <= start || start >= text.length) return;
 
-      currentPosition = end;
-    });
-
-    // Last matching text pachi ko normal text add garne
-    html += escapeHtml(documentText.substring(currentPosition));
-
-    viewer.innerHTML = html;
+    positions.push({ start: start, end: Math.min(end, text.length), similarity: similarity });
   });
 
-  // Text lai safe HTML ma convert garne
-  function escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
-  }
+  // Highlight haru text ko order anusar sort garne
+  positions.sort(function(a, b) {
+    return a.start - b.start;
+  });
+
+  const mergedPositions = [];
+
+  // Overlap bhayeko highlights lai एउटै range ma merge garne
+  positions.forEach(function(position) {
+    const last = mergedPositions[mergedPositions.length - 1];
+
+    if (last && position.start <= last.end) {
+      last.end = Math.max(last.end, position.end);
+      last.similarity = Math.max(last.similarity, position.similarity);
+    } else {
+      mergedPositions.push({
+        start: position.start,
+        end: position.end,
+        similarity: position.similarity
+      });
+    }
+  });
+
+  let html = "";
+  let currentPosition = 0;
+
+  // Highlight range anusar HTML generate garne
+  mergedPositions.forEach(function(position) {
+    html += escapeHtml(text.substring(currentPosition, position.start));
+    html += '<span class="highlighted-match" title="Similarity: ' + position.similarity.toFixed(2) + '%">' + escapeHtml(text.substring(position.start, position.end)) + "</span>";
+    currentPosition = position.end;
+  });
+
+  // Last highlight pachi ko remaining text add garne
+  html += escapeHtml(text.substring(currentPosition));
+
+  return html;
+}
+
+function escapeHtml(text) {
+  // User/document text lai safe HTML ma convert garne
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
 </script>
 
 {% endblock %}

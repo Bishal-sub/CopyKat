@@ -71,7 +71,11 @@ def submit_assignment(request, task_id):
         id=task_id
     )
 
-    if task.batch != request.user.admission_year or task.department_id != request.user.department_id or task.level_id != request.user.level_id:
+    if (
+        task.batch != request.user.admission_year
+        or task.department_id != request.user.department_id
+        or task.level_id != request.user.level_id
+    ):
         messages.error(request, "This assignment is not assigned to you.")
         return redirect("view_assignments")
 
@@ -85,7 +89,10 @@ def submit_assignment(request, task_id):
         messages.error(request, "Assignment due date has passed.")
         return redirect("view_assignments")
 
-    existing_submission = Assignment.objects.filter(task=task, student=request.user).first()
+    existing_submission = Assignment.objects.filter(
+        task=task,
+        student=request.user
+    ).first()
 
     if existing_submission:
         messages.error(request, "You have already submitted this assignment.")
@@ -119,11 +126,20 @@ def submit_assignment(request, task_id):
 
             assignment.refresh_from_db()
 
-            if assignment.matched_assignment and assignment.matched_assignment.student_id == assignment.student_id:
+            if (
+                assignment.matched_assignment
+                and assignment.matched_assignment.student_id == assignment.student_id
+            ):
                 assignment.matched_assignment = None
                 assignment.similarity_percentage = "0%"
                 assignment.matching_text = ""
-                assignment.save(update_fields=["matched_assignment", "similarity_percentage", "matching_text"])
+                assignment.save(
+                    update_fields=[
+                        "matched_assignment",
+                        "similarity_percentage",
+                        "matching_text"
+                    ]
+                )
 
             messages.success(request, "Assignment submitted successfully.")
             return redirect("view_assignments")
@@ -139,7 +155,9 @@ def resubmit_assignment(request, assignment_id):
         return redirect("login")
 
     assignment = get_object_or_404(
-        Assignment.objects.select_related("task", "teacher", "subject", "level", "department"),
+        Assignment.objects.select_related(
+            "task", "teacher", "subject", "level", "department"
+        ),
         id=assignment_id,
         student=request.user,
         status="resubmission_required"
@@ -157,7 +175,11 @@ def resubmit_assignment(request, assignment_id):
         messages.error(request, "Resubmission already used.")
         return redirect("view_assignments")
 
-    if assignment.task.batch != request.user.admission_year or assignment.task.department_id != request.user.department_id or assignment.task.level_id != request.user.level_id:
+    if (
+        assignment.task.batch != request.user.admission_year
+        or assignment.task.department_id != request.user.department_id
+        or assignment.task.level_id != request.user.level_id
+    ):
         messages.error(request, "This assignment is not assigned to you.")
         return redirect("view_assignments")
 
@@ -216,11 +238,20 @@ def resubmit_assignment(request, assignment_id):
 
         assignment.refresh_from_db()
 
-        if assignment.matched_assignment and assignment.matched_assignment.student_id == assignment.student_id:
+        if (
+            assignment.matched_assignment
+            and assignment.matched_assignment.student_id == assignment.student_id
+        ):
             assignment.matched_assignment = None
             assignment.similarity_percentage = "0%"
             assignment.matching_text = ""
-            assignment.save(update_fields=["matched_assignment", "similarity_percentage", "matching_text"])
+            assignment.save(
+                update_fields=[
+                    "matched_assignment",
+                    "similarity_percentage",
+                    "matching_text"
+                ]
+            )
 
         messages.success(request, "Assignment resubmitted successfully.")
         return redirect("view_assignments")
@@ -258,7 +289,10 @@ def teacher_review(request, id):
 
         elif status == "resubmission_required":
             if assignment.submission_attempt != 1:
-                messages.error(request, "A second submission cannot be rejected for another resubmission.")
+                messages.error(
+                    request,
+                    "A second submission cannot be rejected for another resubmission."
+                )
                 return redirect("teacher_dashboard")
 
             if assignment.resubmission_used:
@@ -290,24 +324,37 @@ def teacher_review(request, id):
 
     matching_sentences = []
     document_text = ""
+    matched_document_text = ""
 
-    # Current assignment ko original/raw text UI ko display garna nikalne
+    # Current assignment ko original/raw text
     try:
         document_text = get_text_from_file(assignment.file.path)
     except Exception:
         document_text = ""
 
-    # Different student ko assignment sanga matra matching content check garne
-    if assignment.matched_assignment and assignment.matched_assignment.student_id != assignment.student_id:
+    # Matched assignment ko whole raw document
+    if (
+        assignment.matched_assignment
+        and assignment.matched_assignment.student_id != assignment.student_id
+    ):
         try:
-            # Similarity ko lagi clean text use garne hoina, matching ko lagi raw text use garne
             current_text = get_text_from_file(assignment.file.path)
-            old_text = get_text_from_file(assignment.matched_assignment.file.path)
+            old_text = get_text_from_file(
+                assignment.matched_assignment.file.path
+            )
 
-            # Raw text use gareko le original capital letter, punctuation ra position preserve huncha
-            matching_sentences = find_matching_sentences(current_text, old_text)
+            # Whole previous document
+            matched_document_text = old_text
+
+            # Matching sentences for highlighting current document
+            matching_sentences = find_matching_sentences(
+                current_text,
+                old_text,
+            )
+
         except Exception:
             matching_sentences = []
+            matched_document_text = ""
 
     return render(
         request,
@@ -316,5 +363,6 @@ def teacher_review(request, id):
             "assignment": assignment,
             "document_text": document_text,
             "matching_sentences": matching_sentences,
+            "matched_document_text": matched_document_text,
         },
     )
