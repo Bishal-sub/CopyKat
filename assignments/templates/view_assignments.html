@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
-{% block title %}CopyKat | Assignments To Do{% endblock %}
+{% block title %}
+CopyKat | Assignments To Do
+{% endblock %}
 
 {% block content %}
 
@@ -48,15 +50,18 @@
                         <hr>
 
                         <div class="mb-3">
-                            <strong>Teacher:</strong> {{ item.task.teacher.full_name }}
+                            <strong>Teacher:</strong>
+                            {{ item.task.teacher.full_name }}
                         </div>
 
                         <div class="mb-3">
-                            <strong>Semester:</strong> {{ item.task.subject.semester }}
+                            <strong>Semester:</strong>
+                            {{ item.task.subject.semester }}
                         </div>
 
                         <div class="mb-3">
-                            <strong>Due Date:</strong> {{ item.task.due_date }}
+                            <strong>Due Date:</strong>
+                            {{ item.task.due_date }}
                         </div>
 
                         <div class="mb-4">
@@ -69,6 +74,14 @@
                                 <a href="{% url 'resubmit_assignment' item.assignment.id %}" class="btn btn-dark rounded-pill px-4">Resubmit Assignment</a>
                             {% elif item.assignment.file %}
                                 <a href="{{ item.assignment.file.url }}" target="_blank" class="btn btn-outline-dark rounded-pill px-4">View Submission</a>
+                            {% endif %}
+                        {% else %}
+                            {% if item.is_expired %}
+                                <button class="btn btn-secondary rounded-pill px-4" disabled>Submission Closed</button>
+                            {% elif item.task and item.task.id %}
+                                <a href="{% url 'submit_assignment' item.task.id %}" class="btn btn-dark rounded-pill px-4">Submit Assignment</a>
+                            {% else %}
+                                <button class="btn btn-secondary rounded-pill px-4" disabled>Task Not Available</button>
                             {% endif %}
                         {% endif %}
                     </div>
@@ -88,30 +101,30 @@
 </div>
 
 <style>
-body {
-    background: #e6ecef;
-    font-family: "Plus Jakarta Sans", sans-serif;
+body{
+    background:#e6ecef;
+    font-family:"Plus Jakarta Sans",sans-serif;
 }
 
-.task-card {
-    transition: all .3s ease;
+.task-card{
+    transition:all .3s ease;
 }
 
-.task-card:hover {
-    transform: translateY(-6px);
+.task-card:hover{
+    transform:translateY(-6px);
 }
 
-.btn-dark {
-    transition: .25s;
+.btn-dark{
+    transition:.25s;
 }
 
-.btn-dark:hover {
-    transform: translateY(-2px);
+.btn-dark:hover{
+    transform:translateY(-2px);
 }
 
-@media (max-width: 768px) {
-    .display-5 {
-        font-size: 2rem;
+@media(max-width:768px){
+    .display-5{
+        font-size:2rem;
     }
 }
 </style>

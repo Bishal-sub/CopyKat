@@ -56,7 +56,7 @@ def view_assignments(request):
         if submission and submission.status in ("accepted", "final_rejected"):
             continue
 
-        task_data.append({"task": task, "assignment": submission})
+        task_data.append({"task": task, "assignment": submission, "is_expired": task.due_date < now})
 
     return render(request, "view_assignments.html", {"tasks": task_data})
 
