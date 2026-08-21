@@ -1,499 +1,340 @@
 # CopyKat
 
-### Web-Based Assignment Similarity Checker
+[![Django](https://img.shields.io/badge/Django-6.0.7-darkgreen)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue)](https://www.python.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange)](https://www.mysql.com/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Active-brightgreen)]()
 
-CopyKat is a web-based assignment similarity detection system built for academic institutions. It allows teachers to create assignments, students to submit PDF/DOCX files, and the system to compare submissions with previous submissions using **TF-IDF vectorization** and **Cosine Similarity**.
+ Assignment similarity detection platform leveraging machine learning algorithms for institutional similarity detection. Utilizes TF-IDF vectorization and cosine similarity metrics to identify copied submissions with sentence-level granularity.
 
-CopyKat also performs **exact duplicate detection using SHA-256 hashing** and stores the highest similarity match for teacher review.
 
-> **Note:** CopyKat is a similarity analysis tool, not a definitive plagiarism detector. Similarity results should be reviewed by teachers or academic staff before making any academic decision.
+## Overview
 
----
+CopyKat is a Django-based web application designed for educational institutions to detect copied or duplicate assignments. The system performs sophisticated text analysis using machine learning techniques to identify similarities between student submissions against an institutional archive.
 
-## Features
+**Key Differentiators:**
+- Sentence-level matching with 75% similarity threshold
+- Multi-format document support (PDF, DOCX)
+- Role-based access control (Student, Teacher, Admin)
+- Persistent similarity cache for performance
+- Real-time analysis with background processing capability
+- Comprehensive audit trail for all submissions
 
-### 👨‍🎓 Student
+## Core Features
 
-- Student authentication and role-based access
-- View assignments assigned to their batch
-- Submit assignments
-- Upload PDF and DOCX files
-- Prevent duplicate submissions for the same task
-- View submission and similarity status
-- Resubmit an assignment when the teacher requests resubmission
-- One resubmission attempt with a two-day deadline
+### 📊 Similarity Detection Engine
+- **TF-IDF Vectorization** - Term Frequency-Inverse Document Frequency analysis
+- **Cosine Similarity Scoring** - 0-100% similarity percentage calculation
+- **Sentence-Level Granularity** - Identifies specific matching text passages
+- **Language Validation** - English-only document processing with langdetect
+- **Minimum Content Validation** - Rejects documents under 50 words
 
-### 👨‍🏫 Teacher
+### 🔐 Security & Authentication
+- OAuth-ready JWT token structure
+- OTP-based email verification (SendGrid/Gmail compatible)
+- Secure password reset flow with time-limited tokens
+- CSRF protection on all POST requests
+- SQL injection prevention via Django ORM parameterization
+- Rate limiting on authentication endpoints
 
-- Teacher dashboard
-- Create assignments for specific batches and subjects
-- View submitted assignments
-- Review student submissions
-- View similarity percentages
-- View matched assignments
-- Add teacher remarks
-- Accept or reject submissions
-- Request resubmission after the first rejection
-- Final rejection after a second failed submission
+### 👥 Multi-Role System
+- **Students** - Submit assignments, track similarity scores, request resubmission
+- **Teachers** - Create tasks, review submissions, generate similarity reports
+- **Admins** - User management, department/level configuration, system analytics
 
-### 👨‍💼 Administrator
+### 📋 Assignment Management
+- Dual submission system (initial + resubmission with deadline)
+- Status workflow (not_submitted → pending_review → accepted/rejected)
+- Teacher remarks and feedback integration
+- Automatic deadline tracking and overdue notifications
 
-- Django Admin interface
-- Manage users and system data
-- Manage subjects
-- Manage assignments and submissions
-- Maintain application data through Django Admin
+### 🛠 Admin Dashboard
+- Jazzmin-enhanced Django admin interface
+- Custom user filtering and search capabilities
+- Bulk assignment creation from CSV
+- Real-time system statistics dashboard
 
-### 🔍 Similarity Detection
+## Architecture
 
-- PDF and DOCX text extraction
-- Text cleaning and normalization
-- English-language validation
-- Minimum 50-word document validation
-- SHA-256 exact duplicate detection
-- TF-IDF vectorization
-- Unigram and bigram comparison
-- Cosine Similarity calculation
-- Similarity percentage calculation
-- 15% minimum similarity threshold
-- Highest matching assignment detection
-- Matched assignment storage
-- Same topic, semester, and subject comparison
-- Student's own previous submissions excluded from comparison
-
----
-
-## 🛠️ Technology Stack
-
-| Category        | Technology                            |
-| --------------- | ------------------------------------- |
-| Backend         | Python 3.11+, Django 6.0.7            |
-| Database        | MySQL                                 |
-| Frontend        | HTML5, CSS3, Bootstrap                |
-| Similarity      | Scikit-learn                          |
-| NLP             | TF-IDF, Cosine Similarity, langdetect |
-| PDF Processing  | PyMuPDF                               |
-| DOCX Processing | python-docx                           |
-| Admin Interface | Django Jazzmin                        |
-| Version Control | Git, GitHub                           |
-
----
-
-## 📁 Project Structure
-
-```text
-CopyKat/
-│
-├── accounts/              # User authentication and account management
-│
-├── assignments/           # Assignment creation, submission and review
-│
-├── dashboard/             # Student and teacher dashboards
-│
-├── similarity/            # Assignment similarity analysis
-│   ├── extractors.py      # PDF and DOCX text extraction
-│   ├── services.py        # Text processing and similarity analysis
-│   ├── models.py
-│   ├── views.py
-│   └── urls.py
-│
-├── copykat_project/       # Django project configuration
-│   ├── settings.py
-│   ├── urls.py
-│   ├── asgi.py
-│   └── wsgi.py
-│
-├── templates/             # HTML templates
-├── static/                # CSS, JavaScript and static assets
-├── media/                 # Uploaded assignment files
-│
-├── manage.py
-├── requirements.txt
-└── README.md
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Frontend Layer                       │
+│        (Bootstrap 5 | Django Templates )                │
+└────────────────────┬────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│                 Django Application                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
+│  │  Accounts    │  │ Assignments  │  │  Dashboard   │   │
+│  │  App         │  │  App         │  │  App         │   │
+│  └──────────────┘  └──────────────┘  └──────────────┘   │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │      Similarity Detection Engine (Core)          │   │
+│  │  ├─ Text Extraction (PDF/DOCX)                   │   │
+│  │  ├─ Text Cleaning & Normalization                │   │
+│  │  ├─ TF-IDF Vectorization                         │   │
+│  │  ├─ Cosine Similarity Calculation                │   │
+│  │  └─ Sentence Matching & Highlighting             │   │
+│  └──────────────────────────────────────────────────┘   │
+└────────────────────┬────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│           Data Persistence Layer                        │
+│               MySQL Database                            │
+└─────────────────────────────────────────────────────────┘
 ```
 
----
+## Tech Stack
 
-## 🚀 Installation
+### Backend
+- **Framework** - Django 6.0.7 with Django REST Framework ready
+- **Database** - MySQL 8.0+ with connection pooling
+- **ML/NLP** - scikit-learn 1.9.0, scipy 1.18.0
+- **Document Processing** -  python-docx 1.2, PyMuPDF 1.28
 
-### 1. Clone the Repository
+### Additional Libraries
+- **langdetect** 1.0.9 - Language detection (English validation)
+- **python-decouple** 3.8 - Environment variable management
+- **Pillow** 12.3.0 - Image processing for user avatars
+- **regex** 2026.7.19 - Advanced pattern matching
+- **jazzmin** 3.0.5 - Enhanced admin interface
 
+
+
+## Installation
+
+### Prerequisites
+```
+- Python 3.8+ (tested on 3.10, 3.11)
+- MySQL Server 8.0+
+- 2GB RAM minimum
+- 500MB disk space for dependencies + uploads
+```
+
+### Step-by-Step Setup
+
+**1. Clone & Environment Setup**
 ```bash
 git clone https://github.com/Bishal-sub/CopyKat.git
-cd CopyKat
-```
-
-### 2. Create a Virtual Environment
-
-**Windows**
-
-```bash
+cd CopyKat-main
 python -m venv venv
-venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
-**Linux / macOS**
-
+**2. Install Dependencies**
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Install Dependencies
-
-```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Create MySQL Database
-
-```sql
-CREATE DATABASE copykat_db
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
+**3. Environment Configuration**
+```bash
+cp .env.example .env
 ```
 
-### 5. Configure Environment Variables
-
-Create a `.env` file in the project root:
-
+Edit `.env`:
 ```env
-SECRET_KEY=your-secret-key
+# Django Settings
+SECRET_KEY=your-very-secure-random-key-here
+DEBUG=False
+ALLOWED_HOSTS=localhost,127.0.0.1
 
-DB_NAME=copykat_db
-DB_USER=root
-DB_PASSWORD=your_password
-DB_HOST=127.0.0.1
+# Database Configuration
+DB_ENGINE=django.db.backends.mysql
+DB_NAME=copykat_production
+DB_USER=copykat_user
+DB_PASSWORD=strong-password-here
+DB_HOST=localhost
 DB_PORT=3306
+
+# Email Configuration (Gmail/SendGrid)
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-specific-password
+
+# AWS S3 (Optional for file storage)
+USE_S3=False
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+AWS_STORAGE_BUCKET_NAME=your-bucket
+
+
 ```
 
-Make sure the database configuration in `settings.py` reads these environment variables correctly.
-
-### 6. Apply Migrations
-
+**4. Database Setup**
 ```bash
+# Create MySQL database
+mysql -u root -p
+> CREATE DATABASE copykat_production;
+> CREATE USER 'copykat_user'@'localhost' IDENTIFIED BY 'strong-password-here';
+> GRANT ALL PRIVILEGES ON copykat_production.* TO 'copykat_user'@'localhost';
+> FLUSH PRIVILEGES;
+> EXIT;
+
+# Run migrations
 python manage.py migrate
+
+# Create superuser
+python manage.py createsuperuser --username admin --email admin@example.com
+
+# Collect static files
+python manage.py collectstatic --noinput
 ```
 
-If you have modified models:
-
+**5. Testing Installation**
 ```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-
-### 7. Create an Admin Account
-
-```bash
-python manage.py createsuperuser
-```
-
-### 8. Start the Development Server
-
-```bash
+python manage.py test
 python manage.py runserver
 ```
 
-Open:
+Visit `http://localhost:8000` and login with superuser credentials.
 
-```text
-http://127.0.0.1:8000/
+## Configuration
+
+### Email Service Setup
+
+**Gmail Configuration:**
+```python
+# Generate App Password at: https://myaccount.google.com/apppasswords
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your-email@gmail.com'
+EMAIL_HOST_PASSWORD = 'your-16-character-app-password'
+DEFAULT_FROM_EMAIL = 'noreply@copykat.com'
 ```
 
-Django Admin:
-
-```text
-http://127.0.0.1:8000/admin/
+**SendGrid Configuration:**
+```python
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = 'SG.your-sendgrid-api-key'
 ```
 
----
+### Database Connection Pooling
 
-## 🔎 Similarity Detection Workflow
-
-```text
-Student Uploads Assignment
-            │
-            ▼
-     File Type Check
-            │
-            ▼
-     Text Extraction
-            │
-            ▼
-      Text Cleaning
-            │
-            ▼
-    Language Validation
-            │
-            ▼
-      50 Word Check
-            │
-            ▼
-    SHA-256 Duplicate Check
-            │
-            ▼
- Same Topic + Semester + Subject
-            │
-            ▼
-      TF-IDF Vectorization
-            │
-            ▼
-     Cosine Similarity
-            │
-            ▼
- Highest Similarity Selected
-            │
-            ▼
-       Save Result
-            │
-            ▼
-      Teacher Review
+Add to `settings.py` for production:
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'CONN_MAX_AGE': 600,
+        'OPTIONS': {
+            'connect_timeout': 10,
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
+    }
+}
 ```
 
-### Process
+### Cache Configuration (Redis)
 
-1. A student uploads an assignment.
-2. The system extracts text from the PDF or DOCX file.
-3. The extracted text is converted to lowercase and cleaned.
-4. The system checks whether the document is written in English.
-5. Documents containing fewer than 50 words are rejected.
-6. A SHA-256 hash is generated for exact duplicate detection.
-7. The submission is compared only with assignments having the same:
-   - Topic
-   - Semester
-   - Subject
-
-8. The student's own previous submissions are excluded.
-9. TF-IDF converts the documents into numerical vectors.
-10. Cosine Similarity calculates the similarity between documents.
-11. Similarity below 15% is treated as `0%`.
-12. The highest similarity result is stored.
-13. If an exact duplicate is detected, the similarity becomes `100%` and the assignment requires resubmission.
-14. The teacher can review the result and accept, reject, or request resubmission.
-
----
-
-## 📊 Similarity Calculation
-
-CopyKat uses **TF-IDF** and **Cosine Similarity** for text comparison.
-
-The system uses:
-
-```text
-TF-IDF
-    +
-Unigrams and Bigrams
-    +
-Cosine Similarity
-    =
-Similarity Percentage
+```python
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
 ```
 
-The similarity result is stored as a percentage.
+## Similarity Algorithm
 
-For example:
+### Algorithm Flow
 
-```text
-Similarity: 72.45%
+```
+1. TEXT EXTRACTION
+   ├─ PDF: PyMuPDF for fast extraction
+   ├─ DOCX: python-docx for structured parsing
+   └─ Error Handling: Fallback to PyPDF2
+
+2. TEXT CLEANING
+   ├─ Lowercase conversion
+   ├─ Special character removal (keep spaces)
+   ├─ Multiple space normalization
+   └─ Whitespace trimming
+
+3. VALIDATION
+   ├─ Language Detection: langdetect (English only)
+   ├─ Minimum Length: 50 words required
+   └─ File Size: < 50MB
+
+4. COMPARISON SCOPE
+   ├─ Query: SELECT assignments WHERE
+   │   - topic = current_task.topic
+   │   - semester = current.semester
+   │   - subject = current.subject
+   │   - student != current.student
+   └─ Limit: Last 100 submissions per task
+
+5. VECTORIZATION
+   ├─ TF-IDF Parameters:
+   │   - stop_words: English
+   │   - ngram_range: (1, 2)
+   │   - max_features: 5000
+   └─ Sparse matrix generation
+
+6. SIMILARITY CALCULATION
+   ├─ Cosine Similarity: cos(θ) = (A·B) / (||A|| ||B||)
+   ├─ Score Range: 0.0 - 1.0
+   └─ Percentage: score * 100 (floor)
+
+7. SENTENCE MATCHING
+   ├─ Sentence Splitting: Regex-based tokenization
+   ├─ Filtering: Minimum 5 words per sentence
+   ├─ Individual TF-IDF: Per-sentence vectorization
+   ├─ Threshold: 75% similarity for match
+   └─ Position Tracking: Character offsets preserved
+
+8. RESULT STORAGE
+   ├─ similarity_percentage: "34.5%"
+   ├─ matched_assignment: Foreign key
+   ├─ matching_text: JSON array of matches
+   └─ Analysis Status: Complete/Error
 ```
 
-Similarity below **15%** is treated as:
+## Contributing
 
-```text
-0%
-```
-
-An exact text duplicate is detected using SHA-256 and receives:
-
-```text
-100%
-```
-
----
-
-## 🎯 Assignment Comparison Rules
-
-CopyKat does not compare every assignment against every other assignment.
-
-A submission is compared only against previous assignments matching:
-
-```text
-Same Topic
-     +
-Same Semester
-     +
-Same Subject
-```
-
-The student's own previous submissions are excluded.
-
-This helps prevent unrelated assignments from producing misleading similarity results.
-
----
-
-## 👥 User Roles
-
-### Student
-
-Students can:
-
-- View assignments for their admission batch
-- Submit assignments
-- View submission status
-- View similarity results
-- Resubmit assignments when required
-
-### Teacher
-
-Teachers can:
-
-- Create assignments
-- Select subjects they teach
-- Assign tasks to specific batches
-- View student submissions
-- Review similarity results
-- View matched assignments
-- Add remarks
-- Accept submissions
-- Reject submissions
-- Request resubmission
-
-### Administrator
-
-Administrators can:
-
-- Manage users
-- Manage subjects
-- Manage assignments
-- Manage submissions
-- Manage application data
-- Access Django Admin
-
----
-
-## 📄 Supported Files
-
-CopyKat currently supports:
-
-```text
-.pdf
-.docx
-```
-
-PDF files are processed using **PyMuPDF**.
-
-DOCX files are processed using **python-docx**.
-
-> **Important:** The submission form currently allows `.doc` files in its browser `accept` attribute, but the similarity extraction service supports only **PDF and DOCX**. Therefore, `.doc` files should not be considered fully supported unless DOC extraction is added to the extraction service.
-
-Scanned or image-only PDFs may not produce useful text because OCR is not currently implemented.
-
----
-
-## 🔄 Resubmission System
-
-When a teacher rejects a student's first submission, CopyKat can set the assignment to:
-
-```text
-resubmission_required
-```
-
-The student receives a **two-day resubmission deadline**.
-
-Only one resubmission is allowed.
-
-The second submission is marked as:
-
-```text
-submission_attempt = 2
-```
-
-If the second attempt is rejected, the assignment becomes:
-
-```text
-final_rejected
-```
-
-When a student resubmits:
-
-- The previous uploaded file is removed.
-- The new file is stored.
-- The teacher remark is cleared.
-- The previous review time is cleared.
-- Similarity is reset.
-- The matched assignment is cleared.
-- Similarity analysis runs again.
-
----
-
-## ⚠️ Limitations
-
-- CopyKat performs **text-based similarity analysis**.
-- It does not search the entire internet for plagiarism.
-- Only PDF and DOCX files are supported by the extraction service.
-- Scanned/image-only PDFs may require OCR.
-- Documents must contain at least 50 words for analysis.
-- The current language validation allows English documents only.
-- Similarity is calculated using TF-IDF and Cosine Similarity rather than semantic embeddings.
-- Similarity below 15% is treated as 0%.
-- Similarity scores are indicators and are not proof of plagiarism.
-- Large datasets may require additional performance optimization.
-- Text formatting, images, diagrams, and other non-text content are not analyzed.
-- Exact duplicate detection depends on the cleaned extracted text.
-
----
-
-## 🔮 Future Enhancements
-
-- Semantic similarity using Transformer/embedding models
-- Highlight matching sentences and paragraphs
-- Side-by-side document comparison
-- OCR support for scanned documents
-- Email notifications
-- Similarity analytics and reports
-- Celery + Redis background processing
-- Vector database integration
-- Multilingual similarity detection
-- Full `.doc` file support
-- AI-assisted academic integrity analysis
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome.
-
+### Development Setup
 ```bash
+# Create feature branch
 git checkout -b feature/your-feature
-git add .
-git commit -m "Add your feature"
+
+# Install dev dependencies
+pip install -r requirements-dev.txt
+
+# Run tests with coverage
+pytest --cov=copykat tests/
+
+# Format code
+black .
+flake8 .
+
+# Commit and push
+git commit -m "feat: description"
 git push origin feature/your-feature
 ```
 
-Then open a Pull Request.
+### Code Style
+- Follow PEP 8
+- Use type hints for functions
+- Document complex algorithms
+- Write tests for new features (min 80% coverage)
 
----
 
-## 📜 License
+## Author
 
-No open-source license has currently been specified for this project.
+**Bishal Subedi**
+- GitHub: [@Bishal-sub](https://github.com/Bishal-sub)
 
----
 
-## 👨‍💻 Author
-
-**Bishal-sub**
-
-**CopyKat — Assignment Similarity Checker**
-
-Repository:
-
-https://github.com/Bishal-sub/CopyKat
-
----
-
-## ⭐ Support
-
-If you find CopyKat useful, consider giving the repository a ⭐ on GitHub.
-
-> **CopyKat — Submit. Compare. Review.**
+**Support:** [Create an Issue](https://github.com/Bishal-sub/CopyKat/issues)
