@@ -3,8 +3,7 @@
 [![Django](https://img.shields.io/badge/Django-6.0.7-darkgreen)](https://www.djangoproject.com/)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue)](https://www.python.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange)](https://www.mysql.com/)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen)]()
+
 
  Assignment similarity detection platform leveraging machine learning algorithms for institutional similarity detection. Utilizes TF-IDF vectorization and cosine similarity metrics to identify copied submissions with sentence-level granularity.
 
