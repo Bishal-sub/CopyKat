@@ -34,7 +34,7 @@ def get_text_from_file(file_path):
     raise ValueError("Only PDF and DOCX files are allowed.")
 
 
-# Assignment valid chaina bhane resubmission ko lagi mark garne
+# Assignment valid chaina bhane resubmission ko lagi mark garne (empty,few line )
 def reject_assignment(assignment, reason):
     assignment.status = "resubmission_required"
     assignment.similarity_percentage = reason

@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils import timezone
+
 
 from assignments.models import Assignment, TeacherTask
 
@@ -12,49 +14,43 @@ def student_dashboard(request):
     if request.user.role != "student":
         return redirect("login")
 
-    # Student ko batch ko tasks matra retrieve garne
-    all_tasks = TeacherTask.objects.filter(
-        batch=request.user.admission_year
-    ).select_related("teacher", "subject")
+    # Ahile ko current date ra time 
+    now = timezone.now()
 
-    # Student le submit gareko assignments ko details retrieve garne
-    assignments = Assignment.objects.filter(
-        student=request.user
-    ).select_related("task", "subject", "teacher")
+    # Student ko batch, level ra department sanga match hune ra schedule time aaipugeko tasks matra 
+    all_tasks = TeacherTask.objects.filter(batch=request.user.admission_year, level=request.user.level, department=request.user.department, show_at__lte=now).select_related("teacher", "subject", "level", "department")
+
+    # Student le submit gareko assignments ko details 
+    assignments = Assignment.objects.filter(student=request.user).select_related("task", "subject", "teacher")
 
     tasks = []
 
-    # Accepted ra Final Rejected assignment task count ma nadekhaune
+    # Student ko lagi active tasks haru check garne
     for task in all_tasks:
 
-        submission = Assignment.objects.filter(
-            task=task,
-            student=request.user
-        ).first()
+        # Yo task ko lagi student le pahile nai assignment submit gareko cha ki chaina
+        submission = Assignment.objects.filter(task=task, student=request.user).first()
 
-        # Accepted ra Final Rejected assignment lai active task namanne
+        # Assignment accepted wa final rejected bhayepachi "Assignments To Do" ma feri count nagarne
         if submission and submission.status in ["accepted", "final_rejected"]:
             continue
 
+        # Active task list ma task add garne
         tasks.append(task)
 
-    # Dashboard ma active task ko total count dekhau na
+    # Student dashboard ma dekhine total active tasks ko count
     total_tasks = len(tasks)
 
-    # Student le submit gareko assignment ko total count
+    # Student le submit gareko total assignments ko count
     submitted_count = assignments.count()
 
-    # Teacher review garna baki assignments ko count
-    pending_count = assignments.filter(
-        status="pending_review"
-    ).count()
+    # Teacher le review garna baki assignments ko count
+    pending_count = assignments.filter(status="pending_review").count()
 
-    # Final rejected assignments ko count
-    rejected_count = assignments.filter(
-        status="final_rejected"
-    ).count()
+    # Final rejected bhayeko assignments ko count
+    rejected_count = assignments.filter(status="final_rejected").count()
 
-    # Dashboard template lai required data ekai thau bata pathauna
+    # Dashboard template lai sabai required data pathaune
     context = {
         "tasks": tasks,
         "assignments": assignments,
@@ -64,11 +60,8 @@ def student_dashboard(request):
         "rejected_count": rejected_count,
     }
 
-    return render(
-        request,
-        "student_dashboard.html",
-        context
-    )
+    return render(request, "student_dashboard.html", context)
+
 
 
 # Teacher ko dashboard ma tasks ra student submissions ko summary dekhau na
