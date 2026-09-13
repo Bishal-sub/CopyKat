@@ -1,10 +1,7 @@
 # CopyKat
-
- \<h1 align="center"\>CopyKat\</h1\> \<p align="center"\> \<strong\>Academic Assignment Similarity Detection Platform\</strong\> \</p\> \<p align="center"\> A Django-based platform for assignment submission, similarity analysis, teacher review, and academic integrity management. \</p\> \<p align="center"\> \
- \
-
- \</p\>
----
+[![Django](https://img.shields.io/badge/Django-6.0.7-darkgreen)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue)](https://www.python.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange)](https://www.mysql.com/)
 
  ## 📖 Overview
 
