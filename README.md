@@ -913,7 +913,6 @@ Teacher Review
 
  A teacher can request a permitted resubmission when the first submission requires another attempt.
 
- The student can then:
 
  ## 🚀 Installation
 
