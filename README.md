@@ -1376,4 +1376,3 @@ git push origin feature/your-feature
 
 ---
 
- \<p align="center"\> \<strong\>CopyKat\</strong\>\<br\> Detect Similarity. Protect Originality. \</p\> :::
