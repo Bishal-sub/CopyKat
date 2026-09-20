@@ -6,6 +6,8 @@ from django.conf import settings
 from .models import User, EmailVerificationOTP, PasswordResetOTP
 from .forms import StudentRegisterForm
 import random
+from django.views.decorators.cache import never_cache
+
 
 
 def register_view(request):
@@ -39,7 +41,7 @@ def register_view(request):
 
     return render(request, "register.html", {"form": form})
 
-
+@never_cache
 def login_view(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
