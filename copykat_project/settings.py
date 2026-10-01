@@ -148,6 +148,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -169,6 +173,8 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to the Admin Panel",
 
     "copyright": "CopyKat",
+    "site_logo": "logo/logo.jpg",
+
 
     "show_sidebar": True,
     "navigation_expanded": True,
